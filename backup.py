@@ -8,10 +8,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# +++ New Imports +++
-import requests
-from datetime import datetime, date, timedelta
-
 # ─────────────────────────────
 # Setup
 # ─────────────────────────────
@@ -33,10 +29,15 @@ def extract_json(raw: str) -> dict:
     """
     # Strip fenced code blocks if present
     if raw.startswith("```") and raw.endswith("```"):
-        raw = raw.strip("```").strip()
+        # remove the fences, keep internal content
+        raw = raw.strip("`").strip()
+
+    # Find first '{'
     start = raw.find("{")
     if start == -1:
         raise ValueError("No JSON object found in model output")
+
+    # Match braces to find the end of the first JSON object
     depth = 0
     end = None
     for i, ch in enumerate(raw[start:], start):
@@ -47,8 +48,10 @@ def extract_json(raw: str) -> dict:
             if depth == 0:
                 end = i
                 break
+
     if end is None:
         raise ValueError("Unbalanced braces in model output")
+
     json_str = raw[start: end + 1]
     return json.loads(json_str)
 
@@ -56,15 +59,20 @@ def extract_json(raw: str) -> dict:
 # ─────────────────────────────
 # Events memory / config
 # ─────────────────────────────
+# In-memory store for user message history (for /ask/events)
 message_history = defaultdict(lambda: deque(maxlen=10))
-MAX_CONTEXT_TOKENS = 3000
-MAX_COMPLETION_TOKENS = 800
+
+# Constants to prevent abuse
+MAX_CONTEXT_TOKENS = 3000  # rough input limit
+MAX_COMPLETION_TOKENS = 800  # output limit
 
 
 def approximate_token_count(messages):
+    # Very rough estimate: ~1 token ≈ 4 characters
     total = 0
     for msg in messages:
         content = msg.get("content", "")
+        # If content isn't a string, coerce to string conservatively
         if not isinstance(content, str):
             try:
                 content = json.dumps(content)
@@ -74,6 +82,7 @@ def approximate_token_count(messages):
     return total
 
 
+# Load events.json (safe fallback to empty list if missing)
 EVENTS = []
 EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
 if os.path.exists(EVENTS_PATH):
@@ -83,137 +92,29 @@ if os.path.exists(EVENTS_PATH):
     except Exception:
         EVENTS = []
 
-# +++ START: New UC Merced Integration +++
-
-# ─────────────────────────────
-# UC Merced Event Configuration
-# ─────────────────────────────
-
-# Hardcoded lookup table for event locations.
-# The key should match the `location_name` from the API response.
-# Populate this with known campus venues.
-LOCATION_LOOKUP = {
-    "UC Merced": {"lat": 37.3660, "lon": -120.4246},
-    "Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-    "Leo and Dottie Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-    "Arts and Computational Sciences (ACS)": {"lat": 37.3670, "lon": -120.4255},
-    "Scholars Lane": {"lat": 37.366117, "lon": -120.424205},
-    # Add more locations here...
-    # "Some Other Building": {"lat": 37.xxxx, "lon": -120.xxxx},
-}
-
-
-def fetch_and_process_uc_merced_events():
-    """
-    Fetches events from the UC Merced API, processes them, and formats them
-    for the frontend.
-    """
-    start_date = date.today()
-    end_date = start_date + timedelta(days=7)
-    start_str = start_date.strftime("%Y-%m-%d")
-    end_str = end_date.strftime("%Y-%m-%d")
-
-    cal_url = f"[https://events.ucmerced.edu/api/2/events?start=](https://events.ucmerced.edu/api/2/events?start=){start_str}&end={end_str}&pp=100"
-
-    response = requests.get(cal_url, timeout=10)
-    response.raise_for_status()
-    data = response.json()
-
-    processed_events = []
-
-    for event_wrapper in data.get("events", []):
-        event = event_wrapper.get("event")
-        if not event:
-            continue
-
-        place_lat, place_lon = None, None
-        location_name = event.get("location_name")
-
-        if location_name and location_name in LOCATION_LOOKUP:
-            coords = LOCATION_LOOKUP[location_name]
-            place_lat, place_lon = coords.get("lat"), coords.get("lon")
-
-        if place_lat is None or place_lon is None:
-            geo = event.get("geo", {}) or {}
-            place_lat = geo.get("latitude")
-            place_lon = geo.get("longitude")
-
-        inst_list = event.get("event_instances", [])
-        if not inst_list:
-            continue
-
-        inst = inst_list[0].get("event_instance", {})
-        start_iso = inst.get("start")
-        end_iso = inst.get("end")
-
-        if not start_iso:
-            continue
-
-        try:
-            start_dt = datetime.fromisoformat(start_iso)
-            end_dt = datetime.fromisoformat(end_iso) if end_iso else None
-        except (ValueError, TypeError):
-            continue
-
-        campus_event = {
-            "id": str(event.get("id")),
-            "event_name": event.get("title"),
-            "description": event.get("description_text") or None,
-            "date": start_dt.strftime("%Y-%m-%d"),
-            "startAt": start_dt.strftime("%H:%M"),
-            "endAt": end_dt.strftime("%H:%M") if end_dt else None,
-            "locationTag": location_name,
-            "names": None,
-            "original": event,
-            "geometry": None,
-            "fromUser": False,
-            "url": event.get("localist_url")
-        }
-
-        if place_lat is not None and place_lon is not None:
-            campus_event["geometry"] = {
-                "x": float(place_lon),
-                "y": float(place_lat),
-                "wkid": 4326
-            }
-
-        processed_events.append(campus_event)
-
-    return processed_events
-
-# +++ END: New UC Merced Integration +++
-
 
 # ─────────────────────────────
 # Routes
 # ─────────────────────────────
 @app.route("/", methods=["GET"])
 def root():
-    # Updated to show the new endpoint
-    return jsonify({"ok": True, "endpoints": ["/ask (POST)", "/ask/events (POST)", "/events/ucmerced (GET)"]})
-
-
-# +++ New Route for UC Merced Events +++
-@app.route("/events/ucmerced", methods=["GET"])
-def get_uc_merced_events():
-    """
-    Provides a list of upcoming events from the official UC Merced calendar,
-    formatted for the campus map application.
-    """
-    try:
-        events = fetch_and_process_uc_merced_events()
-        return jsonify(events)
-    except requests.exceptions.RequestException as e:
-        # Handle network errors, timeouts, etc.
-        return jsonify({"error": f"Failed to fetch events from source: {e}"}), 502
-    except Exception as e:
-        # Handle other unexpected errors during processing
-        return jsonify({"error": f"An internal error occurred: {e}"}), 500
+    return jsonify({"ok": True, "endpoints": ["/ask/vision (POST)", "/ask/events (POST)"]})
 
 
 @app.route("/ask", methods=["POST"])
 def ask_vision():
-    # ... (your existing /ask route code is unchanged) ...
+    """
+    Multipart form-data with a file field named 'file'.
+    Returns strict JSON extracted from the image:
+      {
+        "date": "",
+        "time": "",
+        "location": "",
+        "names": [],
+        "event_name": "",
+        "description": ""
+      }
+    """
     if "file" not in request.files:
         return jsonify({"error": "No image file provided (field name should be 'file')"}), 400
 
@@ -282,7 +183,19 @@ def ask_vision():
 
 @app.route("/ask/events", methods=["POST"])
 def ask_events():
-    # ... (your existing /ask/events route code is unchanged) ...
+    """
+    JSON body:
+      {
+        "user_id": "abc123",       # optional, for per-user short memory
+        "question": "What should I attend?",
+        "tags": ["freshmen","engineering"]  # optional tag filtering
+      }
+    Returns:
+      {
+        "response": "<assistant text>",
+        "matched_events": [ ...events whose IDs were referenced... ]
+      }
+    """
     data = request.get_json(silent=True) or {}
     user_id = data.get("user_id", "default")
     question = data.get("question", "")
@@ -291,6 +204,7 @@ def ask_events():
     if not isinstance(question, str) or not question.strip():
         return jsonify({"error": "No question provided"}), 400
 
+    # Filter events by tags (if provided)
     filtered_events = [
         event for event in EVENTS
         if not tags or any(tag in event.get("tags", []) for tag in tags)
@@ -305,9 +219,11 @@ def ask_events():
         ),
     }
 
+    # Maintain short per-user history
     history = message_history[user_id]
     history.append({"role": "user", "content": question})
 
+    # Create a compact context to keep token usage sane
     context_prompt = (
         f"User asked: \"{question}\"\n\n"
         f"Here is a list of events:\n{json.dumps(filtered_events, ensure_ascii=False)}"
@@ -316,6 +232,7 @@ def ask_events():
     messages = [system_message] + \
         list(history) + [{"role": "user", "content": context_prompt}]
 
+    # Truncate if too long
     while approximate_token_count(messages) > MAX_CONTEXT_TOKENS and len(history) > 0:
         history.popleft()
         messages = [system_message] + \
@@ -331,8 +248,10 @@ def ask_events():
 
         reply = (response.choices[0].message.content or "").strip()
 
+        # Save assistant reply to history
         history.append({"role": "assistant", "content": reply})
 
+        # Extract event IDs like event001, event123, etc.
         event_ids = re.findall(r"event\d{3}", reply)
         matched_events = [
             event for event in EVENTS if event.get("id") in set(event_ids)]
