@@ -1503,11 +1503,13 @@ def health():
 
 
 @app.route("/events", methods=["GET"])
+# ... (imports and setup unchanged above)
+@app.route("/events", methods=["GET"])
 def get_events():
     """
     If 'from'/'to' are provided, proxy UC Merced Localist feed and normalize to CampusEvent.
     Otherwise, return demo events (optionally filterable by from/to).
-    - 'from' inclusive; 'to' exclusive (your contract).
+    - 'from' inclusive; 'to' exclusive.
     """
     from_param = request.args.get("from")
     to_param = request.args.get("to")
@@ -1530,12 +1532,29 @@ def get_events():
                 continue
             if to_dt and t >= to_dt:
                 continue
-            filtered.append(ev)
+            # Ensure top-level lat/lon present for your React loader
+            ev_out = {
+                "id": ev["id"],
+                "title": ev["title"],
+                "event_name": ev["title"],
+                "description": ev.get("description"),
+                "start": ev["start"],
+                "end": ev.get("end"),
+                "lat": ev["lat"],
+                "lon": ev["lon"],
+                "fromUser": ev.get("fromUser", False),
+                # Keep your richer fields (optional; loader ignores them)
+                "date": parse_iso(ev["start"]).astimezone(PACIFIC).date().isoformat(),
+                "startAt": hhmm(parse_iso(ev["start"]).astimezone(PACIFIC)),
+                "endAt": (hhmm(parse_iso(ev["end"]).astimezone(PACIFIC)) if ev.get("end") else None),
+                "original": {"demo": True},
+            }
+            filtered.append(ev_out)
         resp = make_response(jsonify({"events": filtered}))
         resp.headers["Cache-Control"] = "no-store"
         return resp
 
-    # Convert your inclusive/exclusive window to Localist date window (Pacific)
+    # Convert window to Localist date range (Pacific)
     start_local = (from_dt.astimezone(PACIFIC)
                    if from_dt else datetime.now(PACIFIC)).date()
     if to_dt:
@@ -1577,14 +1596,14 @@ def get_events():
                 lat = geo.get("latitude")
                 lon = geo.get("longitude")
 
-                # If feed lacks coords, try our hard-coded lookup using multiple fields
+                # If feed lacks coords, try hard-coded lookup
                 matched_key = None
                 if lat is None or lon is None:
                     lat, lon, matched_key = lookup_coords_hardcoded(
                         loc_name,
                         ev.get("location"),
                         ev.get("address"),
-                        title  # sometimes venue is in the title
+                        title
                     )
 
                 instances = ev.get("event_instances") or []
@@ -1599,13 +1618,23 @@ def get_events():
                     if not sdt:
                         continue
 
-                    campus_event = {
+                    # Build payload that your React loader can ingest directly
+                    out = {
                         "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash((start_s, title))}"),
+                        "title": str(title),
                         "event_name": str(title),
                         "description": desc_text,
+                        # <-- key for your loader
+                        "start": iso_z(sdt),
+                        "end": iso_z(edt) if edt else None,
+                        "fromUser": False,
+                        # Prefer lat/lon at top-level; if missing, loader will skip it
+                        "lat": float(lat) if lat is not None else None,
+                        "lon": float(lon) if lon is not None else None,
+                        # Keep extras (ignored by loader, but handy for debugging)
                         "date": sdt.astimezone(PACIFIC).date().isoformat(),
                         "startAt": hhmm(sdt.astimezone(PACIFIC)),
-                        "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
+                        "endAt": (hhmm(edt.astimezone(PACIFIC)) if edt else None),
                         "locationTag": room or None,
                         "names": None,
                         "original": {
@@ -1620,15 +1649,9 @@ def get_events():
                             ),
                             "coord_match": matched_key,
                         },
-                        "fromUser": False,
                     }
 
-                    if lat is not None and lon is not None:
-                        # IMPORTANT: x = lon, y = lat, wkid=4326
-                        campus_event["geometry"] = {"x": float(
-                            lon), "y": float(lat), "wkid": 4326}
-
-                    campus_events.append(campus_event)
+                    campus_events.append(out)
 
             if len(page_events) < per_page:
                 break
@@ -1636,25 +1659,21 @@ def get_events():
 
     except requests.RequestException as e:
         print(f"[events] UCM feed error: {e}")
+        # Fallback: demo events (already have lat/lon/start)
         demo = build_events()
-        campus_events = []
         for ev in demo:
-            sdt = parse_iso(ev["start"])
-            edt = parse_iso(ev.get("end"))
-            ce = {
+            campus_events.append({
                 "id": ev["id"],
+                "title": ev["title"],
                 "event_name": ev["title"],
                 "description": ev.get("description"),
-                "date": sdt.astimezone(PACIFIC).date().isoformat(),
-                "startAt": hhmm(sdt.astimezone(PACIFIC)),
-                "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
-                "locationTag": None,
-                "names": None,
+                "start": ev["start"],
+                "end": ev.get("end"),
+                "lat": ev["lat"],
+                "lon": ev["lon"],
+                "fromUser": ev.get("fromUser", False),
                 "original": {"demo": True},
-                "fromUser": False,
-                "geometry": {"x": ev["lon"], "y": ev["lat"], "wkid": 4326},
-            }
-            campus_events.append(ce)
+            })
 
     if raw_toggle:
         return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
@@ -1662,6 +1681,166 @@ def get_events():
     resp = make_response(jsonify({"events": campus_events}))
     resp.headers["Cache-Control"] = "no-store"
     return resp
+
+# def get_events():
+#     """
+#     If 'from'/'to' are provided, proxy UC Merced Localist feed and normalize to CampusEvent.
+#     Otherwise, return demo events (optionally filterable by from/to).
+#     - 'from' inclusive; 'to' exclusive (your contract).
+#     """
+#     from_param = request.args.get("from")
+#     to_param = request.args.get("to")
+#     per_page = int(request.args.get("pp") or 100)
+#     raw_toggle = request.args.get("raw") == "1"
+
+#     from_dt = parse_iso(from_param) if from_param else None
+#     to_dt = parse_iso(to_param) if to_param else None
+
+#     use_ucm = bool(from_dt or to_dt)
+#     if not use_ucm:
+#         # Demo mode
+#         all_events = build_events()
+#         filtered = []
+#         for ev in all_events:
+#             t = parse_iso(ev.get("start"))
+#             if t is None:
+#                 continue
+#             if from_dt and t < from_dt:
+#                 continue
+#             if to_dt and t >= to_dt:
+#                 continue
+#             filtered.append(ev)
+#         resp = make_response(jsonify({"events": filtered}))
+#         resp.headers["Cache-Control"] = "no-store"
+#         return resp
+
+#     # Convert your inclusive/exclusive window to Localist date window (Pacific)
+#     start_local = (from_dt.astimezone(PACIFIC)
+#                    if from_dt else datetime.now(PACIFIC)).date()
+#     if to_dt:
+#         last_included_local_date = (to_dt.astimezone(
+#             PACIFIC) - timedelta(microseconds=1)).date()
+#     else:
+#         last_included_local_date = (datetime.now(
+#             PACIFIC) + timedelta(days=14)).date()
+
+#     start_str = start_local.isoformat()
+#     end_str = last_included_local_date.isoformat()
+
+#     page = 1
+#     max_pages = 10
+#     raw_pages = []
+#     campus_events = []
+
+#     try:
+#         while page <= max_pages:
+#             params = {"start": start_str, "end": end_str,
+#                       "pp": per_page, "page": page}
+#             r = requests.get(UCM_FEED, params=params, timeout=10)
+#             r.raise_for_status()
+#             payload = r.json() or {}
+#             page_events = payload.get("events") or []
+#             raw_pages.append(payload)
+
+#             if not page_events:
+#                 break
+
+#             for wrapper in page_events:
+#                 ev = (wrapper or {}).get("event") or {}
+#                 title = ev.get("title") or ""
+#                 desc_text = ev.get("description_text") or strip_html(
+#                     ev.get("description"))
+#                 loc_name = ev.get("location_name") or ev.get("location") or ""
+#                 room = ev.get("room_number")
+#                 geo = ev.get("geo") or {}
+#                 lat = geo.get("latitude")
+#                 lon = geo.get("longitude")
+
+#                 # If feed lacks coords, try our hard-coded lookup using multiple fields
+#                 matched_key = None
+#                 if lat is None or lon is None:
+#                     lat, lon, matched_key = lookup_coords_hardcoded(
+#                         loc_name,
+#                         ev.get("location"),
+#                         ev.get("address"),
+#                         title  # sometimes venue is in the title
+#                     )
+
+#                 instances = ev.get("event_instances") or []
+#                 for inst_wrap in instances:
+#                     inst = (inst_wrap or {}).get("event_instance") or {}
+#                     start_s = inst.get("start")
+#                     end_s = inst.get("end")
+#                     if not start_s:
+#                         continue
+#                     sdt = parse_iso(start_s)
+#                     edt = parse_iso(end_s) if end_s else None
+#                     if not sdt:
+#                         continue
+
+#                     campus_event = {
+#                         "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash((start_s, title))}"),
+#                         "event_name": str(title),
+#                         "description": desc_text,
+#                         "date": sdt.astimezone(PACIFIC).date().isoformat(),
+#                         "startAt": hhmm(sdt.astimezone(PACIFIC)),
+#                         "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
+#                         "locationTag": room or None,
+#                         "names": None,
+#                         "original": {
+#                             "event_id": ev.get("id"),
+#                             "instance_id": inst.get("id"),
+#                             "location_name": loc_name,
+#                             "room_number": room,
+#                             "localist_url": ev.get("localist_url"),
+#                             "coord_source": (
+#                                 "feed" if (geo.get("latitude") is not None and geo.get("longitude") is not None)
+#                                 else ("lookup" if matched_key else None)
+#                             ),
+#                             "coord_match": matched_key,
+#                         },
+#                         "fromUser": False,
+#                     }
+
+#                     if lat is not None and lon is not None:
+#                         # IMPORTANT: x = lon, y = lat, wkid=4326
+#                         campus_event["geometry"] = {"x": float(
+#                             lon), "y": float(lat), "wkid": 4326}
+
+#                     campus_events.append(campus_event)
+
+#             if len(page_events) < per_page:
+#                 break
+#             page += 1
+
+#     except requests.RequestException as e:
+#         print(f"[events] UCM feed error: {e}")
+#         demo = build_events()
+#         campus_events = []
+#         for ev in demo:
+#             sdt = parse_iso(ev["start"])
+#             edt = parse_iso(ev.get("end"))
+#             ce = {
+#                 "id": ev["id"],
+#                 "event_name": ev["title"],
+#                 "description": ev.get("description"),
+#                 "date": sdt.astimezone(PACIFIC).date().isoformat(),
+#                 "startAt": hhmm(sdt.astimezone(PACIFIC)),
+#                 "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
+#                 "locationTag": None,
+#                 "names": None,
+#                 "original": {"demo": True},
+#                 "fromUser": False,
+#                 "geometry": {"x": ev["lon"], "y": ev["lat"], "wkid": 4326},
+#             }
+#             campus_events.append(ce)
+
+#     if raw_toggle:
+#         return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
+
+#     resp = make_response(jsonify({"events": campus_events}))
+#     resp.headers["Cache-Control"] = "no-store"
+#     return resp
 
 
 @app.route("/ask", methods=["POST"])
