@@ -1258,7 +1258,6 @@
 
 #     except Exception as e:
 #         return jsonify({"error": str(e)}), 500
-
 from openai import OpenAI
 import os
 import re
@@ -1270,6 +1269,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 from datetime import datetime, timezone, timedelta
 from zoneinfo import ZoneInfo
+import unicodedata
 import requests
 
 # ─────────────────────────────
@@ -1290,7 +1290,6 @@ UCM_FEED = "https://events.ucmerced.edu/api/2/events"
 
 
 def extract_json(raw: str) -> dict:
-    """Clean up model output and return the first {...} JSON object inside."""
     if raw.startswith("```") and raw.endswith("```"):
         raw = raw.strip("`").strip()
     start = raw.find("{")
@@ -1313,12 +1312,10 @@ def extract_json(raw: str) -> dict:
 
 
 def iso_z(dt: datetime) -> str:
-    """ISO-8601 with trailing 'Z' (like JS toISOString)."""
     return dt.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
 def parse_iso(s: str) -> datetime | None:
-    """Parse common ISO strings, including trailing 'Z'."""
     if not s:
         return None
     try:
@@ -1332,7 +1329,6 @@ def parse_iso(s: str) -> datetime | None:
 def strip_html(html: str | None) -> str | None:
     if not html:
         return None
-    # remove tags crudely
     return re.sub(r"<[^>]+>", "", html).strip() or None
 
 
@@ -1341,31 +1337,61 @@ def hhmm(dt: datetime) -> str:
 
 
 # ─────────────────────────────
-# Optional location lookup
+# HARD-CODED location → (lat, lon)
+#   • Keys are normalized internally (case/space/punct insensitive).
+#   • Add as many as you want below.
 # ─────────────────────────────
-LOCATIONS = {}
-LOCATIONS_PATH = os.path.join(os.getcwd(), "locations.json")
-if os.path.exists(LOCATIONS_PATH):
-    try:
-        with open(LOCATIONS_PATH, "r", encoding="utf-8") as f:
-            raw_locs = json.load(f)
-            # normalize keys to lowercase for forgiving lookup
-            for k, v in (raw_locs or {}).items():
-                if isinstance(v, dict) and "lat" in v and "lon" in v:
-                    LOCATIONS[k.strip().lower()] = {"lat": float(
-                        v["lat"]), "lon": float(v["lon"])}
-    except Exception:
-        LOCATIONS = {}
+HARD_CODED_LOCATIONS = {
+    # Campus-wide / generic
+    "uc merced": (37.3690, -120.4209),
+
+    # Your example from earlier
+    "merced station": (37.3027, -120.4811),
+    "Scholars Lane": (37.366117,  -120.424205),
+
+    # Add more here as needed, e.g.:
+    # "cob1": (37.3657, -120.4249),
+    # "cob 1": (37.3657, -120.4249),
+    # "conference center": (37.3683, -120.4230),
+}
 
 
-def lookup_coords(*names: str):
-    for n in names:
-        if not n:
+def _norm(s: str) -> str:
+    """Lowercase, ASCII-fold, collapse non-alnum to spaces."""
+    if not s:
+        return ""
+    s = unicodedata.normalize("NFKD", s)
+    s = s.encode("ascii", "ignore").decode("ascii")
+    s = s.lower().replace("&", "and")
+    s = re.sub(r"[^a-z0-9]+", " ", s)
+    return " ".join(s.split())
+
+
+# Build a normalized lookup once
+_NORM_LOC = {_norm(k): v for k, v in HARD_CODED_LOCATIONS.items()}
+
+
+def lookup_coords_hardcoded(*candidates: str):
+    """
+    Try exact normalized match first; then substring containment both ways.
+    Returns (lat, lon, matched_key | None).
+    """
+    norm_cands = [(_norm(c or ""), (c or "")) for c in candidates if c]
+    # Exact first
+    for nc, raw in norm_cands:
+        if not nc:
             continue
-        hit = LOCATIONS.get(n.strip().lower())
-        if hit and isinstance(hit, dict) and "lat" in hit and "lon" in hit:
-            return hit["lat"], hit["lon"]
-    return None, None
+        if nc in _NORM_LOC:
+            lat, lon = _NORM_LOC[nc]
+            return lat, lon, raw
+    # Then substring-based (for forgiving matches like "COB 1" vs "COB1")
+    for nc, raw in norm_cands:
+        if not nc:
+            continue
+        for key_norm, (lat, lon) in _NORM_LOC.items():
+            if key_norm in nc or nc in key_norm:
+                return lat, lon, raw
+    return None, None, None
 
 
 # ─────────────────────────────
@@ -1400,7 +1426,7 @@ if os.path.exists(EVENTS_PATH):
         EVENTS = []
 
 # ─────────────────────────────
-# Demo Events (ported from Node)
+# Demo Events
 # ─────────────────────────────
 
 
@@ -1488,13 +1514,12 @@ def get_events():
     per_page = int(request.args.get("pp") or 100)
     raw_toggle = request.args.get("raw") == "1"
 
-    # Parse boundaries
     from_dt = parse_iso(from_param) if from_param else None
     to_dt = parse_iso(to_param) if to_param else None
 
     use_ucm = bool(from_dt or to_dt)
     if not use_ucm:
-        # Demo mode (original behavior)
+        # Demo mode
         all_events = build_events()
         filtered = []
         for ev in all_events:
@@ -1510,11 +1535,9 @@ def get_events():
         resp.headers["Cache-Control"] = "no-store"
         return resp
 
-    # Map exclusive/inclusive to Localist YYYY-MM-DD window in America/Los_Angeles
-    # If 'from' missing, start today; if 'to' missing, use +14d (sensible default)
+    # Convert your inclusive/exclusive window to Localist date window (Pacific)
     start_local = (from_dt.astimezone(PACIFIC)
                    if from_dt else datetime.now(PACIFIC)).date()
-    # 'to' is exclusive; map to last included local date = (to - 1 microsecond).date()
     if to_dt:
         last_included_local_date = (to_dt.astimezone(
             PACIFIC) - timedelta(microseconds=1)).date()
@@ -1525,7 +1548,6 @@ def get_events():
     start_str = start_local.isoformat()
     end_str = last_included_local_date.isoformat()
 
-    # Pull pages until we exhaust or hit a sane cap
     page = 1
     max_pages = 10
     raw_pages = []
@@ -1544,7 +1566,6 @@ def get_events():
             if not page_events:
                 break
 
-            # Normalize each event_instance -> CampusEvent
             for wrapper in page_events:
                 ev = (wrapper or {}).get("event") or {}
                 title = ev.get("title") or ""
@@ -1556,9 +1577,15 @@ def get_events():
                 lat = geo.get("latitude")
                 lon = geo.get("longitude")
 
-                # Try user-provided locations.json if feed has no coords
+                # If feed lacks coords, try our hard-coded lookup using multiple fields
+                matched_key = None
                 if lat is None or lon is None:
-                    lat, lon = lookup_coords(loc_name, ev.get("location"))
+                    lat, lon, matched_key = lookup_coords_hardcoded(
+                        loc_name,
+                        ev.get("location"),
+                        ev.get("address"),
+                        title  # sometimes venue is in the title
+                    )
 
                 instances = ev.get("event_instances") or []
                 for inst_wrap in instances:
@@ -1567,16 +1594,13 @@ def get_events():
                     end_s = inst.get("end")
                     if not start_s:
                         continue
-
-                    # Parse instance times (Localist returns timezone-aware strings)
                     sdt = parse_iso(start_s)
                     edt = parse_iso(end_s) if end_s else None
                     if not sdt:
                         continue
 
                     campus_event = {
-                        # Prefer stable composite id to avoid collisions across instances
-                        "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash(start_s+title)}"),
+                        "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash((start_s, title))}"),
                         "event_name": str(title),
                         "description": desc_text,
                         "date": sdt.astimezone(PACIFIC).date().isoformat(),
@@ -1590,11 +1614,17 @@ def get_events():
                             "location_name": loc_name,
                             "room_number": room,
                             "localist_url": ev.get("localist_url"),
+                            "coord_source": (
+                                "feed" if (geo.get("latitude") is not None and geo.get("longitude") is not None)
+                                else ("lookup" if matched_key else None)
+                            ),
+                            "coord_match": matched_key,
                         },
                         "fromUser": False,
                     }
 
                     if lat is not None and lon is not None:
+                        # IMPORTANT: x = lon, y = lat, wkid=4326
                         campus_event["geometry"] = {"x": float(
                             lon), "y": float(lat), "wkid": 4326}
 
@@ -1605,10 +1635,8 @@ def get_events():
             page += 1
 
     except requests.RequestException as e:
-        # Fall back to demo if feed is down
         print(f"[events] UCM feed error: {e}")
         demo = build_events()
-        # Convert demo to CampusEvent-ish for consistency
         campus_events = []
         for ev in demo:
             sdt = parse_iso(ev["start"])
@@ -1628,7 +1656,6 @@ def get_events():
             }
             campus_events.append(ce)
 
-    # Debug toggles
     if raw_toggle:
         return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
 
@@ -1744,4 +1771,492 @@ def ask_events():
 # ─────────────────────────────
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "6050"))
-    app.run(host="0.0.0.0", port=9050)
+    app.run(host="0.0.0.0", port=port)
+
+# working best version below
+# from openai import OpenAI
+# import os
+# import re
+# import base64
+# import json
+# from collections import defaultdict, deque
+# from flask import Flask, request, jsonify, make_response
+# from flask_cors import CORS
+# from dotenv import load_dotenv
+# from datetime import datetime, timezone, timedelta
+# from zoneinfo import ZoneInfo
+# import requests
+
+# # ─────────────────────────────
+# # Setup
+# # ─────────────────────────────
+# load_dotenv()
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+# app = Flask(__name__)
+# CORS(app)
+
+# PACIFIC = ZoneInfo("America/Los_Angeles")
+# UCM_FEED = "https://events.ucmerced.edu/api/2/events"
+
+# # ─────────────────────────────
+# # Shared helpers
+# # ─────────────────────────────
+
+
+# def extract_json(raw: str) -> dict:
+#     """Clean up model output and return the first {...} JSON object inside."""
+#     if raw.startswith("```") and raw.endswith("```"):
+#         raw = raw.strip("`").strip()
+#     start = raw.find("{")
+#     if start == -1:
+#         raise ValueError("No JSON object found in model output")
+#     depth = 0
+#     end = None
+#     for i, ch in enumerate(raw[start:], start):
+#         if ch == "{":
+#             depth += 1
+#         elif ch == "}":
+#             depth -= 1
+#             if depth == 0:
+#                 end = i
+#                 break
+#     if end is None:
+#         raise ValueError("Unbalanced braces in model output")
+#     json_str = raw[start: end + 1]
+#     return json.loads(json_str)
+
+
+# def iso_z(dt: datetime) -> str:
+#     """ISO-8601 with trailing 'Z' (like JS toISOString)."""
+#     return dt.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
+
+
+# def parse_iso(s: str) -> datetime | None:
+#     """Parse common ISO strings, including trailing 'Z'."""
+#     if not s:
+#         return None
+#     try:
+#         if s.endswith("Z"):
+#             s = s.replace("Z", "+00:00")
+#         return datetime.fromisoformat(s)
+#     except Exception:
+#         return None
+
+
+# def strip_html(html: str | None) -> str | None:
+#     if not html:
+#         return None
+#     # remove tags crudely
+#     return re.sub(r"<[^>]+>", "", html).strip() or None
+
+
+# def hhmm(dt: datetime) -> str:
+#     return dt.strftime("%H:%M")
+
+
+# # ─────────────────────────────
+# # Optional location lookup
+# # ─────────────────────────────
+# LOCATIONS = {}
+# LOCATIONS_PATH = os.path.join(os.getcwd(), "locations.json")
+# if os.path.exists(LOCATIONS_PATH):
+#     try:
+#         with open(LOCATIONS_PATH, "r", encoding="utf-8") as f:
+#             raw_locs = json.load(f)
+#             # normalize keys to lowercase for forgiving lookup
+#             for k, v in (raw_locs or {}).items():
+#                 if isinstance(v, dict) and "lat" in v and "lon" in v:
+#                     LOCATIONS[k.strip().lower()] = {"lat": float(
+#                         v["lat"]), "lon": float(v["lon"])}
+#     except Exception:
+#         LOCATIONS = {}
+
+
+# def lookup_coords(*names: str):
+#     for n in names:
+#         if not n:
+#             continue
+#         hit = LOCATIONS.get(n.strip().lower())
+#         if hit and isinstance(hit, dict) and "lat" in hit and "lon" in hit:
+#             return hit["lat"], hit["lon"]
+#     return None, None
+
+
+# # ─────────────────────────────
+# # Events memory / config
+# # ─────────────────────────────
+# message_history = defaultdict(lambda: deque(maxlen=10))
+# MAX_CONTEXT_TOKENS = 3000
+# MAX_COMPLETION_TOKENS = 800
+
+
+# def approximate_token_count(messages):
+#     total = 0
+#     for msg in messages:
+#         content = msg.get("content", "")
+#         if not isinstance(content, str):
+#             try:
+#                 content = json.dumps(content)
+#             except Exception:
+#                 content = str(content)
+#         total += len(content) // 4
+#     return total
+
+
+# # Load events.json (safe fallback to empty list if missing)
+# EVENTS = []
+# EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
+# if os.path.exists(EVENTS_PATH):
+#     try:
+#         with open(EVENTS_PATH, "r", encoding="utf-8") as f:
+#             EVENTS = json.load(f)
+#     except Exception:
+#         EVENTS = []
+
+# # ─────────────────────────────
+# # Demo Events (ported from Node)
+# # ─────────────────────────────
+
+
+# def build_events():
+#     now = datetime.now(timezone.utc)
+#     hour = timedelta(hours=1)
+#     day = timedelta(days=1)
+#     return [
+#         {
+#             "id": "evt-1",
+#             "title": "Campus Tour",
+#             "description": "Guided tour for prospective students.",
+#             "start": iso_z(now + 2 * hour),
+#             "end": iso_z(now + 3 * hour),
+#             "lat": 37.3656,
+#             "lon": -120.425,
+#             "fromUser": False,
+#         },
+#         {
+#             "id": "evt-2",
+#             "title": "Biology Seminar",
+#             "description": "Guest lecture on marine ecosystems.",
+#             "start": iso_z(now - 1 * day),
+#             "end": iso_z(now - 1 * day + 2 * hour),
+#             "lat": 37.3637,
+#             "lon": -120.4245,
+#             "fromUser": False,
+#         },
+#         {
+#             "id": "evt-3",
+#             "title": "Hack Night",
+#             "description": "Open coding session — bring your laptop.",
+#             "start": iso_z(now + 3 * day),
+#             "end": iso_z(now + 3 * day + 4 * hour),
+#             "lat": 37.369,
+#             "lon": -120.4209,
+#             "fromUser": False,
+#         },
+#         {
+#             "id": "evt-4",
+#             "title": "Alumni Meetup",
+#             "description": "Networking with UC Merced alumni.",
+#             "start": iso_z(now + 30 * day),
+#             "end": iso_z(now + 30 * day + 2 * hour),
+#             "lat": 37.3669,
+#             "lon": -120.4224,
+#             "fromUser": False,
+#         },
+#     ]
+
+# # ─────────────────────────────
+# # Routes
+# # ─────────────────────────────
+
+
+# @app.route("/", methods=["GET"])
+# def root():
+#     return jsonify({
+#         "ok": True,
+#         "endpoints": [
+#             "/health (GET)",
+#             "/events (GET)",
+#             "/ask (POST)",
+#             "/ask/events (POST)"
+#         ]
+#     })
+
+
+# @app.route("/health", methods=["GET"])
+# def health():
+#     return jsonify({"ok": True})
+
+# # GET /events?from=ISO&to=ISO
+
+
+# @app.route("/events", methods=["GET"])
+# def get_events():
+#     """
+#     If 'from'/'to' are provided, proxy UC Merced Localist feed and normalize to CampusEvent.
+#     Otherwise, return demo events (optionally filterable by from/to).
+#     - 'from' inclusive; 'to' exclusive (your contract).
+#     """
+#     from_param = request.args.get("from")
+#     to_param = request.args.get("to")
+#     per_page = int(request.args.get("pp") or 100)
+#     raw_toggle = request.args.get("raw") == "1"
+
+#     # Parse boundaries
+#     from_dt = parse_iso(from_param) if from_param else None
+#     to_dt = parse_iso(to_param) if to_param else None
+
+#     use_ucm = bool(from_dt or to_dt)
+#     if not use_ucm:
+#         # Demo mode (original behavior)
+#         all_events = build_events()
+#         filtered = []
+#         for ev in all_events:
+#             t = parse_iso(ev.get("start"))
+#             if t is None:
+#                 continue
+#             if from_dt and t < from_dt:
+#                 continue
+#             if to_dt and t >= to_dt:
+#                 continue
+#             filtered.append(ev)
+#         resp = make_response(jsonify({"events": filtered}))
+#         resp.headers["Cache-Control"] = "no-store"
+#         return resp
+
+#     # Map exclusive/inclusive to Localist YYYY-MM-DD window in America/Los_Angeles
+#     # If 'from' missing, start today; if 'to' missing, use +14d (sensible default)
+#     start_local = (from_dt.astimezone(PACIFIC)
+#                    if from_dt else datetime.now(PACIFIC)).date()
+#     # 'to' is exclusive; map to last included local date = (to - 1 microsecond).date()
+#     if to_dt:
+#         last_included_local_date = (to_dt.astimezone(
+#             PACIFIC) - timedelta(microseconds=1)).date()
+#     else:
+#         last_included_local_date = (datetime.now(
+#             PACIFIC) + timedelta(days=14)).date()
+
+#     start_str = start_local.isoformat()
+#     end_str = last_included_local_date.isoformat()
+
+#     # Pull pages until we exhaust or hit a sane cap
+#     page = 1
+#     max_pages = 10
+#     raw_pages = []
+#     campus_events = []
+
+#     try:
+#         while page <= max_pages:
+#             params = {"start": start_str, "end": end_str,
+#                       "pp": per_page, "page": page}
+#             r = requests.get(UCM_FEED, params=params, timeout=10)
+#             r.raise_for_status()
+#             payload = r.json() or {}
+#             page_events = payload.get("events") or []
+#             raw_pages.append(payload)
+
+#             if not page_events:
+#                 break
+
+#             # Normalize each event_instance -> CampusEvent
+#             for wrapper in page_events:
+#                 ev = (wrapper or {}).get("event") or {}
+#                 title = ev.get("title") or ""
+#                 desc_text = ev.get("description_text") or strip_html(
+#                     ev.get("description"))
+#                 loc_name = ev.get("location_name") or ev.get("location") or ""
+#                 room = ev.get("room_number")
+#                 geo = ev.get("geo") or {}
+#                 lat = geo.get("latitude")
+#                 lon = geo.get("longitude")
+
+#                 # Try user-provided locations.json if feed has no coords
+#                 if lat is None or lon is None:
+#                     lat, lon = lookup_coords(loc_name, ev.get("location"))
+
+#                 instances = ev.get("event_instances") or []
+#                 for inst_wrap in instances:
+#                     inst = (inst_wrap or {}).get("event_instance") or {}
+#                     start_s = inst.get("start")
+#                     end_s = inst.get("end")
+#                     if not start_s:
+#                         continue
+
+#                     # Parse instance times (Localist returns timezone-aware strings)
+#                     sdt = parse_iso(start_s)
+#                     edt = parse_iso(end_s) if end_s else None
+#                     if not sdt:
+#                         continue
+
+#                     campus_event = {
+#                         # Prefer stable composite id to avoid collisions across instances
+#                         "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash(start_s+title)}"),
+#                         "event_name": str(title),
+#                         "description": desc_text,
+#                         "date": sdt.astimezone(PACIFIC).date().isoformat(),
+#                         "startAt": hhmm(sdt.astimezone(PACIFIC)),
+#                         "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
+#                         "locationTag": room or None,
+#                         "names": None,
+#                         "original": {
+#                             "event_id": ev.get("id"),
+#                             "instance_id": inst.get("id"),
+#                             "location_name": loc_name,
+#                             "room_number": room,
+#                             "localist_url": ev.get("localist_url"),
+#                         },
+#                         "fromUser": False,
+#                     }
+
+#                     if lat is not None and lon is not None:
+#                         campus_event["geometry"] = {"x": float(
+#                             lon), "y": float(lat), "wkid": 4326}
+
+#                     campus_events.append(campus_event)
+
+#             if len(page_events) < per_page:
+#                 break
+#             page += 1
+
+#     except requests.RequestException as e:
+#         # Fall back to demo if feed is down
+#         print(f"[events] UCM feed error: {e}")
+#         demo = build_events()
+#         # Convert demo to CampusEvent-ish for consistency
+#         campus_events = []
+#         for ev in demo:
+#             sdt = parse_iso(ev["start"])
+#             edt = parse_iso(ev.get("end"))
+#             ce = {
+#                 "id": ev["id"],
+#                 "event_name": ev["title"],
+#                 "description": ev.get("description"),
+#                 "date": sdt.astimezone(PACIFIC).date().isoformat(),
+#                 "startAt": hhmm(sdt.astimezone(PACIFIC)),
+#                 "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
+#                 "locationTag": None,
+#                 "names": None,
+#                 "original": {"demo": True},
+#                 "fromUser": False,
+#                 "geometry": {"x": ev["lon"], "y": ev["lat"], "wkid": 4326},
+#             }
+#             campus_events.append(ce)
+
+#     # Debug toggles
+#     if raw_toggle:
+#         return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
+
+#     resp = make_response(jsonify({"events": campus_events}))
+#     resp.headers["Cache-Control"] = "no-store"
+#     return resp
+
+
+# @app.route("/ask", methods=["POST"])
+# def ask_vision():
+#     if "file" not in request.files:
+#         return jsonify({"error": "No image file provided (field name should be 'file')"}), 400
+#     uploaded = request.files["file"]
+#     img_bytes = uploaded.read()
+#     if not img_bytes:
+#         return jsonify({"error": "Empty file"}), 400
+#     mime = uploaded.mimetype or "image/png"
+#     b64 = base64.b64encode(img_bytes).decode("utf-8")
+#     data_url = f"data:{mime};base64,{b64}"
+
+#     system_message = {
+#         "role": "system",
+#         "content": (
+#             "You are a vision-enabled assistant. "
+#             "Extract from the image: date, time, location, names, event name, and a short description of the event. "
+#             "Respond *only* with valid JSON matching this schema:\n\n"
+#             "{\n"
+#             "  \"date\": \"\",\n"
+#             "  \"time\": \"\",\n"
+#             "  \"location\": \"\",\n"
+#             "  \"names\": [],\n"
+#             "  \"event_name\": \"\",\n"
+#             "  \"description\": \"\"\n"
+#             "}\n"
+#             "Rules:\n"
+#             "- If a field is unknown, use an empty string (or empty array for names).\n"
+#             "- Do not add extra keys. Do not include explanations."
+#         ),
+#     }
+#     user_message = {"role": "user", "content": [
+#         {"type": "image_url", "image_url": {"url": data_url}}]}
+#     try:
+#         resp = client.chat.completions.create(
+#             model="gpt-4o",
+#             messages=[system_message, user_message],
+#             temperature=0.0,
+#             max_tokens=400,
+#         )
+#         raw = (resp.choices[0].message.content or "").strip()
+#         if not raw:
+#             return jsonify({"error": "Empty model response"}), 502
+#         try:
+#             result = extract_json(raw)
+#         except ValueError:
+#             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
+#         return jsonify(result)
+#     except json.JSONDecodeError:
+#         return jsonify({"error": "Model did not return valid JSON"}), 500
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+
+# @app.route("/ask/events", methods=["POST"])
+# def ask_events():
+#     data = request.get_json(silent=True) or {}
+#     user_id = data.get("user_id", "default")
+#     question = data.get("question", "")
+#     tags = data.get("tags", [])
+#     if not isinstance(question, str) or not question.strip():
+#         return jsonify({"error": "No question provided"}), 400
+
+#     filtered_events = [event for event in EVENTS if not tags or any(
+#         tag in event.get("tags", []) for tag in tags)]
+#     system_message = {
+#         "role": "system",
+#         "content": (
+#             "You are a helpful assistant for UC Merced's Bobcat Day. "
+#             "You help students find relevant events based on their interests. "
+#             "When recommending events, include their IDs at the end in a JSON array like [\"event002\", \"event004\"]."
+#         ),
+#     }
+#     history = message_history[user_id]
+#     history.append({"role": "user", "content": question})
+
+#     context_prompt = f'User asked: "{question}"\n\nHere is a list of events:\n{json.dumps(filtered_events, ensure_ascii=False)}'
+#     messages = [system_message] + \
+#         list(history) + [{"role": "user", "content": context_prompt}]
+#     while approximate_token_count(messages) > MAX_CONTEXT_TOKENS and len(history) > 0:
+#         history.popleft()
+#         messages = [system_message] + \
+#             list(history) + [{"role": "user", "content": context_prompt}]
+
+#     try:
+#         response = client.chat.completions.create(
+#             model="gpt-4o",
+#             messages=messages,
+#             temperature=0.4,
+#             max_tokens=MAX_COMPLETION_TOKENS,
+#         )
+#         reply = (response.choices[0].message.content or "").strip()
+#         history.append({"role": "assistant", "content": reply})
+
+#         event_ids = re.findall(r"event\d{3}", reply)
+#         matched_events = [
+#             event for event in EVENTS if event.get("id") in set(event_ids)]
+#         return jsonify({"response": reply, "matched_events": matched_events})
+#     except Exception as e:
+#         return jsonify({"error": str(e)}), 500
+
+
+# # ─────────────────────────────
+# # Entrypoint
+# # ─────────────────────────────
+# if __name__ == "__main__":
+#     port = int(os.getenv("PORT", "6050"))
+#     app.run(host="0.0.0.0", port=9050)
