@@ -1,1276 +1,27 @@
-# # -*- coding: utf-8 -*-
-# """
-# Flask-based proxy and AI interface for UC Merced campus events.
-
-# This application serves two main purposes:
-# 1. Acts as a robust, caching proxy for an upstream events API. It handles
-#    retries, timeouts, and aggregates data from multiple potential sources.
-# 2. Provides an AI-powered conversational endpoint (/ask) to query event
-#    information using natural language (routes not shown in this snippet).
-
-# Key features include an in-memory cache, request validation to prevent
-# resource exhaustion, and dynamic configuration via environment variables.
-# """
-
-# import os
-# import json
-# import math
-# import time
-# from collections import defaultdict, deque
-# from datetime import datetime, date, timedelta, timezone
-
-# # --- Third-party libraries ---
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# from dotenv import load_dotenv
-# import requests
-# from requests.adapters import HTTPAdapter
-# from urllib3.util.retry import Retry
-# from openai import OpenAI
-
-
-# # ─────────────────────────────
-# # Setup & Configuration
-# # ─────────────────────────────
-# load_dotenv()
-
-# # --- Core App Setup ---
-# app = Flask(__name__)
-# CORS(app)
-
-# # --- OpenAI Client ---
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# # --- Environment Detection ---
-# ON_RENDER = bool(os.getenv("RENDER") or os.getenv("RENDER_EXTERNAL_URL"))
-
-# # --- Upstream API Configuration ---
-# # Primary base URL (kept for backward-compat)
-# _primary_events_url = os.getenv(
-#     "EVENTS_BASE_URL",
-#     "https://uc-merced-campus-event-api-backend.onrender.com"
-# ).rstrip("/")
-
-# # Default base URLs:
-# # - On Render: just the Render backend
-# # - Local dev: Render first, then localhost
-# _default_urls = [_primary_events_url] if ON_RENDER else [
-#     _primary_events_url, "http://localhost:7050"]
-# EVENTS_BASE_URLS = [
-#     u.strip().rstrip("/")
-#     for u in os.getenv("EVENTS_BASE_URLS", ",".join(_default_urls)).split(",")
-#     if u.strip()
-# ]
-
-# # --- Performance & Caching ---
-# CONNECT_TIMEOUT = float(os.getenv("EVENTS_CONNECT_TIMEOUT", "4.5"))
-# READ_TIMEOUT = float(os.getenv("EVENTS_READ_TIMEOUT", "20.0"))
-# CACHE_TTL_SEC = int(os.getenv("EVENTS_CACHE_TTL_SECONDS", "300"))  # 5 minutes
-# MAX_DATE_RANGE_DAYS = 31  # Prevents memory exhaustion from large requests
-
-# # --- In-memory cache: key -> (timestamp, payload, source_url) ---
-# EVENTS_CACHE = {}
-
-# # --- AI Chat History & Token Limits ---
-# message_history = defaultdict(lambda: deque(maxlen=10))
-# MAX_CONTEXT_TOKENS = 3000
-# MAX_COMPLETION_TOKENS = 800
-
-# # --- Location Data ---
-# LOCATION_LOOKUP = {
-#     "UC Merced": {"lat": 37.3660, "lon": -120.4246},
-#     "Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-#     "Leo and Dottie Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-#     "Arts and Computational Sciences (ACS)": {"lat": 37.3670, "lon": -120.4255},
-#     "Scholars Lane": {"lat": 37.366117, "lon": -120.424205},
-# }
-# LOCATIONS_PATH = os.path.join(os.getcwd(), "locations.json")
-# if os.path.exists(LOCATIONS_PATH):
-#     try:
-#         with open(LOCATIONS_PATH, "r", encoding="utf-8") as f:
-#             loaded = json.load(f)
-#             if isinstance(loaded, dict):
-#                 LOCATION_LOOKUP.update(loaded)
-#     except Exception as e:
-#         app.logger.warning(f"Could not load locations.json: {e}")
-
-
-# # ─────────────────────────────
-# # Shared Helper Functions
-# # ─────────────────────────────
-
-# def first(*vals, default=None):
-#     """Returns the first non-None value in a sequence."""
-#     for v in vals:
-#         if v is not None:
-#             return v
-#     return default
-
-
-# def to_bool(v, default=False):
-#     """Converts a value to a boolean, handling common string representations."""
-#     if isinstance(v, bool):
-#         return v
-#     if v is None:
-#         return default
-#     return str(v).strip().lower() in {"1", "true", "yes", "y", "on"}
-
-
-# def parse_iso(dt_str: str) -> datetime:
-#     """Robustly parses an ISO 8601 string into a timezone-aware datetime object."""
-#     if not dt_str:
-#         return None
-#     s = dt_str.strip()
-#     if s.endswith("Z"):
-#         s = s[:-1] + "+00:00"
-#     try:
-#         return datetime.fromisoformat(s)
-#     except ValueError:
-#         # Fallback for formats without timezone info, assuming UTC
-#         return datetime.fromisoformat(s + "+00:00")
-
-
-# def lonlat_to_web_mercator(lon: float, lat: float):
-#     """Converts longitude and latitude to Web Mercator coordinates (EPSG:3857)."""
-#     # Clamp latitude to the valid range for the Mercator projection
-#     lat = max(min(lat, 85.05112878), -85.05112878)
-#     R = 6378137.0  # Earth's radius in meters
-#     x = R * math.radians(lon)
-#     y = R * math.log(math.tan(math.pi / 4 + math.radians(lat) / 2))
-#     return x, y
-
-
-# # ─────────────────────────────
-# # HTTP Session with Retries
-# # ─────────────────────────────
-
-# def make_session() -> requests.Session:
-#     """Creates a requests.Session with configured retries and timeouts."""
-#     s = requests.Session()
-#     retries = Retry(
-#         total=2,          # Max 3 attempts (1 initial + 2 retries)
-#         connect=1,        # Retry once on connection errors
-#         read=1,           # Retry once on read timeouts
-#         backoff_factor=0.4,
-#         status_forcelist=[429, 500, 502, 503, 504],
-#         allowed_methods=frozenset(["GET"])
-#     )
-#     adapter = HTTPAdapter(max_retries=retries,
-#                           pool_connections=10, pool_maxsize=10)
-#     s.mount("http://", adapter)
-#     s.mount("https://", adapter)
-#     s.headers.update({
-#         "User-Agent": "ucm-events-proxy/1.1",
-#         "Accept": "application/json"
-#     })
-#     return s
-
-
-# SESSION = make_session()
-
-
-# # ─────────────────────────────
-# # Caching Logic
-# # ─────────────────────────────
-
-# def cache_get(key):
-#     """Retrieves an item from the cache if it's not expired."""
-#     rec = EVENTS_CACHE.get(key)
-#     if not rec:
-#         return None
-#     ts, payload, source = rec
-#     if (time.time() - ts) <= CACHE_TTL_SEC:
-#         return "hit", payload, source
-#     return "stale", payload, source
-
-
-# def cache_put(key, payload, source):
-#     """Adds an item to the cache."""
-#     EVENTS_CACHE[key] = (time.time(), payload, source)
-
-
-# # ─────────────────────────────
-# # Core Event Fetching Logic
-# # ─────────────────────────────
-
-# def fetch_and_process_events(from_iso: str = None, to_iso: str = None, base_urls=None, nocache=False):
-#     """
-#     Fetches events from upstream APIs, processes them into a standard format,
-#     and utilizes an in-memory cache.
-#     """
-#     base_urls = base_urls or EVENTS_BASE_URLS
-
-#     # Set default time window (next 7 days) if not provided
-#     if not from_iso or not to_iso:
-#         start_date = datetime.now(timezone.utc)
-#         end_date = start_date + timedelta(days=7)
-#         from_iso = start_date.isoformat().replace("+00:00", "Z")
-#         to_iso = end_date.isoformat().replace("+00:00", "Z")
-
-#     cache_key = (from_iso, to_iso, tuple(base_urls))
-#     if not nocache:
-#         cache_result = cache_get(cache_key)
-#         if cache_result:
-#             state, payload, source = cache_result
-#             return payload, source, state  # state: "hit" or "stale"
-
-#     params = {"from": from_iso, "to": to_iso}
-#     errors = []
-
-#     for base in base_urls:
-#         url = f"{base}/events"
-#         try:
-#             r = SESSION.get(url, params=params, timeout=(
-#                 CONNECT_TIMEOUT, READ_TIMEOUT))
-#             r.raise_for_status()
-#             raw_data = r.json()
-#             events_list = raw_data.get("events") if isinstance(
-#                 raw_data, dict) else raw_data
-#             if not isinstance(events_list, list):
-#                 app.logger.warning(
-#                     f"API at {base} returned non-list data: {type(events_list)}")
-#                 events_list = []
-
-#             processed = []
-#             for e in events_list:
-#                 if not isinstance(e, dict):
-#                     continue
-
-#                 start_raw = first(e.get("start"), e.get(
-#                     "startAt"), e.get("start_time"))
-#                 start_dt = parse_iso(start_raw) if isinstance(
-#                     start_raw, str) else None
-#                 if not start_dt:
-#                     continue  # Skip events without a valid start time
-
-#                 end_raw = first(e.get("end"), e.get(
-#                     "endAt"), e.get("end_time"))
-#                 end_dt = parse_iso(end_raw) if isinstance(
-#                     end_raw, str) else None
-
-#                 location_name = first(
-#                     e.get("location_name"), e.get("location"), e.get("venue"))
-#                 lon = first(e.get("lon"), e.get("lng"), e.get("longitude"))
-#                 lat = first(e.get("lat"), e.get("latitude"))
-
-#                 # Geocode known locations if coordinates are missing
-#                 if (lon is None or lat is None) and location_name in LOCATION_LOOKUP:
-#                     coords = LOCATION_LOOKUP[location_name]
-#                     lat, lon = coords.get("lat"), coords.get("lon")
-
-#                 geometry = None
-#                 if isinstance(lon, (int, float)) and isinstance(lat, (int, float)):
-#                     x, y = lonlat_to_web_mercator(float(lon), float(lat))
-#                     geometry = {"type": "point", "x": x, "y": y,
-#                                 "spatialReference": {"wkid": 3857}}
-
-#                 processed.append({
-#                     "id": str(first(e.get("id"), e.get("_id"), e.get("uuid"), default="")),
-#                     "event_name": first(e.get("title"), e.get("name"), e.get("event_name"), default=""),
-#                     "description": first(e.get("description"), e.get("desc")),
-#                     "url": first(e.get("url"), e.get("link")),
-#                     "date": start_dt.date().isoformat(),
-#                     "startAt": start_dt.strftime("%H:%M"),
-#                     "endAt": end_dt.strftime("%H:%M") if end_dt else None,
-#                     "locationTag": location_name,
-#                     "names": e.get("names") if isinstance(e.get("names"), list) else None,
-#                     "geometry": geometry,
-#                     "fromUser": to_bool(e.get("fromUser", False)),
-#                     # "original": e, # CRITICAL: REMOVED to prevent high memory usage
-#                 })
-
-#             cache_put(cache_key, processed, base)
-#             return processed, base, "miss"
-
-#         except requests.exceptions.RequestException as ex:
-#             errors.append(f"Request failed for {base}: {ex}")
-#         except json.JSONDecodeError as ex:
-#             errors.append(f"JSON decode error for {base}: {ex}")
-#         except Exception as ex:
-#             errors.append(f"An unexpected error occurred for {base}: {ex}")
-#             app.logger.error(
-#                 f"Error processing events from {base}", exc_info=True)
-
-#     # If all upstream sources failed, try to serve stale cache as a last resort
-#     stale_result = cache_get(cache_key)
-#     if stale_result and stale_result[0] == "stale":
-#         _, payload, source = stale_result
-#         return payload, source, "stale-fallback"
-
-#     raise RuntimeError(
-#         "All upstream event services failed: " + " ; ".join(errors))
-
-
-# # ─────────────────────────────
-# # API Routes
-# # ─────────────────────────────
-
-# @app.route("/", methods=["GET"])
-# def root():
-#     """Provides basic service information."""
-#     return jsonify({
-#         "status": "ok",
-#         "service_name": "ucm-events-proxy",
-#         "on_render": ON_RENDER,
-#         "configured_event_sources": EVENTS_BASE_URLS,
-#         "cache_ttl_seconds": CACHE_TTL_SEC,
-#         "max_date_range_days": MAX_DATE_RANGE_DAYS,
-#         # Add /ask (POST) if using it
-#         "endpoints": ["/health (GET)", "/events (GET)"]
-#     })
-
-
-# @app.route("/health", methods=["GET"])
-# def health():
-#     """Simple health check endpoint."""
-#     return jsonify({"status": "ok"})
-
-
-# @app.route("/events", methods=["GET"])
-# def get_events():
-#     """
-#     Fetches and returns campus events within a specified date range.
-
-#     Query Params:
-#       - from (ISO8601, optional): Start date/time.
-#       - to (ISO8601, optional): End date/time.
-#       - nocache (1, optional): Bypass the cache for a fresh fetch.
-#       - source (render|local, optional): Force use of a specific source type.
-#     """
-#     try:
-#         from_iso = request.args.get("from")
-#         to_iso = request.args.get("to")
-#         nocache = (request.args.get("nocache") == "1")
-
-#         # --- ROBUSTNESS: Validate date range to prevent memory exhaustion ---
-#         try:
-#             # Provide sensible defaults if params are missing
-#             now_utc = datetime.now(timezone.utc)
-#             from_dt = parse_iso(from_iso) if from_iso else now_utc
-#             to_dt = parse_iso(to_iso) if to_iso else now_utc + \
-#                 timedelta(days=7)
-
-#             if from_dt is None or to_dt is None:
-#                 raise ValueError("Invalid 'from' or 'to' date format.")
-
-#             if (to_dt - from_dt).days > MAX_DATE_RANGE_DAYS:
-#                 return jsonify({
-#                     "error": f"Date range too large. Please request a maximum of {MAX_DATE_RANGE_DAYS} days."
-#                 }), 400
-#         except (ValueError, TypeError) as e:
-#             return jsonify({"error": f"Invalid date format: {e}"}), 400
-#         # --- End Validation ---
-
-#         source_pref = (request.args.get("source") or "").strip().lower()
-#         if source_pref == "render":
-#             bases = [u for u in EVENTS_BASE_URLS if "onrender.com" in u]
-#         elif source_pref == "local":
-#             bases = [u for u in EVENTS_BASE_URLS if "localhost" in u]
-#         else:
-#             bases = EVENTS_BASE_URLS
-
-#         if not bases:
-#             return jsonify({"error": f"No event sources configured for preference '{source_pref}'"}), 500
-
-#         events, used_source, cache_state = fetch_and_process_events(
-#             from_iso, to_iso, bases, nocache=nocache)
-
-#         resp = jsonify(events)
-#         resp.headers["X-Events-Source"] = used_source
-#         resp.headers["X-Cache-Status"] = cache_state
-#         return resp
-
-#     except RuntimeError as e:
-#         app.logger.error(f"Failed to fetch events from all sources: {e}")
-#         return jsonify({"error": f"Failed to fetch events: {e}"}), 502
-#     except Exception as e:
-#         app.logger.error(
-#             "An unexpected error occurred in /events", exc_info=True)
-#         return jsonify({"error": f"An internal server error occurred: {e}"}), 500
-
-
-# # NOTE: Your /ask and /ask/events routes would go here.
-# # They were omitted for brevity as per your original post.
-
-
-# # ─────────────────────────────
-# # Application Entrypoint
-# # ─────────────────────────────
-# if __name__ == "__main__":
-#     port = int(os.environ.get("PORT", 8050))
-#     # Use host='0.0.0.0' to be accessible on the network
-#     # debug=False is crucial for production
-#     app.run(host="0.0.0.0", port=port, debug=False)
-
-# from openai import OpenAI
-# import os
-# import re
-# import base64
-# import json
-# from collections import defaultdict, deque
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# from dotenv import load_dotenv
-
-# # +++ New/Updated Imports +++
-# import requests
-# from datetime import datetime, date, timedelta, timezone
-# import math
-
-# # ─────────────────────────────
-# # Setup
-# # ─────────────────────────────
-# load_dotenv()
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# app = Flask(__name__)
-# CORS(app)
-
-# # Where to fetch events from (Render by default; override for local dev)
-# EVENTS_BASE_URL = os.getenv(
-#     "EVENTS_BASE_URL",
-#     "https://uc-merced-campus-event-api-backend.onrender.com"
-# ).rstrip("/")
-
-# # ─────────────────────────────
-# # Shared helpers
-# # ─────────────────────────────
-
-
-# def extract_json(raw: str) -> dict:
-#     """
-#     Clean up model output and return the first {...} JSON object inside.
-#     Raises ValueError if no valid JSON is found.
-#     """
-#     # Strip fenced code blocks if present
-#     if raw.startswith("```") and raw.endswith("```"):
-#         raw = raw.strip("```").strip()
-#     start = raw.find("{")
-#     if start == -1:
-#         raise ValueError("No JSON object found in model output")
-#     depth = 0
-#     end = None
-#     for i, ch in enumerate(raw[start:], start):
-#         if ch == "{":
-#             depth += 1
-#         elif ch == "}":
-#             depth -= 1
-#             if depth == 0:
-#                 end = i
-#                 break
-#     if end is None:
-#         raise ValueError("Unbalanced braces in model output")
-#     json_str = raw[start: end + 1]
-#     return json.loads(json_str)
-
-
-# def parse_iso(dt_str: str) -> datetime:
-#     """
-#     Parse ISO8601 strings, handling 'Z' as UTC.
-#     Returns timezone-aware datetime when possible.
-#     """
-#     if not dt_str:
-#         return None
-#     s = dt_str.strip()
-#     if s.endswith("Z"):
-#         s = s[:-1] + "+00:00"
-#     try:
-#         return datetime.fromisoformat(s)
-#     except Exception:
-#         try:
-#             return datetime.strptime(dt_str.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S%z")
-#         except Exception:
-#             return None
-
-
-# def lonlat_to_web_mercator(lon: float, lat: float):
-#     """
-#     Convert WGS84 lon/lat to Web Mercator (EPSG:3857).
-#     Returns (x, y)
-#     """
-#     lat = max(min(lat, 85.05112878), -85.05112878)
-#     R = 6378137.0
-#     x = R * math.radians(lon)
-#     y = R * math.log(math.tan(math.pi/4 + math.radians(lat)/2))
-#     return x, y
-
-
-# def first(*vals, default=None):
-#     for v in vals:
-#         if v is not None:
-#             return v
-#     return default
-
-
-# def to_bool(v, default=False):
-#     if isinstance(v, bool):
-#         return v
-#     if v is None:
-#         return default
-#     return str(v).strip().lower() in {"1", "true", "yes", "y", "on"}
-
-
-# # ─────────────────────────────
-# # Events memory / config
-# # ─────────────────────────────
-# message_history = defaultdict(lambda: deque(maxlen=10))
-# MAX_CONTEXT_TOKENS = 3000
-# MAX_COMPLETION_TOKENS = 800
-
-
-# def approximate_token_count(messages):
-#     total = 0
-#     for msg in messages:
-#         content = msg.get("content", "")
-#         if not isinstance(content, str):
-#             try:
-#                 content = json.dumps(content)
-#             except Exception:
-#                 content = str(content)
-#         total += len(content) // 4
-#     return total
-
-
-# EVENTS = []
-# EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
-# if os.path.exists(EVENTS_PATH):
-#     try:
-#         with open(EVENTS_PATH, "r", encoding="utf-8") as f:
-#             EVENTS = json.load(f)
-#     except Exception:
-#         EVENTS = []
-
-# # +++ START: Location lookup (user-provided) +++
-# LOCATION_LOOKUP = {
-#     "UC Merced": {"lat": 37.3660, "lon": -120.4246},
-#     "Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-#     "Leo and Dottie Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-#     "Arts and Computational Sciences (ACS)": {"lat": 37.3670, "lon": -120.4255},
-#     "Scholars Lane": {"lat": 37.366117, "lon": -120.424205},
-# }
-
-# LOCATIONS_PATH = os.path.join(os.getcwd(), "locations.json")
-# if os.path.exists(LOCATIONS_PATH):
-#     try:
-#         with open(LOCATIONS_PATH, "r", encoding="utf-8") as f:
-#             loaded = json.load(f)
-#             if isinstance(loaded, dict):
-#                 LOCATION_LOOKUP.update(loaded)
-#     except Exception:
-#         pass
-# # +++ END: Location lookup (user-provided) +++
-
-# # +++ START: Render Events Integration +++
-
-
-# def fetch_and_process_local_events(from_iso: str = None, to_iso: str = None):
-#     """
-#     Fetch events from Render backend:
-#       {EVENTS_BASE_URL}/events?from=...&to=...
-
-#     Normalize to frontend schema:
-#       {
-#         id, event_name, description, date, startAt, endAt,
-#         locationTag, names, original, geometry, fromUser, url
-#       }
-#     """
-#     # Defaults: 7-day window if not provided
-#     if not from_iso or not to_iso:
-#         start_date = datetime.now(timezone.utc).date()
-#         end_date = start_date + timedelta(days=7)
-#         from_iso = datetime.combine(start_date, datetime.min.time(
-#         ), tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
-#         to_iso = datetime.combine(end_date, datetime.max.time(
-#         ), tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
-
-#     base_url = f"{EVENTS_BASE_URL}/events"
-#     params = {"from": from_iso, "to": to_iso}
-
-#     resp = requests.get(base_url, params=params, timeout=12)
-#     resp.raise_for_status()
-
-#     raw = resp.json()
-#     events_list = raw.get("events") if isinstance(raw, dict) else raw
-#     if not isinstance(events_list, list):
-#         events_list = []
-
-#     processed = []
-
-#     for e in events_list:
-#         # Basic fields (tolerant of different keys)
-#         eid = str(first(e.get("id"), e.get("_id"), e.get("uuid"), default=""))
-#         title = first(e.get("title"), e.get("name"),
-#                       e.get("event_name"), default="")
-#         description = first(e.get("description"), e.get("desc"), default=None)
-#         url = first(e.get("url"), e.get("link"), default=None)
-#         location_name = first(e.get("location_name"), e.get(
-#             "location"), e.get("venue"), default=None)
-#         names = e.get("names") if isinstance(e.get("names"), list) else None
-#         from_user = to_bool(e.get("fromUser", False))
-
-#         # Start/End
-#         start_raw = first(e.get("start"), e.get("startAt"),
-#                           e.get("start_time"), default=None)
-#         end_raw = first(e.get("end"), e.get("endAt"),
-#                         e.get("end_time"), default=None)
-
-#         start_dt = parse_iso(start_raw) if isinstance(start_raw, str) else None
-#         end_dt = parse_iso(end_raw) if isinstance(end_raw, str) else None
-
-#         if not start_dt:
-#             continue
-
-#         # Coordinates: prefer direct numeric fields, else lookup by location string
-#         lon = first(e.get("lon"), e.get("lng"), e.get("longitude"))
-#         lat = first(e.get("lat"), e.get("latitude"))
-
-#         if (lon is None or lat is None) and location_name and location_name in LOCATION_LOOKUP:
-#             coords = LOCATION_LOOKUP[location_name]
-#             lat = first(coords.get("lat"))
-#             lon = first(coords.get("lon"))
-
-#         geometry = None
-#         if isinstance(lon, (int, float)) and isinstance(lat, (int, float)):
-#             x, y = lonlat_to_web_mercator(float(lon), float(lat))
-#             geometry = {
-#                 "type": "point",
-#                 "x": float(x),
-#                 "y": float(y),
-#                 "spatialReference": {"wkid": 3857},
-#             }
-
-#         processed.append({
-#             "id": eid,
-#             "event_name": title,
-#             "description": description,
-#             "date": start_dt.date().isoformat(),
-#             "startAt": start_dt.strftime("%H:%M"),
-#             "endAt": (end_dt.strftime("%H:%M") if end_dt else None),
-#             "locationTag": location_name,
-#             "names": names,
-#             "original": e,
-#             "geometry": geometry,
-#             "fromUser": from_user,
-#             "url": url,
-#         })
-
-#     return processed
-# # +++ END: Render Events Integration +++
-
-# # ─────────────────────────────
-# # Routes
-# # ─────────────────────────────
-
-
-# @app.route("/", methods=["GET"])
-# def root():
-#     return jsonify({
-#         "ok": True,
-#         "events_base_url": EVENTS_BASE_URL,
-#         "endpoints": ["/ask (POST)", "/ask/events (POST)", "/events (GET)"]
-#     })
-
-
-# @app.route("/health", methods=["GET"])
-# def health():
-#     return jsonify({"ok": True})
-
-# # Proxies to Render service
-
-
-# @app.route("/events", methods=["GET"])
-# def get_events():
-#     """
-#     Proxy-normalizer for events service at:
-#       {EVENTS_BASE_URL}/events?from=...&to=...
-
-#     Query params (optional):
-#       - from: ISO8601 string (e.g., 2025-08-31T07:00:00.000Z)
-#       - to:   ISO8601 string (e.g., 2025-10-08T06:59:59.999Z)
-#     """
-#     try:
-#         from_iso = request.args.get("from")
-#         to_iso = request.args.get("to")
-#         events = fetch_and_process_local_events(from_iso, to_iso)
-#         return jsonify(events)
-#     except requests.exceptions.RequestException as e:
-#         return jsonify({"error": f"Failed to fetch from events service: {e}"}), 502
-#     except Exception as e:
-#         return jsonify({"error": f"An internal error occurred: {e}"}), 500
-
-
-# @app.route("/ask", methods=["POST"])
-# def ask_vision():
-#     if "file" not in request.files:
-#         return jsonify({"error": "No image file provided (field name should be 'file')"}), 400
-
-#     uploaded = request.files["file"]
-#     img_bytes = uploaded.read()
-#     if not img_bytes:
-#         return jsonify({"error": "Empty file"}), 400
-
-#     mime = uploaded.mimetype or "image/png"
-#     b64 = base64.b64encode(img_bytes).decode("utf-8")
-#     data_url = f"data:{mime};base64,{b64}"
-
-#     system_message = {
-#         "role": "system",
-#         "content": (
-#             "You are a vision-enabled assistant. "
-#             "Extract from the image: date, time, location, names, event name, and a short description of the event. "
-#             "Respond *only* with valid JSON matching this schema:\n\n"
-#             "{\n"
-#             "  \"date\": \"\",\n"
-#             "  \"time\": \"\",\n"
-#             "  \"location\": \"\",\n"
-#             "  \"names\": [],\n"
-#             "  \"event_name\": \"\",\n"
-#             "  \"description\": \"\"\n"
-#             "}\n"
-#             "Rules:\n"
-#             "- If a field is unknown, use an empty string (or empty array for names).\n"
-#             "- Do not add extra keys. Do not include explanations."
-#         ),
-#     }
-
-#     user_message = {
-#         "role": "user",
-#         "content": [
-#             {"type": "image_url", "image_url": {"url": data_url}},
-#         ],
-#     }
-
-#     try:
-#         resp = client.chat.completions.create(
-#             model="gpt-4o",
-#             messages=[system_message, user_message],
-#             temperature=0.0,
-#             max_tokens=400,
-#         )
-
-#         raw = (resp.choices[0].message.content or "").strip()
-#         if not raw:
-#             return jsonify({"error": "Empty model response"}), 502
-
-#         try:
-#             result = extract_json(raw)
-#         except ValueError:
-#             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
-
-#         return jsonify(result)
-
-#     except json.JSONDecodeError:
-#         return jsonify({"error": "Model did not return valid JSON"}), 500
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-
-# @app.route("/ask/events", methods=["POST"])
-# def ask_events():
-#     data = request.get_json(silent=True) or {}
-#     user_id = data.get("user_id", "default")
-#     question = data.get("question", "")
-#     tags = data.get("tags", [])
-
-#     if not isinstance(question, str) or not question.strip():
-#         return jsonify({"error": "No question provided"}), 400
-
-#     filtered_events = [
-#         event for event in EVENTS
-#         if not tags or any(tag in event.get("tags", []) for tag in tags)
-#     ]
-
-#     system_message = {
-#         "role": "system",
-#         "content": (
-#             "You are a helpful assistant for UC Merced's Bobcat Day. "
-#             "You help students find relevant events based on their interests. "
-#             "When recommending events, include their IDs at the end in a JSON array like [\"event002\", \"event004\"]."
-#         ),
-#     }
-
-#     history = message_history[user_id]
-#     history.append({"role": "user", "content": question})
-
-#     context_prompt = (
-#         f"User asked: \"{question}\"\n\n"
-#         f"Here is a list of events:\n{json.dumps(filtered_events, ensure_ascii=False)}"
-#     )
-
-#     messages = [system_message] + \
-#         list(history) + [{"role": "user", "content": context_prompt}]
-
-#     while approximate_token_count(messages) > MAX_CONTEXT_TOKENS and len(history) > 0:
-#         history.pop()
-#         messages = [system_message] + \
-#             list(history) + [{"role": "user", "content": context_prompt}]
-
-#     try:
-#         response = client.chat.completions.create(
-#             model="gpt-4o",
-#             messages=messages,
-#             temperature=0.4,
-#             max_tokens=MAX_COMPLETION_TOKENS,
-#         )
-
-#         reply = (response.choices[0].message.content or "").strip()
-
-#         history.append({"role": "assistant", "content": reply})
-
-#         event_ids = re.findall(r"event\d{3}", reply)
-#         matched_events = [
-#             event for event in EVENTS if event.get("id") in set(event_ids)]
-
-#         return jsonify({"response": reply, "matched_events": matched_events})
-
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-
-# # ─────────────────────────────
-# # Entrypoint
-# # ─────────────────────────────
-# if __name__ == "__main__":
-#     # On Render, PORT is provided as an env var
-#     port = int(os.getenv("PORT", "8050"))
-#     app.run(host="0.0.0.0", port=port)
-
-# working local down bellow
-# from openai import OpenAI
-# import os
-# import re
-# import base64
-# import json
-# from collections import defaultdict, deque
-# from flask import Flask, request, jsonify
-# from flask_cors import CORS
-# from dotenv import load_dotenv
-
-# # +++ New/Updated Imports +++
-# import requests
-# from datetime import datetime, date, timedelta, timezone
-# import math
-
-# # ─────────────────────────────
-# # Setup
-# # ─────────────────────────────
-# load_dotenv()
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# app = Flask(__name__)
-# CORS(app)
-
-# # ─────────────────────────────
-# # Shared helpers
-# # ─────────────────────────────
-
-
-# def extract_json(raw: str) -> dict:
-#     """
-#     Clean up model output and return the first {...} JSON object inside.
-#     Raises ValueError if no valid JSON is found.
-#     """
-#     # Strip fenced code blocks if present
-#     if raw.startswith("```") and raw.endswith("```"):
-#         raw = raw.strip("```").strip()
-#     start = raw.find("{")
-#     if start == -1:
-#         raise ValueError("No JSON object found in model output")
-#     depth = 0
-#     end = None
-#     for i, ch in enumerate(raw[start:], start):
-#         if ch == "{":
-#             depth += 1
-#         elif ch == "}":
-#             depth -= 1
-#             if depth == 0:
-#                 end = i
-#                 break
-#     if end is None:
-#         raise ValueError("Unbalanced braces in model output")
-#     json_str = raw[start: end + 1]
-#     return json.loads(json_str)
-
-
-# def parse_iso(dt_str: str) -> datetime:
-#     """
-#     Parse ISO8601 strings, handling 'Z' as UTC.
-#     Returns timezone-aware datetime when possible.
-#     """
-#     if not dt_str:
-#         return None
-#     s = dt_str.strip()
-#     # Normalize Z → +00:00 for fromisoformat
-#     if s.endswith("Z"):
-#         s = s[:-1] + "+00:00"
-#     try:
-#         return datetime.fromisoformat(s)
-#     except Exception:
-#         # Last resort: try without microseconds, etc.
-#         try:
-#             return datetime.strptime(dt_str.replace("Z", "+00:00"), "%Y-%m-%dT%H:%M:%S%z")
-#         except Exception:
-#             return None
-
-
-# def lonlat_to_web_mercator(lon: float, lat: float):
-#     """
-#     Convert WGS84 lon/lat to Web Mercator (EPSG:3857).
-#     Returns (x, y)
-#     """
-#     # Clamp latitude to mercator valid range
-#     lat = max(min(lat, 85.05112878), -85.05112878)
-#     R = 6378137.0
-#     x = R * math.radians(lon)
-#     y = R * math.log(math.tan(math.pi/4 + math.radians(lat)/2))
-#     return x, y
-
-
-# def first(*vals, default=None):
-#     for v in vals:
-#         if v is not None:
-#             return v
-#     return default
-
-
-# # ─────────────────────────────
-# # Events memory / config
-# # ─────────────────────────────
-# message_history = defaultdict(lambda: deque(maxlen=10))
-# MAX_CONTEXT_TOKENS = 3000
-# MAX_COMPLETION_TOKENS = 800
-
-
-# def approximate_token_count(messages):
-#     total = 0
-#     for msg in messages:
-#         content = msg.get("content", "")
-#         if not isinstance(content, str):
-#             try:
-#                 content = json.dumps(content)
-#             except Exception:
-#                 content = str(content)
-#         total += len(content) // 4
-#     return total
-
-
-# EVENTS = []
-# EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
-# if os.path.exists(EVENTS_PATH):
-#     try:
-#         with open(EVENTS_PATH, "r", encoding="utf-8") as f:
-#             EVENTS = json.load(f)
-#     except Exception:
-#         EVENTS = []
-
-# # +++ START: Location lookup (user-provided) +++
-# # If a 'locations.json' file is present, use it to override/extend LOCATION_LOOKUP.
-# # Expected shape: { "Kolligian Library": {"lat": 37.3653, "lon": -120.4243}, ... }
-# LOCATION_LOOKUP = {
-#     "UC Merced": {"lat": 37.3660, "lon": -120.4246},
-#     "Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-#     "Leo and Dottie Kolligian Library": {"lat": 37.3653, "lon": -120.4243},
-#     "Arts and Computational Sciences (ACS)": {"lat": 37.3670, "lon": -120.4255},
-#     "Scholars Lane": {"lat": 37.366117, "lon": -120.424205},
-# }
-
-# LOCATIONS_PATH = os.path.join(os.getcwd(), "locations.json")
-# if os.path.exists(LOCATIONS_PATH):
-#     try:
-#         with open(LOCATIONS_PATH, "r", encoding="utf-8") as f:
-#             loaded = json.load(f)
-#             if isinstance(loaded, dict):
-#                 # Shallow merge/override
-#                 LOCATION_LOOKUP.update(loaded)
-#     except Exception:
-#         # If bad file, just ignore and keep defaults
-#         pass
-# # +++ END: Location lookup (user-provided) +++
-
-# # +++ START: New Local Events Integration +++
-
-
-# def fetch_and_process_local_events(from_iso: str = None, to_iso: str = None):
-#     """
-#     Fetch events from LOCAL endpoint:
-#       http://localhost:7050/events?from=...&to=...
-
-#     Then normalize to the frontend schema:
-#       {
-#         id, event_name, description, date, startAt, endAt,
-#         locationTag, names, original, geometry, fromUser, url
-#       }
-
-#     Coordinates:
-#       - Prefer event.lat/lon (or latitude/longitude/lng) if present.
-#       - Else, try LOCATION_LOOKUP by 'location_name' or 'location' string.
-#       - If lon/lat found, output geometry in Web Mercator (wkid 3857).
-#     """
-#     # Defaults: 7-day window if not provided
-#     if not from_iso or not to_iso:
-#         start_date = datetime.now(timezone.utc).date()
-#         end_date = start_date + timedelta(days=7)
-#         from_iso = datetime.combine(start_date, datetime.min.time(
-#         ), tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
-#         to_iso = datetime.combine(end_date, datetime.max.time(
-#         ), tzinfo=timezone.utc).isoformat().replace("+00:00", "Z")
-
-#     base_url = "http://localhost:7050/events"
-#     params = {"from": from_iso, "to": to_iso}
-
-#     resp = requests.get(base_url, params=params, timeout=12)
-#     resp.raise_for_status()
-
-#     raw = resp.json()
-#     # Accept either {"events":[...]} or just [...]
-#     events_list = raw.get("events") if isinstance(raw, dict) else raw
-#     if not isinstance(events_list, list):
-#         events_list = []
-
-#     processed = []
-
-#     for e in events_list:
-#         # Basic fields (tolerant of different keys)
-#         eid = str(first(e.get("id"), e.get("_id"), e.get("uuid"), default=""))
-#         title = first(e.get("title"), e.get("name"),
-#                       e.get("event_name"), default="")
-#         description = first(e.get("description"), e.get("desc"), default=None)
-#         url = first(e.get("url"), e.get("link"), default=None)
-#         location_name = first(e.get("location_name"), e.get(
-#             "location"), e.get("venue"), default=None)
-#         names = e.get("names") if isinstance(e.get("names"), list) else None
-#         from_user = bool(e.get("fromUser", False))
-
-#         # Start/End
-#         start_raw = first(e.get("start"), e.get("startAt"),
-#                           e.get("start_time"), default=None)
-#         end_raw = first(e.get("end"), e.get("endAt"),
-#                         e.get("end_time"), default=None)
-
-#         start_dt = parse_iso(start_raw) if isinstance(start_raw, str) else None
-#         end_dt = parse_iso(end_raw) if isinstance(end_raw, str) else None
-
-#         if not start_dt:
-#             # Skip events without a valid start time
-#             continue
-
-#         # Coordinates: prefer direct numeric fields, else lookup by location string
-#         lon = first(e.get("lon"), e.get("lng"), e.get("longitude"))
-#         lat = first(e.get("lat"), e.get("latitude"))
-
-#         if (lon is None or lat is None) and location_name and location_name in LOCATION_LOOKUP:
-#             coords = LOCATION_LOOKUP[location_name]
-#             lat = first(coords.get("lat"))
-#             lon = first(coords.get("lon"))
-
-#         geometry = None
-#         if isinstance(lon, (int, float)) and isinstance(lat, (int, float)):
-#             x, y = lonlat_to_web_mercator(float(lon), float(lat))
-#             geometry = {
-#                 "type": "point",
-#                 "x": float(x),
-#                 "y": float(y),
-#                 "spatialReference": {"wkid": 3857},
-#             }
-
-#         processed.append({
-#             "id": eid,
-#             "event_name": title,
-#             "description": description,
-#             "date": (start_dt.date().isoformat() if start_dt else None),
-#             "startAt": (start_dt.strftime("%H:%M") if start_dt else None),
-#             "endAt": (end_dt.strftime("%H:%M") if end_dt else None),
-#             "locationTag": location_name,
-#             "names": names,
-#             "original": e,
-#             "geometry": geometry,
-#             "fromUser": from_user,
-#             "url": url,
-#         })
-
-#     return processed
-# # +++ END: New Local Events Integration +++
-
-# # ─────────────────────────────
-# # Routes
-# # ─────────────────────────────
-
-
-# @app.route("/", methods=["GET"])
-# def root():
-#     # Updated to show the new endpoint
-#     return jsonify({
-#         "ok": True,
-#         "endpoints": ["/ask (POST)", "/ask/events (POST)", "/events (GET)"]
-#     })
-
-# # +++ Replaced: /events (GET) proxies to your local service +++
-
-
-# @app.route("/events", methods=["GET"])
-# def get_events():
-#     """
-#     Proxy-normalizer for local events service at:
-#       http://localhost:7050/events?from=...&to=...
-
-#     Query params (optional):
-#       - from: ISO8601 string (e.g., 2025-08-31T07:00:00.000Z)
-#       - to:   ISO8601 string (e.g., 2025-10-08T06:59:59.999Z)
-#     """
-#     try:
-#         from_iso = request.args.get("from")
-#         to_iso = request.args.get("to")
-#         events = fetch_and_process_local_events(from_iso, to_iso)
-#         return jsonify(events)
-#     except requests.exceptions.RequestException as e:
-#         return jsonify({"error": f"Failed to fetch from local events service: {e}"}), 502
-#     except Exception as e:
-#         return jsonify({"error": f"An internal error occurred: {e}"}), 500
-
-
-# @app.route("/ask", methods=["POST"])
-# def ask_vision():
-#     # ... (your existing /ask route code is unchanged) ...
-#     if "file" not in request.files:
-#         return jsonify({"error": "No image file provided (field name should be 'file')"}), 400
-
-#     uploaded = request.files["file"]
-#     img_bytes = uploaded.read()
-#     if not img_bytes:
-#         return jsonify({"error": "Empty file"}), 400
-
-#     mime = uploaded.mimetype or "image/png"
-#     b64 = base64.b64encode(img_bytes).decode("utf-8")
-#     data_url = f"data:{mime};base64,{b64}"
-
-#     system_message = {
-#         "role": "system",
-#         "content": (
-#             "You are a vision-enabled assistant. "
-#             "Extract from the image: date, time, location, names, event name, and a short description of the event. "
-#             "Respond *only* with valid JSON matching this schema:\n\n"
-#             "{\n"
-#             "  \"date\": \"\",\n"
-#             "  \"time\": \"\",\n"
-#             "  \"location\": \"\",\n"
-#             "  \"names\": [],\n"
-#             "  \"event_name\": \"\",\n"
-#             "  \"description\": \"\"\n"
-#             "}\n"
-#             "Rules:\n"
-#             "- If a field is unknown, use an empty string (or empty array for names).\n"
-#             "- Do not add extra keys. Do not include explanations."
-#         ),
-#     }
-
-#     user_message = {
-#         "role": "user",
-#         "content": [
-#             {"type": "image_url", "image_url": {"url": data_url}},
-#         ],
-#     }
-
-#     try:
-#         resp = client.chat.completions.create(
-#             model="gpt-4o",
-#             messages=[system_message, user_message],
-#             temperature=0.0,
-#             max_tokens=400,
-#         )
-
-#         raw = (resp.choices[0].message.content or "").strip()
-#         if not raw:
-#             return jsonify({"error": "Empty model response"}), 502
-
-#         try:
-#             result = extract_json(raw)
-#         except ValueError:
-#             # Return the raw text to help debugging the prompt/formatting
-#             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
-
-#         # Success
-#         return jsonify(result)
-
-#     except json.JSONDecodeError:
-#         return jsonify({"error": "Model did not return valid JSON"}), 500
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-
-# @app.route("/ask/events", methods=["POST"])
-# def ask_events():
-#     # ... (your existing /ask/events route code is unchanged) ...
-#     data = request.get_json(silent=True) or {}
-#     user_id = data.get("user_id", "default")
-#     question = data.get("question", "")
-#     tags = data.get("tags", [])
-
-#     if not isinstance(question, str) or not question.strip():
-#         return jsonify({"error": "No question provided"}), 400
-
-#     filtered_events = [
-#         event for event in EVENTS
-#         if not tags or any(tag in event.get("tags", []) for tag in tags)
-#     ]
-
-#     system_message = {
-#         "role": "system",
-#         "content": (
-#             "You are a helpful assistant for UC Merced's Bobcat Day. "
-#             "You help students find relevant events based on their interests. "
-#             "When recommending events, include their IDs at the end in a JSON array like [\"event002\", \"event004\"]."
-#         ),
-#     }
-
-#     history = message_history[user_id]
-#     history.append({"role": "user", "content": question})
-
-#     context_prompt = (
-#         f"User asked: \"{question}\"\n\n"
-#         f"Here is a list of events:\n{json.dumps(filtered_events, ensure_ascii=False)}"
-#     )
-
-#     messages = [system_message] + \
-#         list(history) + [{"role": "user", "content": context_prompt}]
-
-#     while approximate_token_count(messages) > MAX_CONTEXT_TOKENS and len(history) > 0:
-#         history.popleft()
-#         messages = [system_message] + \
-#             list(history) + [{"role": "user", "content": context_prompt}]
-
-#     try:
-#         response = client.chat.completions.create(
-#             model="gpt-4o",
-#             messages=messages,
-#             temperature=0.4,
-#             max_tokens=MAX_COMPLETION_TOKENS,
-#         )
-
-#         reply = (response.choices[0].message.content or "").strip()
-
-#         history.append({"role": "assistant", "content": reply})
-
-#         event_ids = re.findall(r"event\d{3}", reply)
-#         matched_events = [
-#             event for event in EVENTS if event.get("id") in set(event_ids)]
-
-#         return jsonify({"response": reply, "matched_events": matched_events})
-
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
 from openai import OpenAI
 import os
 import re
 import base64
 import json
+import hashlib
 from collections import defaultdict, deque
 from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from dotenv import load_dotenv
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 from zoneinfo import ZoneInfo
 import unicodedata
 import requests
+import threading
+import time
+from typing import Dict, List, Tuple, Set, Optional
+from urllib.parse import unquote_plus  # NEW
+
+# ─────────────────────────────
+# New: Mongo
+# ─────────────────────────────
+from pymongo import MongoClient, ASCENDING, DESCENDING
+from pymongo.errors import DuplicateKeyError
 
 # ─────────────────────────────
 # Setup
@@ -1284,44 +35,206 @@ CORS(app)
 PACIFIC = ZoneInfo("America/Los_Angeles")
 UCM_FEED = "https://events.ucmerced.edu/api/2/events"
 
+# If set (minutes), a background thread will periodically refresh future UCM events.
+REFRESH_MINUTES = int(os.getenv("EVENTS_REFRESH_MINUTES", "0"))  # 0 disables
+REFRESH_LOOKAHEAD_DAYS = int(os.getenv("EVENTS_REFRESH_LOOKAHEAD_DAYS", "14"))
+
+MONGODB_URI = os.getenv("MONGODB_URI")
+if not MONGODB_URI:
+    raise RuntimeError("MONGODB_URI is required")
+
+# IMPORTANT: tz_aware=True so datetimes are aware (UTC)
+mongo_client = MongoClient(
+    MONGODB_URI, serverSelectionTimeoutMS=5000, tz_aware=True)
+try:
+    mongo_client.admin.command("ping")
+except Exception as e:
+    raise RuntimeError(f"Failed to connect to MongoDB: {e}")
+
+db = mongo_client.get_default_database()
+events_col = db["events"]
+meta_col = db["meta"]
+
+# Indexes
+events_col.create_index([("id", ASCENDING)], unique=True, name="uniq_id")
+events_col.create_index([("start_dt", ASCENDING)], name="start_dt_idx")
+events_col.create_index(
+    [("title_norm", ASCENDING), ("location_norm", ASCENDING), ("start_dt", ASCENDING)],
+    name="dupe_probe_idx",
+)
+events_col.create_index(
+    [("description_norm", ASCENDING)], name="desc_norm_idx")
+
 # ─────────────────────────────
-# Shared helpers
+# Categories & stopwords  (UPDATED)
 # ─────────────────────────────
+CATEGORY_SYNONYMS: Dict[str, List[str]] = {
+    # 1) Food & Drinks
+    "food_drink": [
+        "food", "snack", "snacks", "pizza", "refreshments", "beverage", "beverages",
+        "drink", "drinks", "coffee", "tea", "boba", "milk tea", "soda", "juice",
+        "cookies", "donuts", "catering", "dessert", "complimentary"
+    ],
+    # 2) Career & Jobs
+    "career_jobs": [
+        "career", "jobs", "job", "recruiting", "recruiter", "hiring", "internship", "intern",
+        "resume", "cv", "cover letter", "networking", "employer", "career fair", "info session", "interview"
+    ],
+    # 3) Academics & Research
+    "academics_research": [
+        "academic", "academics", "seminar", "colloquium", "lecture", "talk", "panel",
+        "research", "paper", "thesis", "dissertation", "poster", "workshop", "reading group"
+    ],
+    # 4) Sports & Fitness
+    "sports_fitness": [
+        "sports", "sport", "game", "match", "tournament", "intramural", "fitness", "workout",
+        "run", "5k", "yoga", "rec", "recreation", "climbing", "hike", "training"
+    ],
+    # 5) Arts & Culture
+    "arts_culture": [
+        "arts", "art", "culture", "cultural", "concert", "performance", "dance", "theater",
+        "film", "screening", "gallery", "exhibit", "museum", "poetry", "music", "symphony", "choir"
+    ],
+    # 6) Social & Community
+    "social_community": [
+        "mixer", "meetup", "social", "hangout", "club", "student org", "organization",
+        "community", "volunteer", "volunteering", "service", "fundraiser", "block party"
+    ],
+    # 7) Tech & Engineering
+    "tech_engineering": [
+        "tech", "technology", "engineering", "coding", "programming", "developer", "dev",
+        "hackathon", "data", "data science", "ai", "ml", "robotics", "cloud", "cybersecurity", "linux", "git"
+    ],
+    # 8) Wellness & Health
+    "wellness_health": [
+        "wellness", "health", "mental health", "mindfulness", "meditation", "counseling",
+        "nutrition", "health fair", "vaccination", "flu shot", "stress relief", "therapy dogs", "yoga"
+    ],
+    # 9) Admin & Deadlines
+    "admin_deadlines": [
+        "registration", "deadline", "due", "drop", "add", "financial aid", "payment",
+        "bursar", "application", "orientation", "advising", "office hours", "forms"
+    ],
+    # 10) Tours & Admissions
+    "tours_admissions": [
+        "tour", "campus tour", "open house", "admissions", "admitted students",
+        "orientation", "info session", "preview day", "visit", "housing tour"
+    ],
+    # 11) Faith & Spirituality (NEW)
+    "faith_spirituality": [
+        "religion", "religious", "faith", "spiritual", "spirituality",
+        "interfaith", "chaplain", "chaplaincy", "worship", "service",
+        "prayer", "pray", "bible", "quran", "torah", "mass", "church",
+        "mosque", "synagogue", "temple", "hillel", "fellowship", "ministry"
+    ],
+}
+
+# Common English stopwords (short list, you can expand later)
+STOPWORDS: Set[str] = {
+    "a", "an", "the", "and", "or", "of", "in", "on", "for", "to", "with",
+    "is", "are", "be", "at", "by", "from", "as", "it", "this", "that",
+    "these", "those", "where", "when", "how", "what", "who", "whom",
+    "about", "into", "over", "under", "after", "before", "during",
+    "up", "down", "out", "off", "than", "then"
+}
 
 
-def extract_json(raw: str) -> dict:
-    if raw.startswith("```") and raw.endswith("```"):
-        raw = raw.strip("`").strip()
-    start = raw.find("{")
-    if start == -1:
-        raise ValueError("No JSON object found in model output")
-    depth = 0
-    end = None
-    for i, ch in enumerate(raw[start:], start):
-        if ch == "{":
-            depth += 1
-        elif ch == "}":
-            depth -= 1
-            if depth == 0:
-                end = i
-                break
-    if end is None:
-        raise ValueError("Unbalanced braces in model output")
-    json_str = raw[start: end + 1]
-    return json.loads(json_str)
+def _norm(s: str) -> str:
+    if not s:
+        return ""
+    s = unicodedata.normalize("NFKD", s)
+    s = s.encode("ascii", "ignore").decode("ascii")
+    s = s.lower().replace("&", "and")
+    s = re.sub(r"[^a-z0-9]+", " ", s)
+    return " ".join(s.split())
+
+
+# Build expansion lookups
+TERM_EXPANSIONS: Dict[str, Set[str]] = defaultdict(set)
+PHRASE_EXPANSIONS: Dict[str, Set[str]] = defaultdict(set)
+for cat, words in CATEGORY_SYNONYMS.items():
+    norm_words = [w for w in {_norm(w) for w in words} if w]
+    for w in norm_words:
+        for other in norm_words:
+            if other != w:
+                if " " in other:
+                    PHRASE_EXPANSIONS[w].add(other)
+                else:
+                    TERM_EXPANSIONS[w].add(other)
+
+# ─────────────────────────────
+# HARD-CODED location → (lat, lon)
+# ─────────────────────────────
+HARD_CODED_LOCATIONS = {
+    "uc merced": (37.3690, -120.4209),
+    "merced station": (37.3027, -120.4811),
+    "scholars lane": (37.366117,  -120.424205),
+}
+_NORM_LOC = {_norm(k): v for k, v in HARD_CODED_LOCATIONS.items()}
+
+
+def lookup_coords_hardcoded(*candidates: str):
+    norm_cands = [(_norm(c or ""), (c or "")) for c in candidates if c]
+    for nc, raw in norm_cands:
+        if not nc:
+            continue
+        if nc in _NORM_LOC:
+            lat, lon = _NORM_LOC[nc]
+            return lat, lon, raw
+    for nc, raw in norm_cands:
+        if not nc:
+            continue
+        for key_norm, (lat, lon) in _NORM_LOC.items():
+            if key_norm in nc or nc in key_norm:
+                return lat, lon, raw
+    return None, None, None
+
+# ─────────────────────────────
+# Canonical event utils
+# ─────────────────────────────
 
 
 def iso_z(dt: datetime) -> str:
     return dt.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def parse_iso(s: str) -> datetime | None:
+def parse_iso(s: str) -> Optional[datetime]:
     if not s:
         return None
     try:
         if s.endswith("Z"):
             s = s.replace("Z", "+00:00")
         return datetime.fromisoformat(s)
+    except Exception:
+        return None
+
+
+def parse_dateish_to_utc_start(s: str) -> Optional[datetime]:
+    s = (s or "").strip()
+    if not s:
+        return None
+    dt = parse_iso(s)
+    if dt:
+        return dt
+    try:
+        y, m, d = [int(x) for x in s[:10].split("-")]
+        pac = datetime(y, m, d, tzinfo=PACIFIC)
+        return pac.astimezone(timezone.utc)
+    except Exception:
+        return None
+
+
+def parse_dateish_to_utc_end_exclusive(s: str) -> Optional[datetime]:
+    s = (s or "").strip()
+    if not s:
+        return None
+    dt = parse_iso(s)
+    if dt:
+        return dt
+    try:
+        y, m, d = [int(x) for x in s[:10].split("-")]
+        pac = datetime(y, m, d, tzinfo=PACIFIC) + timedelta(days=1)
+        return pac.astimezone(timezone.utc)
     except Exception:
         return None
 
@@ -1336,66 +249,451 @@ def hhmm(dt: datetime) -> str:
     return dt.strftime("%H:%M")
 
 
-# ─────────────────────────────
-# HARD-CODED location → (lat, lon)
-#   • Keys are normalized internally (case/space/punct insensitive).
-#   • Add as many as you want below.
-# ─────────────────────────────
-HARD_CODED_LOCATIONS = {
-    # Campus-wide / generic
-    "uc merced": (37.3690, -120.4209),
+def today_pacific() -> date:
+    return datetime.now(PACIFIC).date()
 
-    # Your example from earlier
-    "merced station": (37.3027, -120.4811),
-    "Scholars Lane": (37.366117,  -120.424205),
 
-    # Add more here as needed, e.g.:
-    # "cob1": (37.3657, -120.4249),
-    # "cob 1": (37.3657, -120.4249),
-    # "conference center": (37.3683, -120.4230),
+def canon_id_from(title: str, start_iso: str, location: str | None) -> str:
+    base = f"{_norm(title)}|{start_iso}|{_norm(location or '')}"
+    h = hashlib.sha1(base.encode("utf-8")).hexdigest()[:16]
+    return f"evt_{h}"
+
+
+def make_canonical_event(
+    *,
+    title: str,
+    start: datetime,
+    end: datetime | None,
+    description: str | None,
+    location: str | None,
+    lat: float | None,
+    lon: float | None,
+    from_user: bool,
+    tags: list[str] | None,
+    source: dict | None,
+    existing_id: str | None = None
+) -> dict:
+    now = iso_z(datetime.now(timezone.utc))
+    start_iso = iso_z(start)
+    end_iso = iso_z(end) if end else None
+    eid = existing_id or canon_id_from(title, start_iso, location)
+
+    title_norm = _norm(title)
+    location_norm = _norm(location or "")
+    desc_norm = _norm(description or "")
+    doc = {
+        "id": eid,
+        "title": title.strip(),
+        "title_norm": title_norm,
+        "description": (description or None),
+        "description_norm": desc_norm,
+        "start": start_iso,
+        "end": end_iso,
+        "start_dt": start.astimezone(timezone.utc),
+        "end_dt": end.astimezone(timezone.utc) if end else None,
+        "location": (location or None),
+        "location_norm": location_norm,
+        "lat": float(lat) if lat is not None else None,
+        "lon": float(lon) if lon is not None else None,
+        "fromUser": bool(from_user),
+        "tags": list(tags or []),
+        "source": source or {"name": None, "url": None, "event_id": None, "instance_id": None},
+        "created_at": now,
+        "updated_at": now,
+    }
+    return doc
+
+
+def events_overlap_dt(a_start: datetime, b_start: datetime, minutes: int = 15) -> bool:
+    return abs((a_start - b_start).total_seconds()) <= minutes * 60
+
+
+def _serialize_event(doc: dict) -> dict:
+    if not doc:
+        return doc
+    d = dict(doc)
+    d.pop("_id", None)
+    if d.get("start_dt") and not d.get("start"):
+        d["start"] = iso_z(d["start_dt"])
+    if d.get("end_dt") and not d.get("end"):
+        d["end"] = iso_z(d["end_dt"])
+    d.pop("start_dt", None)
+    d.pop("end_dt", None)
+    d.pop("title_norm", None)
+    d.pop("location_norm", None)
+    d.pop("description_norm", None)
+    return d
+
+
+def _merge_preferring_complete(existing: dict, incoming: dict) -> dict:
+    merged = dict(existing)
+    for k in ["description", "location", "lat", "lon"]:
+        if not merged.get(k) and incoming.get(k):
+            merged[k] = incoming.get(k)
+    merged["updated_at"] = iso_z(datetime.now(timezone.utc))
+    if incoming.get("source"):
+        merged["source"] = incoming["source"]
+    merged["fromUser"] = bool(merged.get("fromUser")
+                              or incoming.get("fromUser", False))
+    merged["tags"] = sorted(set(merged.get("tags", []))
+                            | set(incoming.get("tags", [])))
+    for k in ["title", "start", "end", "start_dt", "end_dt", "location", "description"]:
+        if incoming.get(k) is not None:
+            merged[k] = incoming[k]
+    merged["title_norm"] = _norm(merged.get("title", ""))
+    merged["location_norm"] = _norm(merged.get("location") or "")
+    merged["description_norm"] = _norm(merged.get("description") or "")
+    return merged
+
+
+# ─────────────────────────────
+# In-memory cache + inverted index
+# ─────────────────────────────
+FIELD_ALIASES = {
+    "title": "title",
+    "description": "description",
+    "descriptions": "description",
+    "desc": "description",
+    "location": "location",
+    "loc": "location",
+    "tags": "tags",
+    "tag": "tags",
+    "id": "id",
+    "from_user": "fromUser",
+    "fromuser": "fromUser",
+    "fromUser": "fromUser",
+    "source": "source",
+    "source.name": "source_name",
+    "source.url": "source_url",
+    "lat": "lat",
+    "lon": "lon",
+    "lng": "lon",
+    "start": "start",
+    "end": "end",
 }
 
 
-def _norm(s: str) -> str:
-    """Lowercase, ASCII-fold, collapse non-alnum to spaces."""
-    if not s:
-        return ""
-    s = unicodedata.normalize("NFKD", s)
-    s = s.encode("ascii", "ignore").decode("ascii")
-    s = s.lower().replace("&", "and")
-    s = re.sub(r"[^a-z0-9]+", " ", s)
-    return " ".join(s.split())
+def _to_bool(s: str) -> Optional[bool]:
+    m = _norm(s)
+    if m in {"true", "t", "1", "yes", "y"}:
+        return True
+    if m in {"false", "f", "0", "no", "n"}:
+        return False
+    return None
 
 
-# Build a normalized lookup once
-_NORM_LOC = {_norm(k): v for k, v in HARD_CODED_LOCATIONS.items()}
+def _as_aware_utc(dt: Optional[datetime]) -> Optional[datetime]:
+    if not isinstance(dt, datetime):
+        return None
+    if dt.tzinfo is None:
+        return dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone(timezone.utc)
 
 
-def lookup_coords_hardcoded(*candidates: str):
-    """
-    Try exact normalized match first; then substring containment both ways.
-    Returns (lat, lon, matched_key | None).
-    """
-    norm_cands = [(_norm(c or ""), (c or "")) for c in candidates if c]
-    # Exact first
-    for nc, raw in norm_cands:
-        if not nc:
-            continue
-        if nc in _NORM_LOC:
-            lat, lon = _NORM_LOC[nc]
-            return lat, lon, raw
-    # Then substring-based (for forgiving matches like "COB 1" vs "COB1")
-    for nc, raw in norm_cands:
-        if not nc:
-            continue
-        for key_norm, (lat, lon) in _NORM_LOC.items():
-            if key_norm in nc or nc in key_norm:
-                return lat, lon, raw
-    return None, None, None
+def _start_key(eid: str) -> datetime:
+    sdt = _as_aware_utc(CACHE.by_id[eid].get("start_dt"))
+    return sdt or datetime.max.replace(tzinfo=timezone.utc)
 
+
+class EventCache:
+    def __init__(self):
+        self.by_id: Dict[str, dict] = {}
+        self.norm_fields: Dict[str, Dict[str, str]] = {}
+        self.token_ix: Dict[str, Set[str]] = defaultdict(set)
+        self.last_build: Optional[str] = None
+
+    def _norm_fields_for_doc(self, d: dict) -> Dict[str, str]:
+        tags_txt = " ".join(_norm(t) for t in (d.get("tags") or []))
+        source = d.get("source") or {}
+        f = {
+            "id": d.get("id", ""),
+            "title": _norm(d.get("title", "")),
+            "description": _norm(d.get("description") or ""),
+            "location": _norm(d.get("location") or ""),
+            "tags": tags_txt,
+            "source_name": _norm(source.get("name") or ""),
+            "source_url": _norm(source.get("url") or ""),
+            "fromUser": "true" if d.get("fromUser") else "false",
+            "lat": _norm(str(d.get("lat") if d.get("lat") is not None else "")),
+            "lon": _norm(str(d.get("lon") if d.get("lon") is not None else "")),
+            "start": _norm(d.get("start") or ""),
+            "end": _norm(d.get("end") or ""),
+        }
+        f["__all__"] = " ".join([f[k] for k in f.keys()])
+        return f
+
+    def _tokenize(self, text: str) -> Set[str]:
+        tokens = set(text.split())
+        more = set()
+        for t in tokens:
+            if t.endswith("ies") and len(t) > 3:
+                more.add(t[:-3] + "y")
+            elif t.endswith("s") and len(t) > 2:
+                more.add(t[:-1])
+        return tokens.union(more)
+
+    def _index_doc(self, eid: str, f: Dict[str, str]):
+        for tok in self._tokenize(f["__all__"]):
+            self.token_ix[tok].add(eid)
+
+    def _deindex_doc(self, eid: str):
+        for tok, ids in list(self.token_ix.items()):
+            if eid in ids:
+                ids.discard(eid)
+                if not ids:
+                    self.token_ix.pop(tok, None)
+
+    def rebuild(self):
+        self.by_id.clear()
+        self.norm_fields.clear()
+        self.token_ix.clear()
+        for d in events_col.find({}):
+            eid = d.get("id")
+            if not eid:
+                continue
+            d = dict(d)
+            d["start_dt"] = _as_aware_utc(d.get("start_dt"))
+            d["end_dt"] = _as_aware_utc(d.get("end_dt"))
+            self.by_id[eid] = d
+            f = self._norm_fields_for_doc(d)
+            self.norm_fields[eid] = f
+            self._index_doc(eid, f)
+        self.last_build = iso_z(datetime.now(timezone.utc))
+
+    def upsert(self, d: dict):
+        eid = d.get("id")
+        if not eid:
+            return
+        d = dict(d)
+        d["start_dt"] = _as_aware_utc(d.get("start_dt"))
+        d["end_dt"] = _as_aware_utc(d.get("end_dt"))
+        self.by_id[eid] = d
+        f = self._norm_fields_for_doc(d)
+        self.norm_fields[eid] = f
+        self._deindex_doc(eid)
+        self._index_doc(eid, f)
+
+    def delete(self, eid: str):
+        if eid in self.by_id:
+            self.by_id.pop(eid, None)
+        if eid in self.norm_fields:
+            self.norm_fields.pop(eid, None)
+        self._deindex_doc(eid)
+
+    def stats(self):
+        return {
+            "events_cached": len(self.by_id),
+            "unique_tokens": len(self.token_ix),
+            "last_build": self.last_build,
+        }
+
+
+CACHE = EventCache()
 
 # ─────────────────────────────
-# Events memory / config
+# Upsert / DB I/O (updates cache)
+# ─────────────────────────────
+
+
+def upsert_event(ev: dict) -> dict:
+    title_norm = ev.get("title_norm", _norm(ev.get("title", "")))
+    location_norm = ev.get("location_norm", _norm(ev.get("location", "")))
+    sdt: Optional[datetime] = ev.get("start_dt") or parse_iso(ev.get("start"))
+    if not sdt:
+        raise ValueError("Event missing valid start datetime")
+
+    window_start = sdt - timedelta(minutes=15)
+    window_end = sdt + timedelta(minutes=15)
+    dupe_query = {"title_norm": title_norm, "start_dt": {
+        "$gte": window_start, "$lte": window_end}}
+    if location_norm:
+        dupe_query["location_norm"] = location_norm
+
+    existing = events_col.find_one(dupe_query)
+    if existing:
+        merged = _merge_preferring_complete(existing, ev)
+        events_col.update_one({"_id": existing["_id"]}, {"$set": merged})
+        saved = events_col.find_one({"_id": existing["_id"]})
+        CACHE.upsert(saved)
+        return _serialize_event(saved)
+
+    eid = ev.get("id")
+    if not eid:
+        eid = canon_id_from(ev.get("title", ""),
+                            iso_z(sdt), ev.get("location"))
+        ev["id"] = eid
+
+    now_iso = iso_z(datetime.now(timezone.utc))
+    ev.setdefault("created_at", now_iso)
+    ev["updated_at"] = now_iso
+
+    ev["title_norm"] = _norm(ev.get("title", ""))
+    ev["location_norm"] = _norm(ev.get("location") or "")
+    ev["description_norm"] = _norm(ev.get("description") or "")
+
+    update_doc = dict(ev)
+    created_at = update_doc.pop("created_at", now_iso)
+
+    events_col.update_one(
+        {"id": eid},
+        {"$setOnInsert": {"created_at": created_at}, "$set": update_doc},
+        upsert=True,
+    )
+    saved = events_col.find_one({"id": eid})
+    CACHE.upsert(saved)
+    return _serialize_event(saved)
+
+# ─────────────────────────────
+# UCM feed normalization & refresh
+# ─────────────────────────────
+
+
+def normalize_ucm_instance(ev: dict, inst: dict) -> Optional[dict]:
+    title = (ev.get("title") or "").strip()
+    if not title:
+        return None
+    desc_text = ev.get("description_text") or strip_html(ev.get("description"))
+    loc_name = ev.get("location_name") or ev.get("location") or None
+    room = ev.get("room_number")
+    geo = ev.get("geo") or {}
+    lat = geo.get("latitude")
+    lon = geo.get("longitude")
+
+    matched_key = None
+    if lat is None or lon is None:
+        lat, lon, matched_key = lookup_coords_hardcoded(
+            loc_name, ev.get("location"), ev.get("address"), title
+        )
+
+    start_s = (inst or {}).get("start")
+    end_s = (inst or {}).get("end")
+    if not start_s:
+        return None
+    sdt = parse_iso(start_s)
+    edt = parse_iso(end_s) if end_s else None
+    if not sdt:
+        return None
+
+    source = {
+        "name": "ucm",
+        "url": ev.get("localist_url"),
+        "event_id": ev.get("id"),
+        "instance_id": inst.get("id"),
+        "coord_source": (
+            "feed" if (geo.get("latitude") is not None and geo.get("longitude") is not None)
+            else ("lookup" if matched_key else None)
+        ),
+    }
+
+    return make_canonical_event(
+        title=title,
+        description=desc_text,
+        start=sdt,
+        end=edt,
+        location=(f"{loc_name} {room}".strip() if room else loc_name),
+        lat=(float(lat) if lat is not None else None),
+        lon=(float(lon) if lon is not None else None),
+        from_user=False,
+        tags=[],
+        source=source,
+        existing_id=None,
+    )
+
+
+def _set_last_refresh(ts_iso: str):
+    meta_col.update_one({"_id": "last_refresh_ucm"}, {
+                        "$set": {"value": ts_iso}}, upsert=True)
+
+
+def _get_last_refresh() -> Optional[str]:
+    doc = meta_col.find_one({"_id": "last_refresh_ucm"})
+    return (doc or {}).get("value")
+
+
+def refresh_ucm_cache(start_local: Optional[date] = None, end_local: Optional[date] = None, per_page: int = 100) -> dict:
+    if start_local is None:
+        start_local = today_pacific()
+    if end_local is None:
+        end_local = start_local + timedelta(days=REFRESH_LOOKAHEAD_DAYS)
+
+    start_str = start_local.isoformat()
+    end_str = end_local.isoformat()
+
+    page = 1
+    max_pages = 10
+    normalized_count = 0
+
+    try:
+        while page <= max_pages:
+            params = {"start": start_str, "end": end_str,
+                      "pp": per_page, "page": page}
+            r = requests.get(UCM_FEED, params=params, timeout=15)
+            r.raise_for_status()
+            payload = r.json() or {}
+            page_events = payload.get("events") or []
+
+            if not page_events:
+                break
+
+            for wrapper in page_events:
+                ev = (wrapper or {}).get("event") or {}
+                instances = ev.get("event_instances") or []
+                for inst_wrap in instances:
+                    inst = (inst_wrap or {}).get("event_instance") or {}
+                    ce = normalize_ucm_instance(ev, inst)
+                    if ce:
+                        upsert_event(ce)
+                        normalized_count += 1
+
+            if len(page_events) < per_page:
+                break
+            page += 1
+
+        last_refresh = iso_z(datetime.now(timezone.utc))
+        _set_last_refresh(last_refresh)
+        return {"ok": True, "normalized_count": normalized_count, "last_refresh": last_refresh}
+
+    except requests.RequestException as e:
+        return {"ok": False, "error": str(e), "normalized_count": normalized_count}
+
+# ─────────────────────────────
+# Demo seeding (optional)
+# ─────────────────────────────
+
+
+def build_demo_events() -> list[dict]:
+    now = datetime.now(timezone.utc)
+    hour = timedelta(hours=1)
+    day = timedelta(days=1)
+    demo = [
+        make_canonical_event(
+            title="Campus Tour",
+            description="Guided tour for prospective students with refreshments.",
+            start=now + 2 * hour, end=now + 3 * hour,
+            location="UC Merced", lat=37.3656, lon=-120.425, from_user=False,
+            tags=["demo", "tour"], source={"name": "demo", "url": None, "event_id": None, "instance_id": None},
+            existing_id="evt_demo_1",
+        ),
+        make_canonical_event(
+            title="Biology Seminar",
+            description="Guest lecture on marine ecosystems. Free coffee & snacks.",
+            start=now - 1 * day, end=now - 1 * day + 2 * hour,
+            location="COB 1", lat=37.3637, lon=-120.4245, from_user=False,
+            tags=["demo", "academics"], source={"name": "demo", "url": None, "event_id": None, "instance_id": None},
+            existing_id="evt_demo_2",
+        ),
+    ]
+    return demo
+
+
+if events_col.estimated_document_count() == 0:
+    for d in build_demo_events():
+        upsert_event(d)
+
+CACHE.rebuild()
+
+# ─────────────────────────────
+# Chat memory for /ask/events
 # ─────────────────────────────
 message_history = defaultdict(lambda: deque(maxlen=10))
 MAX_CONTEXT_TOKENS = 3000
@@ -1414,68 +712,245 @@ def approximate_token_count(messages):
         total += len(content) // 4
     return total
 
-
-# Load events.json (safe fallback to empty list if missing)
-EVENTS = []
-EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
-if os.path.exists(EVENTS_PATH):
-    try:
-        with open(EVENTS_PATH, "r", encoding="utf-8") as f:
-            EVENTS = json.load(f)
-    except Exception:
-        EVENTS = []
-
 # ─────────────────────────────
-# Demo Events
+# Search parsing helpers  (UPDATED)
 # ─────────────────────────────
 
 
-def build_events():
-    now = datetime.now(timezone.utc)
-    hour = timedelta(hours=1)
-    day = timedelta(days=1)
-    return [
-        {
-            "id": "evt-1",
-            "title": "Campus Tour",
-            "description": "Guided tour for prospective students.",
-            "start": iso_z(now + 2 * hour),
-            "end": iso_z(now + 3 * hour),
-            "lat": 37.3656,
-            "lon": -120.425,
-            "fromUser": False,
-        },
-        {
-            "id": "evt-2",
-            "title": "Biology Seminar",
-            "description": "Guest lecture on marine ecosystems.",
-            "start": iso_z(now - 1 * day),
-            "end": iso_z(now - 1 * day + 2 * hour),
-            "lat": 37.3637,
-            "lon": -120.4245,
-            "fromUser": False,
-        },
-        {
-            "id": "evt-3",
-            "title": "Hack Night",
-            "description": "Open coding session — bring your laptop.",
-            "start": iso_z(now + 3 * day),
-            "end": iso_z(now + 3 * day + 4 * hour),
-            "lat": 37.369,
-            "lon": -120.4209,
-            "fromUser": False,
-        },
-        {
-            "id": "evt-4",
-            "title": "Alumni Meetup",
-            "description": "Networking with UC Merced alumni.",
-            "start": iso_z(now + 30 * day),
-            "end": iso_z(now + 30 * day + 2 * hour),
-            "lat": 37.3669,
-            "lon": -120.4224,
-            "fromUser": False,
-        },
-    ]
+def _strip_quotes(s: str) -> str:
+    s = (s or "").strip()
+    if len(s) >= 2 and ((s[0] == s[-1] == '"') or (s[0] == s[-1] == "'")):
+        return s[1:-1]
+    return s
+
+
+def _split_csv_allow_quotes(s: str) -> List[str]:
+    if not s:
+        return []
+    parts = re.findall(r'"([^"]+)"|([^,\s]+)', s)
+    out = []
+    for a, b in parts:
+        out.append(a if a else b)
+    return [x.strip() for x in out if x and x.strip()]
+
+
+def _parse_options_string(opts: str) -> dict:
+    """
+    options:"location:cob2,time:<start>-<end>,tags:free,career,from_user:true"
+    """
+    opts = (opts or "").strip()
+    if not opts:
+        return {}
+    chunks = []
+    i = 0
+    cur = []
+    in_q = False
+    while i < len(opts):
+        ch = opts[i]
+        if ch == '"':
+            in_q = not in_q
+            cur.append(ch)
+        elif ch == ',' and not in_q:
+            chunks.append(''.join(cur).strip())
+            cur = []
+        else:
+            cur.append(ch)
+        i += 1
+    if cur:
+        chunks.append(''.join(cur).strip())
+    out = {}
+    for c in chunks:
+        if not c or ':' not in c:
+            continue
+        k, v = c.split(':', 1)
+        k = k.strip().lower()
+        v = _strip_quotes(v.strip())
+        out[k] = v
+    return out
+
+
+def _expand_terms_for_value(value_norm: str) -> Tuple[Set[str], Set[str]]:
+    tokens = [t for t in value_norm.split() if t]
+    tset: Set[str] = set()
+    pset: Set[str] = set()
+    for t in tokens:
+        tset |= TERM_EXPANSIONS.get(t, set())
+        pset |= PHRASE_EXPANSIONS.get(t, set())
+    return tset, pset
+
+
+def _harvest_q_colon_style(field_terms: dict, any_terms: List[str]):
+    """
+    Supports colon-in-key:
+      qdescription:"free food"
+      q:"boba"
+    """
+    raw_qs = request.query_string.decode("utf-8", errors="ignore")
+    # q<field>:"..."; field group 1
+    pat_field = re.compile(
+        r'(?:^|[?&])q([A-Za-z0-9_.]+):(?:"([^"]*)"|\'([^\']*)\'|([^&]+))')
+    for m in pat_field.finditer(raw_qs):
+        field_key = m.group(1)
+        val = m.group(2) or m.group(3) or m.group(4) or ""
+        val = unquote_plus(val).strip()
+        if not val:
+            continue
+        canon_field = FIELD_ALIASES.get(field_key.lower(), field_key)
+        v_norm = _norm(_strip_quotes(val))
+        if not v_norm:
+            continue
+        tset, pset = _expand_terms_for_value(v_norm)
+        values_for_field = {v_norm} | tset | pset
+        field_terms[canon_field].extend(sorted(values_for_field))
+
+    # q:"..."; no field specified → general
+    pat_any = re.compile(r'(?:^|[?&])q:(?:"([^"]*)"|\'([^\']*)\'|([^&]+))')
+    for m in pat_any.finditer(raw_qs):
+        val = m.group(1) or m.group(2) or m.group(3) or ""
+        val = unquote_plus(val).strip()
+        if not val:
+            continue
+        any_terms.append(_strip_quotes(val))
+
+
+def _stopword_filter_tokens(tokens: List[str]) -> List[str]:
+    return [t for t in tokens if t and t not in STOPWORDS]
+
+
+def _parse_q_fields_and_options(args) -> Tuple[Dict[str, List[str]], dict]:
+    """
+    Populates:
+      - field_terms: dict[field] -> list of normalized values (OR per field)
+        Also special field "__any__" for general q searches.
+      - options_map: includes:
+          * time range (from/to) under 'time_from'/'time_to' (UTC datetimes or None)
+          * location filters 'loc_filters' (normalized list)
+          * from_user: optional bool
+          * tags merged into field_terms["tags"]
+          * __any_mode: "any_of" (category) or "all_of" (default)
+          * __any_fields: list of fields considered for general search
+    """
+    field_terms: Dict[str, List[str]] = defaultdict(list)
+    options_map: dict = {}
+
+    # A) Field-specific (standard form): ?qdescription="..."
+    for key in request.args.keys():
+        if not key.lower().startswith("q") or key.lower() == "q":
+            continue
+        raw_vals = request.args.getlist(key)
+        field_key = key[1:]  # strip leading 'q'
+        canon_field = FIELD_ALIASES.get(field_key.lower(), field_key)
+        for rv in raw_vals:
+            v = _strip_quotes(rv)
+            if not v:
+                continue
+            v_norm = _norm(v)
+            tset, pset = _expand_terms_for_value(v_norm)
+            values_for_field = {v_norm} | tset | pset
+            field_terms[canon_field].extend(sorted(values_for_field))
+
+    # B) Harvest colon-in-key variants (including q:"...")
+    any_raws: List[str] = []
+    _harvest_q_colon_style(field_terms, any_raws)
+
+    # C) General 'q' param (standard form) — may be multiple
+    any_raws.extend(request.args.getlist("q"))
+
+    # Build __any__ from general q values
+    any_terms_accum: List[str] = []
+    category_hit = False
+    for raw_q in any_raws:
+        val = _strip_quotes(unquote_plus(raw_q or "").strip())
+        if not val:
+            continue
+        val_norm = _norm(val)
+        # split into tokens and remove stopwords
+        tok_list = _stopword_filter_tokens(val_norm.split())
+        if not tok_list and val_norm:
+            tok_list = [val_norm]
+        # category detection: if any token has expansions defined
+        has_cat = any(
+            t in TERM_EXPANSIONS or t in PHRASE_EXPANSIONS for t in tok_list)
+        category_hit = category_hit or has_cat
+        # expansions only for non-stopwords tokens
+        expanded: Set[str] = set(tok_list)
+        for t in tok_list:
+            expanded |= TERM_EXPANSIONS.get(t, set())
+            expanded |= PHRASE_EXPANSIONS.get(t, set())
+        # keep full phrase as well (e.g., "free food")
+        if val_norm:
+            expanded.add(val_norm)
+        any_terms_accum.extend(sorted(expanded))
+
+    if any_terms_accum:
+        field_terms["__any__"] = any_terms_accum
+        options_map["__any_mode"] = "any_of" if category_hit else "all_of"
+
+    # D) Top-level filters (canonical), still support options:"..."
+    # time range
+    from_param = request.args.get("from")
+    to_param = request.args.get("to")
+    date_from = parse_dateish_to_utc_start(from_param) if from_param else None
+    date_to = parse_dateish_to_utc_end_exclusive(
+        to_param) if to_param else None
+
+    # location(s)
+    loc_param = request.args.get("location", "")
+    loc_filters = [_norm(x) for x in _split_csv_allow_quotes(loc_param)]
+
+    # tags (any-of)
+    tags_param = request.args.get("tags", "")
+    if tags_param:
+        field_terms["tags"].extend(
+            [_norm(x) for x in _split_csv_allow_quotes(tags_param)])
+
+    # from_user flag
+    from_user: Optional[bool] = None
+    if "from_user" in request.args:
+        from_user = _to_bool(request.args.get("from_user", ""))
+
+    # fields restriction for __any__ searches
+    fields_param = request.args.get("fields", "")
+    if fields_param:
+        fields = [FIELD_ALIASES.get(x.strip().lower(), x.strip())
+                  for x in _split_csv_allow_quotes(fields_param)]
+        # keep only known
+        valid = {"title", "description", "location",
+                 "tags", "source_name", "source_url"}
+        fields = [f for f in fields if f in valid]
+    else:
+        fields = ["title", "description", "location",
+                  "tags", "source_name", "source_url"]
+    options_map["__any_fields"] = fields
+
+    # Merge legacy options:"..."
+    options_raw_joined = ",".join(request.args.getlist(
+        "options")) or ",".join(request.args.getlist('options"'))
+    if options_raw_joined:
+        o = _parse_options_string(_strip_quotes(options_raw_joined))
+        if "time" in o and not (date_from or date_to):
+            tr = o["time"]
+            parts = re.split(r'\s*(?:-|\sto\s)\s*', tr, maxsplit=1)
+            start_s = parts[0] if parts and parts[0] else ""
+            end_s = parts[1] if len(parts) > 1 else ""
+            date_from = parse_dateish_to_utc_start(
+                start_s) if start_s else date_from
+            date_to = parse_dateish_to_utc_end_exclusive(
+                end_s) if end_s else date_to
+        if "location" in o and not loc_filters:
+            loc_filters = [_norm(x) for x in _split_csv_allow_quotes(
+                o["location"]) or [o["location"]]]
+        if "tags" in o and not field_terms.get("tags"):
+            field_terms["tags"].extend(
+                [_norm(x) for x in _split_csv_allow_quotes(o["tags"])])
+        if "from_user" in o and from_user is None:
+            from_user = _to_bool(o["from_user"])
+
+    options_map["time_from"] = date_from
+    options_map["time_to"] = date_to
+    options_map["loc_filters"] = loc_filters
+    options_map["from_user"] = from_user
+    return field_terms, options_map
 
 # ─────────────────────────────
 # Routes
@@ -1489,6 +964,13 @@ def root():
         "endpoints": [
             "/health (GET)",
             "/events (GET)",
+            "/events/search (GET)",  # UPDATED
+            "/events/<id> (GET)",
+            "/events/<id> (DELETE)",
+            "/events/<id> (PUT)",
+            "/events/refresh (GET|POST)",
+            "/cache/stats (GET)",
+            "/cache/rebuild (POST)",
             "/ask (POST)",
             "/ask/events (POST)"
         ]
@@ -1497,350 +979,436 @@ def root():
 
 @app.route("/health", methods=["GET"])
 def health():
-    return jsonify({"ok": True})
-
-# GET /events?from=ISO&to=ISO
+    return jsonify({"ok": True, "last_refresh_ucm": _get_last_refresh(), "cache": CACHE.stats()})
 
 
-@app.route("/events", methods=["GET"])
-# ... (imports and setup unchanged above)
 @app.route("/events", methods=["GET"])
 def get_events():
-    """
-    If 'from'/'to' are provided, proxy UC Merced Localist feed and normalize to CampusEvent.
-    Otherwise, return demo events (optionally filterable by from/to).
-    - 'from' inclusive; 'to' exclusive.
-    """
     from_param = request.args.get("from")
     to_param = request.args.get("to")
-    per_page = int(request.args.get("pp") or 100)
     raw_toggle = request.args.get("raw") == "1"
 
     from_dt = parse_iso(from_param) if from_param else None
     to_dt = parse_iso(to_param) if to_param else None
 
-    use_ucm = bool(from_dt or to_dt)
-    if not use_ucm:
-        # Demo mode
-        all_events = build_events()
-        filtered = []
-        for ev in all_events:
-            t = parse_iso(ev.get("start"))
-            if t is None:
-                continue
-            if from_dt and t < from_dt:
-                continue
-            if to_dt and t >= to_dt:
-                continue
-            # Ensure top-level lat/lon present for your React loader
-            ev_out = {
-                "id": ev["id"],
-                "title": ev["title"],
-                "event_name": ev["title"],
-                "description": ev.get("description"),
-                "start": ev["start"],
-                "end": ev.get("end"),
-                "lat": ev["lat"],
-                "lon": ev["lon"],
-                "fromUser": ev.get("fromUser", False),
-                # Keep your richer fields (optional; loader ignores them)
-                "date": parse_iso(ev["start"]).astimezone(PACIFIC).date().isoformat(),
-                "startAt": hhmm(parse_iso(ev["start"]).astimezone(PACIFIC)),
-                "endAt": (hhmm(parse_iso(ev["end"]).astimezone(PACIFIC)) if ev.get("end") else None),
-                "original": {"demo": True},
-            }
-            filtered.append(ev_out)
-        resp = make_response(jsonify({"events": filtered}))
-        resp.headers["Cache-Control"] = "no-store"
-        return resp
+    if events_col.estimated_document_count() == 0 and (from_dt or to_dt):
+        start_local = (from_dt.astimezone(PACIFIC).date()
+                       if from_dt else today_pacific())
+        end_local = ((to_dt.astimezone(PACIFIC) - timedelta(microseconds=1)).date()
+                     if to_dt else today_pacific() + timedelta(days=REFRESH_LOOKAHEAD_DAYS))
+        refresh_ucm_cache(start_local, end_local)
 
-    # Convert window to Localist date range (Pacific)
-    start_local = (from_dt.astimezone(PACIFIC)
-                   if from_dt else datetime.now(PACIFIC)).date()
-    if to_dt:
-        last_included_local_date = (to_dt.astimezone(
-            PACIFIC) - timedelta(microseconds=1)).date()
-    else:
-        last_included_local_date = (datetime.now(
-            PACIFIC) + timedelta(days=14)).date()
+    q = {}
+    if from_dt and to_dt:
+        q["start_dt"] = {"$gte": from_dt, "$lt": to_dt}
+    elif from_dt:
+        q["start_dt"] = {"$gte": from_dt}
+    elif to_dt:
+        q["start_dt"] = {"$lt": to_dt}
 
-    start_str = start_local.isoformat()
-    end_str = last_included_local_date.isoformat()
-
-    page = 1
-    max_pages = 10
-    raw_pages = []
-    campus_events = []
-
-    try:
-        while page <= max_pages:
-            params = {"start": start_str, "end": end_str,
-                      "pp": per_page, "page": page}
-            r = requests.get(UCM_FEED, params=params, timeout=10)
-            r.raise_for_status()
-            payload = r.json() or {}
-            page_events = payload.get("events") or []
-            raw_pages.append(payload)
-
-            if not page_events:
-                break
-
-            for wrapper in page_events:
-                ev = (wrapper or {}).get("event") or {}
-                title = ev.get("title") or ""
-                desc_text = ev.get("description_text") or strip_html(
-                    ev.get("description"))
-                loc_name = ev.get("location_name") or ev.get("location") or ""
-                room = ev.get("room_number")
-                geo = ev.get("geo") or {}
-                lat = geo.get("latitude")
-                lon = geo.get("longitude")
-
-                # If feed lacks coords, try hard-coded lookup
-                matched_key = None
-                if lat is None or lon is None:
-                    lat, lon, matched_key = lookup_coords_hardcoded(
-                        loc_name,
-                        ev.get("location"),
-                        ev.get("address"),
-                        title
-                    )
-
-                instances = ev.get("event_instances") or []
-                for inst_wrap in instances:
-                    inst = (inst_wrap or {}).get("event_instance") or {}
-                    start_s = inst.get("start")
-                    end_s = inst.get("end")
-                    if not start_s:
-                        continue
-                    sdt = parse_iso(start_s)
-                    edt = parse_iso(end_s) if end_s else None
-                    if not sdt:
-                        continue
-
-                    # Build payload that your React loader can ingest directly
-                    out = {
-                        "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash((start_s, title))}"),
-                        "title": str(title),
-                        "event_name": str(title),
-                        "description": desc_text,
-                        # <-- key for your loader
-                        "start": iso_z(sdt),
-                        "end": iso_z(edt) if edt else None,
-                        "fromUser": False,
-                        # Prefer lat/lon at top-level; if missing, loader will skip it
-                        "lat": float(lat) if lat is not None else None,
-                        "lon": float(lon) if lon is not None else None,
-                        # Keep extras (ignored by loader, but handy for debugging)
-                        "date": sdt.astimezone(PACIFIC).date().isoformat(),
-                        "startAt": hhmm(sdt.astimezone(PACIFIC)),
-                        "endAt": (hhmm(edt.astimezone(PACIFIC)) if edt else None),
-                        "locationTag": room or None,
-                        "names": None,
-                        "original": {
-                            "event_id": ev.get("id"),
-                            "instance_id": inst.get("id"),
-                            "location_name": loc_name,
-                            "room_number": room,
-                            "localist_url": ev.get("localist_url"),
-                            "coord_source": (
-                                "feed" if (geo.get("latitude") is not None and geo.get("longitude") is not None)
-                                else ("lookup" if matched_key else None)
-                            ),
-                            "coord_match": matched_key,
-                        },
-                    }
-
-                    campus_events.append(out)
-
-            if len(page_events) < per_page:
-                break
-            page += 1
-
-    except requests.RequestException as e:
-        print(f"[events] UCM feed error: {e}")
-        # Fallback: demo events (already have lat/lon/start)
-        demo = build_events()
-        for ev in demo:
-            campus_events.append({
-                "id": ev["id"],
-                "title": ev["title"],
-                "event_name": ev["title"],
-                "description": ev.get("description"),
-                "start": ev["start"],
-                "end": ev.get("end"),
-                "lat": ev["lat"],
-                "lon": ev["lon"],
-                "fromUser": ev.get("fromUser", False),
-                "original": {"demo": True},
-            })
+    docs = list(events_col.find(q).sort("start_dt", ASCENDING))
+    events = [_serialize_event(d) for d in docs]
 
     if raw_toggle:
-        return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
+        return jsonify({
+            "count": len(events),
+            "last_refresh_ucm": _get_last_refresh(),
+            "from": from_param, "to": to_param,
+            "sample": events[:5],
+        })
 
-    resp = make_response(jsonify({"events": campus_events}))
+    resp = make_response(jsonify({"events": events}))
     resp.headers["Cache-Control"] = "no-store"
     return resp
 
-# def get_events():
-#     """
-#     If 'from'/'to' are provided, proxy UC Merced Localist feed and normalize to CampusEvent.
-#     Otherwise, return demo events (optionally filterable by from/to).
-#     - 'from' inclusive; 'to' exclusive (your contract).
-#     """
-#     from_param = request.args.get("from")
-#     to_param = request.args.get("to")
-#     per_page = int(request.args.get("pp") or 100)
-#     raw_toggle = request.args.get("raw") == "1"
 
-#     from_dt = parse_iso(from_param) if from_param else None
-#     to_dt = parse_iso(to_param) if to_param else None
+@app.route("/cache/stats", methods=["GET"])
+def cache_stats():
+    return jsonify({"ok": True, **CACHE.stats()})
 
-#     use_ucm = bool(from_dt or to_dt)
-#     if not use_ucm:
-#         # Demo mode
-#         all_events = build_events()
-#         filtered = []
-#         for ev in all_events:
-#             t = parse_iso(ev.get("start"))
-#             if t is None:
-#                 continue
-#             if from_dt and t < from_dt:
-#                 continue
-#             if to_dt and t >= to_dt:
-#                 continue
-#             filtered.append(ev)
-#         resp = make_response(jsonify({"events": filtered}))
-#         resp.headers["Cache-Control"] = "no-store"
-#         return resp
 
-#     # Convert your inclusive/exclusive window to Localist date window (Pacific)
-#     start_local = (from_dt.astimezone(PACIFIC)
-#                    if from_dt else datetime.now(PACIFIC)).date()
-#     if to_dt:
-#         last_included_local_date = (to_dt.astimezone(
-#             PACIFIC) - timedelta(microseconds=1)).date()
-#     else:
-#         last_included_local_date = (datetime.now(
-#             PACIFIC) + timedelta(days=14)).date()
+@app.route("/cache/rebuild", methods=["POST"])
+def cache_rebuild():
+    CACHE.rebuild()
+    return jsonify({"ok": True, **CACHE.stats()})
 
-#     start_str = start_local.isoformat()
-#     end_str = last_included_local_date.isoformat()
+# ─────────────────────────────
+# NEW/UPDATED: GET /events/search
+# ─────────────────────────────
 
-#     page = 1
-#     max_pages = 10
-#     raw_pages = []
-#     campus_events = []
 
-#     try:
-#         while page <= max_pages:
-#             params = {"start": start_str, "end": end_str,
-#                       "pp": per_page, "page": page}
-#             r = requests.get(UCM_FEED, params=params, timeout=10)
-#             r.raise_for_status()
-#             payload = r.json() or {}
-#             page_events = payload.get("events") or []
-#             raw_pages.append(payload)
+@app.route("/events/search", methods=["GET"])
+def events_search():
+    """
+    Supported:
+      - General:  ?q="free food"&from=YYYY-MM-DD&to=YYYY-MM-DD&location=kl,cob2&tags=career,free
+      - Field:    ?qdescription:"religion"
+      - Field:    ?qtitle="career fair"&options:"time:2025-09-01-2025-10-15,location:kl"
+      - General (colon): ?q:"boba"
 
-#             if not page_events:
-#                 break
+    Notes:
+      * General q does stopword removal.
+      * If the query maps to a known category, we do ANY-of across category terms.
+      * Otherwise we do ALL-of across remaining tokens.
+    """
+    sort_mode = (request.args.get("sort") or "relevance").lower()
+    limit = min(max(int(request.args.get("limit", "50")), 1), 200)
+    offset = max(int(request.args.get("offset", "0")), 0)
 
-#             for wrapper in page_events:
-#                 ev = (wrapper or {}).get("event") or {}
-#                 title = ev.get("title") or ""
-#                 desc_text = ev.get("description_text") or strip_html(
-#                     ev.get("description"))
-#                 loc_name = ev.get("location_name") or ev.get("location") or ""
-#                 room = ev.get("room_number")
-#                 geo = ev.get("geo") or {}
-#                 lat = geo.get("latitude")
-#                 lon = geo.get("longitude")
+    field_terms, opts = _parse_q_fields_and_options(request.args)
 
-#                 # If feed lacks coords, try our hard-coded lookup using multiple fields
-#                 matched_key = None
-#                 if lat is None or lon is None:
-#                     lat, lon, matched_key = lookup_coords_hardcoded(
-#                         loc_name,
-#                         ev.get("location"),
-#                         ev.get("address"),
-#                         title  # sometimes venue is in the title
-#                     )
+    date_from: Optional[datetime] = opts.get("time_from")
+    date_to: Optional[datetime] = opts.get("time_to")
+    loc_filters: List[str] = opts.get("loc_filters") or []
+    from_user_flag: Optional[bool] = opts.get("from_user")
+    any_mode: str = opts.get("__any_mode", "all_of")
+    any_fields: List[str] = opts.get("__any_fields") or [
+        "title", "description", "location", "tags", "source_name", "source_url"]
 
-#                 instances = ev.get("event_instances") or []
-#                 for inst_wrap in instances:
-#                     inst = (inst_wrap or {}).get("event_instance") or {}
-#                     start_s = inst.get("start")
-#                     end_s = inst.get("end")
-#                     if not start_s:
-#                         continue
-#                     sdt = parse_iso(start_s)
-#                     edt = parse_iso(end_s) if end_s else None
-#                     if not sdt:
-#                         continue
+    # Candidate universe
+    candidate_ids: Set[str] = set(CACHE.by_id.keys())
 
-#                     campus_event = {
-#                         "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash((start_s, title))}"),
-#                         "event_name": str(title),
-#                         "description": desc_text,
-#                         "date": sdt.astimezone(PACIFIC).date().isoformat(),
-#                         "startAt": hhmm(sdt.astimezone(PACIFIC)),
-#                         "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
-#                         "locationTag": room or None,
-#                         "names": None,
-#                         "original": {
-#                             "event_id": ev.get("id"),
-#                             "instance_id": inst.get("id"),
-#                             "location_name": loc_name,
-#                             "room_number": room,
-#                             "localist_url": ev.get("localist_url"),
-#                             "coord_source": (
-#                                 "feed" if (geo.get("latitude") is not None and geo.get("longitude") is not None)
-#                                 else ("lookup" if matched_key else None)
-#                             ),
-#                             "coord_match": matched_key,
-#                         },
-#                         "fromUser": False,
-#                     }
+    # Time filter (only if provided)
+    def date_ok(d: dict) -> bool:
+        sdt = _as_aware_utc(d.get("start_dt"))
+        if not isinstance(sdt, datetime):
+            return False
+        if date_from and sdt < date_from:
+            return False
+        if date_to and sdt >= date_to:
+            return False
+        return True
 
-#                     if lat is not None and lon is not None:
-#                         # IMPORTANT: x = lon, y = lat, wkid=4326
-#                         campus_event["geometry"] = {"x": float(
-#                             lon), "y": float(lat), "wkid": 4326}
+    if date_from or date_to:
+        candidate_ids = {
+            eid for eid in candidate_ids if date_ok(CACHE.by_id[eid])}
 
-#                     campus_events.append(campus_event)
+    # Location contains (options)
+    if loc_filters:
+        def loc_ok(eid: str) -> bool:
+            blob = CACHE.norm_fields[eid].get("location", "")
+            return all(loc in blob for loc in loc_filters)
+        candidate_ids = {eid for eid in candidate_ids if loc_ok(eid)}
 
-#             if len(page_events) < per_page:
-#                 break
-#             page += 1
+    # From user filter
+    if from_user_flag is not None:
+        cand = set()
+        for eid in candidate_ids:
+            if CACHE.norm_fields[eid].get("fromUser") == ("true" if from_user_flag else "false"):
+                cand.add(eid)
+        candidate_ids = cand
 
-#     except requests.RequestException as e:
-#         print(f"[events] UCM feed error: {e}")
-#         demo = build_events()
-#         campus_events = []
-#         for ev in demo:
-#             sdt = parse_iso(ev["start"])
-#             edt = parse_iso(ev.get("end"))
-#             ce = {
-#                 "id": ev["id"],
-#                 "event_name": ev["title"],
-#                 "description": ev.get("description"),
-#                 "date": sdt.astimezone(PACIFIC).date().isoformat(),
-#                 "startAt": hhmm(sdt.astimezone(PACIFIC)),
-#                 "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
-#                 "locationTag": None,
-#                 "names": None,
-#                 "original": {"demo": True},
-#                 "fromUser": False,
-#                 "geometry": {"x": ev["lon"], "y": ev["lat"], "wkid": 4326},
-#             }
-#             campus_events.append(ce)
+    # Tags (any-of) in field_terms
+    if "tags" in field_terms and field_terms["tags"]:
+        tags_vals = set(field_terms["tags"])
+        cand = set()
+        for eid in candidate_ids:
+            if any(tv in CACHE.norm_fields[eid].get("tags", "") for tv in tags_vals):
+                cand.add(eid)
+        candidate_ids = cand
 
-#     if raw_toggle:
-#         return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
+    # Field matching logic
+    def contains_any_in_fields(eid: str, fields: List[str], values: List[str]) -> bool:
+        nf = CACHE.norm_fields[eid]
+        for v in values:
+            if not v:
+                continue
+            for f in fields:
+                if v in nf.get(f, ""):
+                    return True
+        return False
 
-#     resp = make_response(jsonify({"events": campus_events}))
-#     resp.headers["Cache-Control"] = "no-store"
-#     return resp
+    def contains_all_in_fields(eid: str, fields: List[str], values: List[str]) -> bool:
+        nf = CACHE.norm_fields[eid]
+        for v in values:
+            if not v:
+                continue
+            # This token must appear in at least one of the fields
+            if not any(v in nf.get(f, "") for f in fields):
+                return False
+        return True
+
+    def field_match(eid: str) -> bool:
+        nf = CACHE.norm_fields[eid]
+
+        # General ANY/ALL search across selected fields
+        if "__any__" in field_terms and field_terms["__any__"]:
+            # dedupe, keep order
+            vals = list(dict.fromkeys(field_terms["__any__"]))
+            if any_mode == "any_of":
+                if not contains_any_in_fields(eid, any_fields, vals):
+                    return False
+            else:
+                if not contains_all_in_fields(eid, any_fields, vals):
+                    return False
+
+        # Specific fields (AND across fields, OR within a field)
+        for field, vals in field_terms.items():
+            if field in {"__any__", "tags"}:
+                continue  # handled elsewhere
+            if field == "source":
+                src_blob = nf.get("source_name", "") + " " + \
+                    nf.get("source_url", "")
+                if not any(v in src_blob for v in vals):
+                    return False
+                continue
+            blob = nf.get(field) or ""
+            if not any(v in blob for v in vals):
+                return False
+        return True
+
+    candidate_ids = {eid for eid in candidate_ids if field_match(eid)}
+
+    # Scoring
+    def score_eid(eid: str) -> float:
+        d = CACHE.by_id[eid]
+        nf = CACHE.norm_fields[eid]
+        score = 0.0
+
+        # Weight by matches in important fields
+        def add_scores(vals: List[str], fields_weights: List[Tuple[str, float]]):
+            nonlocal score
+            for v in vals:
+                if not v:
+                    continue
+                for f, w in fields_weights:
+                    if v in nf.get(f, ""):
+                        score += w
+
+        # General q scoring
+        if "__any__" in field_terms and field_terms["__any__"]:
+            vals = list(dict.fromkeys(field_terms["__any__"]))
+            # title > location > description > tags > source
+            add_scores(vals, [("title", 3.0), ("location", 2.0), ("description", 1.4), ("tags", 1.0),
+                              ("source_name", 0.6), ("source_url", 0.3)])
+
+        # Field-specific scoring
+        for field, vals in field_terms.items():
+            if field in {"__any__", "tags"}:
+                continue
+            weights = [("title", 3.0), ("location", 2.0),
+                       ("description", 1.2), ("tags", 1.0)]
+            if field in {"title", "location", "description", "tags"}:
+                weights = [(field, 3.2)]
+            add_scores(vals, weights)
+
+        # Exact equality nudge
+        for field, vals in field_terms.items():
+            if field == "__any__":
+                for v in vals:
+                    for f in any_fields:
+                        if nf.get(f, "") == v:
+                            score += 0.3
+            elif field not in {"tags"}:
+                for v in vals:
+                    if nf.get(field, "") == v:
+                        score += 0.3
+
+        # Recency bump
+        sdt = _as_aware_utc(d.get("start_dt"))
+        if isinstance(sdt, datetime):
+            now = datetime.now(timezone.utc)
+            days = (sdt - now).total_seconds() / 86400.0
+            if -1 <= days <= 7:
+                score += 0.7
+            elif 0 <= days <= 1:
+                score += 0.3
+
+        return score
+
+    ids_list = list(candidate_ids)
+    if sort_mode == "time":
+        ids_list.sort(key=_start_key)
+    else:
+        ids_list.sort(key=lambda eid: (-score_eid(eid), _start_key(eid)))
+
+    # Paging
+    ids_page = ids_list[offset: offset + limit]
+    events = [_serialize_event(CACHE.by_id[eid]) for eid in ids_page]
+
+    return jsonify({
+        "ok": True,
+        "query": {
+            "sort": sort_mode,
+            "limit": limit,
+            "offset": offset,
+            "any_mode": any_mode if "__any__" in field_terms else None,
+            "any_fields": any_fields if "__any__" in field_terms else None,
+            "fields_used": {k: list(dict.fromkeys(v)) for k, v in field_terms.items()},
+            "time_from": iso_z(date_from) if date_from else None,
+            "time_to": iso_z(date_to) if date_to else None,
+            "locations": loc_filters,
+            "from_user": from_user_flag,
+        },
+        "count": len(events),
+        "events": events
+    })
+
+# Single event
+
+
+@app.route("/events/<event_id>", methods=["GET"])
+def get_event(event_id):
+    event = events_col.find_one({"id": event_id})
+    if not event:
+        return jsonify({"error": f"Event with id '{event_id}' not found"}), 404
+    CACHE.upsert(event)
+    return jsonify({"ok": True, "event": _serialize_event(event)})
+
+# Delete event
+
+
+@app.route("/events/<event_id>", methods=["DELETE"])
+def delete_event(event_id):
+    event = events_col.find_one({"id": event_id})
+    if not event:
+        return jsonify({"error": f"Event with id '{event_id}' not found"}), 404
+    result = events_col.delete_one({"id": event_id})
+    if result.deleted_count > 0:
+        CACHE.delete(event_id)
+        return jsonify({
+            "ok": True,
+            "message": f"Event '{event_id}' deleted successfully",
+            "deleted_event": _serialize_event(event)
+        })
+    else:
+        return jsonify({"error": "Failed to delete event"}), 500
+
+# Update event
+
+
+@app.route("/events/<event_id>", methods=["PUT"])
+def update_event(event_id):
+    existing_event = events_col.find_one({"id": event_id})
+    if not existing_event:
+        return jsonify({"error": f"Event with id '{event_id}' not found"}), 404
+
+    data = request.get_json(silent=True) or {}
+    update_doc = {}
+
+    if "title" in data:
+        title = str(data["title"]).strip()
+        if not title:
+            return jsonify({"error": "Title cannot be empty"}), 400
+        update_doc["title"] = title
+        update_doc["title_norm"] = _norm(title)
+
+    if "description" in data:
+        desc = data["description"]
+        desc_val = str(desc).strip() if desc else None
+        update_doc["description"] = desc_val
+        update_doc["description_norm"] = _norm(desc_val or "")
+
+    if "start" in data:
+        start_dt = parse_iso(data["start"])
+        if not start_dt:
+            return jsonify({"error": "Invalid start datetime format. Use ISO8601"}), 400
+        update_doc["start"] = iso_z(start_dt)
+        update_doc["start_dt"] = start_dt.astimezone(timezone.utc)
+
+    if "end" in data:
+        if data["end"]:
+            end_dt = parse_iso(data["end"])
+            if not end_dt:
+                return jsonify({"error": "Invalid end datetime format. Use ISO8601"}), 400
+            update_doc["end"] = iso_z(end_dt)
+            update_doc["end_dt"] = end_dt.astimezone(timezone.utc)
+        else:
+            update_doc["end"] = None
+            update_doc["end_dt"] = None
+
+    if "location" in data:
+        location = data["location"]
+        if location:
+            location = str(location).strip()
+            update_doc["location"] = location
+            update_doc["location_norm"] = _norm(location)
+            if "lat" not in data or "lon" not in data:
+                lat, lon, _ = lookup_coords_hardcoded(location)
+                if lat is not None and lon is not None:
+                    update_doc["lat"] = float(lat)
+                    update_doc["lon"] = float(lon)
+        else:
+            update_doc["location"] = None
+            update_doc["location_norm"] = ""
+
+    if "lat" in data:
+        if data["lat"] is not None:
+            try:
+                update_doc["lat"] = float(data["lat"])
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid latitude value"}), 400
+        else:
+            update_doc["lat"] = None
+
+    if "lon" in data:
+        if data["lon"] is not None:
+            try:
+                update_doc["lon"] = float(data["lon"])
+            except (ValueError, TypeError):
+                return jsonify({"error": "Invalid longitude value"}), 400
+        else:
+            update_doc["lon"] = None
+
+    if "tags" in data:
+        if isinstance(data["tags"], list):
+            update_doc["tags"] = [str(tag).strip()
+                                  for tag in data["tags"] if tag]
+        else:
+            return jsonify({"error": "Tags must be an array"}), 400
+
+    if "fromUser" in data:
+        update_doc["fromUser"] = bool(data["fromUser"])
+
+    if "source" in data:
+        if isinstance(data["source"], dict):
+            update_doc["source"] = data["source"]
+        else:
+            return jsonify({"error": "Source must be an object"}), 400
+
+    if not update_doc:
+        return jsonify({"error": "No valid fields provided for update"}), 400
+
+    update_doc["updated_at"] = iso_z(datetime.now(timezone.utc))
+
+    result = events_col.update_one({"id": event_id}, {"$set": update_doc})
+    if result.modified_count > 0 or result.matched_count > 0:
+        updated_event = events_col.find_one({"id": event_id})
+        CACHE.upsert(updated_event)
+        return jsonify({
+            "ok": True,
+            "message": f"Event '{event_id}' updated successfully",
+            "event": _serialize_event(updated_event)
+        })
+    else:
+        return jsonify({"error": "Failed to update event"}), 500
+
+# Manual refresh
+
+
+@app.route("/events/refresh", methods=["GET", "POST"])
+def events_refresh_now():
+    from_param = request.args.get("from") or (
+        request.json.get("from") if request.is_json else None)
+    to_param = request.args.get("to") or (
+        request.json.get("to") if request.is_json else None)
+    per_page = int(request.args.get("pp") or (
+        request.json.get("pp") if request.is_json else 100) or 100)
+
+    from_dt = parse_iso(from_param) if from_param else None
+    to_dt = parse_iso(to_param) if to_param else None
+
+    start_local = from_dt.astimezone(
+        PACIFIC).date() if from_dt else today_pacific()
+    end_local = ((to_dt.astimezone(PACIFIC) - timedelta(microseconds=1)).date()
+                 if to_dt else (start_local + timedelta(days=REFRESH_LOOKAHEAD_DAYS)))
+
+    result = refresh_ucm_cache(start_local, end_local, per_page)
+    CACHE.rebuild()
+    code = 200 if result.get("ok") else 502
+    return jsonify(result), code
+
+# Vision
 
 
 @app.route("/ask", methods=["POST"])
@@ -1858,20 +1426,20 @@ def ask_vision():
     system_message = {
         "role": "system",
         "content": (
-            "You are a vision-enabled assistant. "
-            "Extract from the image: date, time, location, names, event name, and a short description of the event. "
-            "Respond *only* with valid JSON matching this schema:\n\n"
+            "You are a vision-enabled assistant that extracts event details. "
+            "Return ONLY valid JSON with this schema:\n"
             "{\n"
-            "  \"date\": \"\",\n"
-            "  \"time\": \"\",\n"
+            "  \"title\": \"\",\n"
+            "  \"description\": \"\",\n"
+            "  \"start\": \"YYYY-MM-DDTHH:MM:SSZ\",\n"
+            "  \"end\": \"YYYY-MM-DDTHH:MM:SSZ or empty string if unknown\",\n"
             "  \"location\": \"\",\n"
-            "  \"names\": [],\n"
-            "  \"event_name\": \"\",\n"
-            "  \"description\": \"\"\n"
+            "  \"names\": []\n"
             "}\n"
             "Rules:\n"
-            "- If a field is unknown, use an empty string (or empty array for names).\n"
-            "- Do not add extra keys. Do not include explanations."
+            "- If a field is unknown, use empty string (or empty array for names).\n"
+            "- If only a date and a time window is visible, fill both start and end.\n"
+            "- Do not add extra keys. No explanations."
         ),
     }
     user_message = {"role": "user", "content": [
@@ -1886,15 +1454,65 @@ def ask_vision():
         raw = (resp.choices[0].message.content or "").strip()
         if not raw:
             return jsonify({"error": "Empty model response"}), 502
+
+        def extract_json(raw: str) -> dict:
+            if raw.startswith("```") and raw.endswith("```"):
+                raw = raw.strip("`").strip()
+            start = raw.find("{")
+            if start == -1:
+                raise ValueError("No JSON object found in model output")
+            depth, end = 0, None
+            for i, ch in enumerate(raw[start:], start):
+                if ch == "{":
+                    depth += 1
+                elif ch == "}":
+                    depth -= 1
+                    if depth == 0:
+                        end = i
+                        break
+            if end is None:
+                raise ValueError("Unbalanced braces in model output")
+            json_str = raw[start: end + 1]
+            return json.loads(json_str)
+
         try:
             result = extract_json(raw)
         except ValueError:
             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
-        return jsonify(result)
+
+        title = (result.get("title") or "").strip()
+        description = (result.get("description") or "").strip() or None
+        start_iso = result.get("start") or ""
+        end_iso = result.get("end") or ""
+        location = (result.get("location") or "").strip() or None
+
+        sdt = parse_iso(start_iso)
+        edt = parse_iso(end_iso) if end_iso else None
+        if not sdt:
+            return jsonify({"error": "Model did not return a valid ISO8601 start"}), 400
+
+        lat, lon, _ = lookup_coords_hardcoded(location, title)
+
+        canonical = make_canonical_event(
+            title=title or "Untitled event",
+            description=description,
+            start=sdt,
+            end=edt,
+            location=location,
+            lat=lat, lon=lon,
+            from_user=True,
+            tags=[],
+            source={"name": "user", "url": None,
+                    "event_id": None, "instance_id": None},
+        )
+        saved = upsert_event(canonical)
+        return jsonify({"ok": True, "event": saved})
     except json.JSONDecodeError:
         return jsonify({"error": "Model did not return valid JSON"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# Q&A (unchanged)
 
 
 @app.route("/ask/events", methods=["POST"])
@@ -1906,14 +1524,17 @@ def ask_events():
     if not isinstance(question, str) or not question.strip():
         return jsonify({"error": "No question provided"}), 400
 
-    filtered_events = [event for event in EVENTS if not tags or any(
-        tag in event.get("tags", []) for tag in tags)]
+    q = {}
+    if tags:
+        q["tags"] = {"$in": tags}
+    docs = list(events_col.find(q).sort("start_dt", ASCENDING))
+    filtered_events = [_serialize_event(d) for d in docs]
+
     system_message = {
         "role": "system",
         "content": (
-            "You are a helpful assistant for UC Merced's Bobcat Day. "
-            "You help students find relevant events based on their interests. "
-            "When recommending events, include their IDs at the end in a JSON array like [\"event002\", \"event004\"]."
+            "You help students find relevant UC Merced events. "
+            "When recommending events, include their IDs at the end in a JSON array like [\"evt_abc123\", \"evt_def456\"]."
         ),
     }
     history = message_history[user_id]
@@ -1937,13 +1558,35 @@ def ask_events():
         reply = (response.choices[0].message.content or "").strip()
         history.append({"role": "assistant", "content": reply})
 
-        event_ids = re.findall(r"event\d{3}", reply)
-        matched_events = [
-            event for event in EVENTS if event.get("id") in set(event_ids)]
+        evt_ids = set(re.findall(r"evt_[a-f0-9]{6,32}", reply))
+        matched = list(events_col.find({"id": {"$in": list(evt_ids)}}))
+        matched_events = [_serialize_event(m) for m in matched]
         return jsonify({"response": reply, "matched_events": matched_events})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+# ─────────────────────────────
+# Background scheduler
+# ─────────────────────────────
+
+
+def _refresh_loop():
+    while True:
+        try:
+            start_local = today_pacific()
+            end_local = start_local + timedelta(days=REFRESH_LOOKAHEAD_DAYS)
+            refresh_ucm_cache(start_local, end_local, per_page=100)
+            CACHE.rebuild()
+        except Exception as e:
+            print(f"[scheduler] refresh error: {e}")
+        minutes = max(REFRESH_MINUTES, 1)
+        time.sleep(minutes * 60)
+
+
+if REFRESH_MINUTES > 0:
+    t = threading.Thread(target=_refresh_loop,
+                         name="events-refresh", daemon=True)
+    t.start()
 
 # ─────────────────────────────
 # Entrypoint
@@ -1951,491 +1594,3 @@ def ask_events():
 if __name__ == "__main__":
     port = int(os.getenv("PORT", "6050"))
     app.run(host="0.0.0.0", port=port)
-
-# working best version below
-# from openai import OpenAI
-# import os
-# import re
-# import base64
-# import json
-# from collections import defaultdict, deque
-# from flask import Flask, request, jsonify, make_response
-# from flask_cors import CORS
-# from dotenv import load_dotenv
-# from datetime import datetime, timezone, timedelta
-# from zoneinfo import ZoneInfo
-# import requests
-
-# # ─────────────────────────────
-# # Setup
-# # ─────────────────────────────
-# load_dotenv()
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-
-# app = Flask(__name__)
-# CORS(app)
-
-# PACIFIC = ZoneInfo("America/Los_Angeles")
-# UCM_FEED = "https://events.ucmerced.edu/api/2/events"
-
-# # ─────────────────────────────
-# # Shared helpers
-# # ─────────────────────────────
-
-
-# def extract_json(raw: str) -> dict:
-#     """Clean up model output and return the first {...} JSON object inside."""
-#     if raw.startswith("```") and raw.endswith("```"):
-#         raw = raw.strip("`").strip()
-#     start = raw.find("{")
-#     if start == -1:
-#         raise ValueError("No JSON object found in model output")
-#     depth = 0
-#     end = None
-#     for i, ch in enumerate(raw[start:], start):
-#         if ch == "{":
-#             depth += 1
-#         elif ch == "}":
-#             depth -= 1
-#             if depth == 0:
-#                 end = i
-#                 break
-#     if end is None:
-#         raise ValueError("Unbalanced braces in model output")
-#     json_str = raw[start: end + 1]
-#     return json.loads(json_str)
-
-
-# def iso_z(dt: datetime) -> str:
-#     """ISO-8601 with trailing 'Z' (like JS toISOString)."""
-#     return dt.astimezone(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
-# def parse_iso(s: str) -> datetime | None:
-#     """Parse common ISO strings, including trailing 'Z'."""
-#     if not s:
-#         return None
-#     try:
-#         if s.endswith("Z"):
-#             s = s.replace("Z", "+00:00")
-#         return datetime.fromisoformat(s)
-#     except Exception:
-#         return None
-
-
-# def strip_html(html: str | None) -> str | None:
-#     if not html:
-#         return None
-#     # remove tags crudely
-#     return re.sub(r"<[^>]+>", "", html).strip() or None
-
-
-# def hhmm(dt: datetime) -> str:
-#     return dt.strftime("%H:%M")
-
-
-# # ─────────────────────────────
-# # Optional location lookup
-# # ─────────────────────────────
-# LOCATIONS = {}
-# LOCATIONS_PATH = os.path.join(os.getcwd(), "locations.json")
-# if os.path.exists(LOCATIONS_PATH):
-#     try:
-#         with open(LOCATIONS_PATH, "r", encoding="utf-8") as f:
-#             raw_locs = json.load(f)
-#             # normalize keys to lowercase for forgiving lookup
-#             for k, v in (raw_locs or {}).items():
-#                 if isinstance(v, dict) and "lat" in v and "lon" in v:
-#                     LOCATIONS[k.strip().lower()] = {"lat": float(
-#                         v["lat"]), "lon": float(v["lon"])}
-#     except Exception:
-#         LOCATIONS = {}
-
-
-# def lookup_coords(*names: str):
-#     for n in names:
-#         if not n:
-#             continue
-#         hit = LOCATIONS.get(n.strip().lower())
-#         if hit and isinstance(hit, dict) and "lat" in hit and "lon" in hit:
-#             return hit["lat"], hit["lon"]
-#     return None, None
-
-
-# # ─────────────────────────────
-# # Events memory / config
-# # ─────────────────────────────
-# message_history = defaultdict(lambda: deque(maxlen=10))
-# MAX_CONTEXT_TOKENS = 3000
-# MAX_COMPLETION_TOKENS = 800
-
-
-# def approximate_token_count(messages):
-#     total = 0
-#     for msg in messages:
-#         content = msg.get("content", "")
-#         if not isinstance(content, str):
-#             try:
-#                 content = json.dumps(content)
-#             except Exception:
-#                 content = str(content)
-#         total += len(content) // 4
-#     return total
-
-
-# # Load events.json (safe fallback to empty list if missing)
-# EVENTS = []
-# EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
-# if os.path.exists(EVENTS_PATH):
-#     try:
-#         with open(EVENTS_PATH, "r", encoding="utf-8") as f:
-#             EVENTS = json.load(f)
-#     except Exception:
-#         EVENTS = []
-
-# # ─────────────────────────────
-# # Demo Events (ported from Node)
-# # ─────────────────────────────
-
-
-# def build_events():
-#     now = datetime.now(timezone.utc)
-#     hour = timedelta(hours=1)
-#     day = timedelta(days=1)
-#     return [
-#         {
-#             "id": "evt-1",
-#             "title": "Campus Tour",
-#             "description": "Guided tour for prospective students.",
-#             "start": iso_z(now + 2 * hour),
-#             "end": iso_z(now + 3 * hour),
-#             "lat": 37.3656,
-#             "lon": -120.425,
-#             "fromUser": False,
-#         },
-#         {
-#             "id": "evt-2",
-#             "title": "Biology Seminar",
-#             "description": "Guest lecture on marine ecosystems.",
-#             "start": iso_z(now - 1 * day),
-#             "end": iso_z(now - 1 * day + 2 * hour),
-#             "lat": 37.3637,
-#             "lon": -120.4245,
-#             "fromUser": False,
-#         },
-#         {
-#             "id": "evt-3",
-#             "title": "Hack Night",
-#             "description": "Open coding session — bring your laptop.",
-#             "start": iso_z(now + 3 * day),
-#             "end": iso_z(now + 3 * day + 4 * hour),
-#             "lat": 37.369,
-#             "lon": -120.4209,
-#             "fromUser": False,
-#         },
-#         {
-#             "id": "evt-4",
-#             "title": "Alumni Meetup",
-#             "description": "Networking with UC Merced alumni.",
-#             "start": iso_z(now + 30 * day),
-#             "end": iso_z(now + 30 * day + 2 * hour),
-#             "lat": 37.3669,
-#             "lon": -120.4224,
-#             "fromUser": False,
-#         },
-#     ]
-
-# # ─────────────────────────────
-# # Routes
-# # ─────────────────────────────
-
-
-# @app.route("/", methods=["GET"])
-# def root():
-#     return jsonify({
-#         "ok": True,
-#         "endpoints": [
-#             "/health (GET)",
-#             "/events (GET)",
-#             "/ask (POST)",
-#             "/ask/events (POST)"
-#         ]
-#     })
-
-
-# @app.route("/health", methods=["GET"])
-# def health():
-#     return jsonify({"ok": True})
-
-# # GET /events?from=ISO&to=ISO
-
-
-# @app.route("/events", methods=["GET"])
-# def get_events():
-#     """
-#     If 'from'/'to' are provided, proxy UC Merced Localist feed and normalize to CampusEvent.
-#     Otherwise, return demo events (optionally filterable by from/to).
-#     - 'from' inclusive; 'to' exclusive (your contract).
-#     """
-#     from_param = request.args.get("from")
-#     to_param = request.args.get("to")
-#     per_page = int(request.args.get("pp") or 100)
-#     raw_toggle = request.args.get("raw") == "1"
-
-#     # Parse boundaries
-#     from_dt = parse_iso(from_param) if from_param else None
-#     to_dt = parse_iso(to_param) if to_param else None
-
-#     use_ucm = bool(from_dt or to_dt)
-#     if not use_ucm:
-#         # Demo mode (original behavior)
-#         all_events = build_events()
-#         filtered = []
-#         for ev in all_events:
-#             t = parse_iso(ev.get("start"))
-#             if t is None:
-#                 continue
-#             if from_dt and t < from_dt:
-#                 continue
-#             if to_dt and t >= to_dt:
-#                 continue
-#             filtered.append(ev)
-#         resp = make_response(jsonify({"events": filtered}))
-#         resp.headers["Cache-Control"] = "no-store"
-#         return resp
-
-#     # Map exclusive/inclusive to Localist YYYY-MM-DD window in America/Los_Angeles
-#     # If 'from' missing, start today; if 'to' missing, use +14d (sensible default)
-#     start_local = (from_dt.astimezone(PACIFIC)
-#                    if from_dt else datetime.now(PACIFIC)).date()
-#     # 'to' is exclusive; map to last included local date = (to - 1 microsecond).date()
-#     if to_dt:
-#         last_included_local_date = (to_dt.astimezone(
-#             PACIFIC) - timedelta(microseconds=1)).date()
-#     else:
-#         last_included_local_date = (datetime.now(
-#             PACIFIC) + timedelta(days=14)).date()
-
-#     start_str = start_local.isoformat()
-#     end_str = last_included_local_date.isoformat()
-
-#     # Pull pages until we exhaust or hit a sane cap
-#     page = 1
-#     max_pages = 10
-#     raw_pages = []
-#     campus_events = []
-
-#     try:
-#         while page <= max_pages:
-#             params = {"start": start_str, "end": end_str,
-#                       "pp": per_page, "page": page}
-#             r = requests.get(UCM_FEED, params=params, timeout=10)
-#             r.raise_for_status()
-#             payload = r.json() or {}
-#             page_events = payload.get("events") or []
-#             raw_pages.append(payload)
-
-#             if not page_events:
-#                 break
-
-#             # Normalize each event_instance -> CampusEvent
-#             for wrapper in page_events:
-#                 ev = (wrapper or {}).get("event") or {}
-#                 title = ev.get("title") or ""
-#                 desc_text = ev.get("description_text") or strip_html(
-#                     ev.get("description"))
-#                 loc_name = ev.get("location_name") or ev.get("location") or ""
-#                 room = ev.get("room_number")
-#                 geo = ev.get("geo") or {}
-#                 lat = geo.get("latitude")
-#                 lon = geo.get("longitude")
-
-#                 # Try user-provided locations.json if feed has no coords
-#                 if lat is None or lon is None:
-#                     lat, lon = lookup_coords(loc_name, ev.get("location"))
-
-#                 instances = ev.get("event_instances") or []
-#                 for inst_wrap in instances:
-#                     inst = (inst_wrap or {}).get("event_instance") or {}
-#                     start_s = inst.get("start")
-#                     end_s = inst.get("end")
-#                     if not start_s:
-#                         continue
-
-#                     # Parse instance times (Localist returns timezone-aware strings)
-#                     sdt = parse_iso(start_s)
-#                     edt = parse_iso(end_s) if end_s else None
-#                     if not sdt:
-#                         continue
-
-#                     campus_event = {
-#                         # Prefer stable composite id to avoid collisions across instances
-#                         "id": str(inst.get("id") or ev.get("id") or f"ucm-{hash(start_s+title)}"),
-#                         "event_name": str(title),
-#                         "description": desc_text,
-#                         "date": sdt.astimezone(PACIFIC).date().isoformat(),
-#                         "startAt": hhmm(sdt.astimezone(PACIFIC)),
-#                         "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
-#                         "locationTag": room or None,
-#                         "names": None,
-#                         "original": {
-#                             "event_id": ev.get("id"),
-#                             "instance_id": inst.get("id"),
-#                             "location_name": loc_name,
-#                             "room_number": room,
-#                             "localist_url": ev.get("localist_url"),
-#                         },
-#                         "fromUser": False,
-#                     }
-
-#                     if lat is not None and lon is not None:
-#                         campus_event["geometry"] = {"x": float(
-#                             lon), "y": float(lat), "wkid": 4326}
-
-#                     campus_events.append(campus_event)
-
-#             if len(page_events) < per_page:
-#                 break
-#             page += 1
-
-#     except requests.RequestException as e:
-#         # Fall back to demo if feed is down
-#         print(f"[events] UCM feed error: {e}")
-#         demo = build_events()
-#         # Convert demo to CampusEvent-ish for consistency
-#         campus_events = []
-#         for ev in demo:
-#             sdt = parse_iso(ev["start"])
-#             edt = parse_iso(ev.get("end"))
-#             ce = {
-#                 "id": ev["id"],
-#                 "event_name": ev["title"],
-#                 "description": ev.get("description"),
-#                 "date": sdt.astimezone(PACIFIC).date().isoformat(),
-#                 "startAt": hhmm(sdt.astimezone(PACIFIC)),
-#                 "endAt": hhmm(edt.astimezone(PACIFIC)) if edt else None,
-#                 "locationTag": None,
-#                 "names": None,
-#                 "original": {"demo": True},
-#                 "fromUser": False,
-#                 "geometry": {"x": ev["lon"], "y": ev["lat"], "wkid": 4326},
-#             }
-#             campus_events.append(ce)
-
-#     # Debug toggles
-#     if raw_toggle:
-#         return jsonify({"raw": raw_pages, "normalized_count": len(campus_events)})
-
-#     resp = make_response(jsonify({"events": campus_events}))
-#     resp.headers["Cache-Control"] = "no-store"
-#     return resp
-
-
-# @app.route("/ask", methods=["POST"])
-# def ask_vision():
-#     if "file" not in request.files:
-#         return jsonify({"error": "No image file provided (field name should be 'file')"}), 400
-#     uploaded = request.files["file"]
-#     img_bytes = uploaded.read()
-#     if not img_bytes:
-#         return jsonify({"error": "Empty file"}), 400
-#     mime = uploaded.mimetype or "image/png"
-#     b64 = base64.b64encode(img_bytes).decode("utf-8")
-#     data_url = f"data:{mime};base64,{b64}"
-
-#     system_message = {
-#         "role": "system",
-#         "content": (
-#             "You are a vision-enabled assistant. "
-#             "Extract from the image: date, time, location, names, event name, and a short description of the event. "
-#             "Respond *only* with valid JSON matching this schema:\n\n"
-#             "{\n"
-#             "  \"date\": \"\",\n"
-#             "  \"time\": \"\",\n"
-#             "  \"location\": \"\",\n"
-#             "  \"names\": [],\n"
-#             "  \"event_name\": \"\",\n"
-#             "  \"description\": \"\"\n"
-#             "}\n"
-#             "Rules:\n"
-#             "- If a field is unknown, use an empty string (or empty array for names).\n"
-#             "- Do not add extra keys. Do not include explanations."
-#         ),
-#     }
-#     user_message = {"role": "user", "content": [
-#         {"type": "image_url", "image_url": {"url": data_url}}]}
-#     try:
-#         resp = client.chat.completions.create(
-#             model="gpt-4o",
-#             messages=[system_message, user_message],
-#             temperature=0.0,
-#             max_tokens=400,
-#         )
-#         raw = (resp.choices[0].message.content or "").strip()
-#         if not raw:
-#             return jsonify({"error": "Empty model response"}), 502
-#         try:
-#             result = extract_json(raw)
-#         except ValueError:
-#             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
-#         return jsonify(result)
-#     except json.JSONDecodeError:
-#         return jsonify({"error": "Model did not return valid JSON"}), 500
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-
-# @app.route("/ask/events", methods=["POST"])
-# def ask_events():
-#     data = request.get_json(silent=True) or {}
-#     user_id = data.get("user_id", "default")
-#     question = data.get("question", "")
-#     tags = data.get("tags", [])
-#     if not isinstance(question, str) or not question.strip():
-#         return jsonify({"error": "No question provided"}), 400
-
-#     filtered_events = [event for event in EVENTS if not tags or any(
-#         tag in event.get("tags", []) for tag in tags)]
-#     system_message = {
-#         "role": "system",
-#         "content": (
-#             "You are a helpful assistant for UC Merced's Bobcat Day. "
-#             "You help students find relevant events based on their interests. "
-#             "When recommending events, include their IDs at the end in a JSON array like [\"event002\", \"event004\"]."
-#         ),
-#     }
-#     history = message_history[user_id]
-#     history.append({"role": "user", "content": question})
-
-#     context_prompt = f'User asked: "{question}"\n\nHere is a list of events:\n{json.dumps(filtered_events, ensure_ascii=False)}'
-#     messages = [system_message] + \
-#         list(history) + [{"role": "user", "content": context_prompt}]
-#     while approximate_token_count(messages) > MAX_CONTEXT_TOKENS and len(history) > 0:
-#         history.popleft()
-#         messages = [system_message] + \
-#             list(history) + [{"role": "user", "content": context_prompt}]
-
-#     try:
-#         response = client.chat.completions.create(
-#             model="gpt-4o",
-#             messages=messages,
-#             temperature=0.4,
-#             max_tokens=MAX_COMPLETION_TOKENS,
-#         )
-#         reply = (response.choices[0].message.content or "").strip()
-#         history.append({"role": "assistant", "content": reply})
-
-#         event_ids = re.findall(r"event\d{3}", reply)
-#         matched_events = [
-#             event for event in EVENTS if event.get("id") in set(event_ids)]
-#         return jsonify({"response": reply, "matched_events": matched_events})
-#     except Exception as e:
-#         return jsonify({"error": str(e)}), 500
-
-
-# # ─────────────────────────────
-# # Entrypoint
-# # ─────────────────────────────
-# if __name__ == "__main__":
-#     port = int(os.getenv("PORT", "6050"))
-#     app.run(host="0.0.0.0", port=9050)

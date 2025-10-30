@@ -1,483 +1,2670 @@
 [
   {
-    "id": "event001",
-    "title": "Bobcat day",
-    "time": "Saturday, April 19, 2025, 8:00 AM",
-    "location": ": UC Merced Campus",
-    "description": "This is our biggest event of the spring! See UC Merced at its liveliest and take a campus tour, meet with faculty, attend presentations from our academic schools, talk to Financial Aid and Admissions staff, discover student clubs and organizations, and much more. This is your chance to explore the university and learn about the academic and student life opportunities we offer. Get answers to your questions about: Admissions Majors Research and Internship Opportunities Housing and Dining Financial Aid and Scholarships Student Activities and Athletic",
-    "tags": ["engineering", "research", "panel"]
-  },
-
-  {
-    "id": "event002",
-    "title": "School of Engineering Presentation",
-    "time": "9:00 AM - 10:00 AM",
-    "location": "Conference Center Ballroom",
-    "description": "School of Engineering offers an engaging opportunity for students and families to discover more about the diverse engineering majors at UC Merced. Hear directly from faculty as they highlight the newest majors. Listen and engage with a student panel that will share their unique experiences as engineering students, including their participation in research opportunities and campus activities.",
-    "tags": ["engineering", "research", "presentation"]
-  },
-
-  {
-    "id": "event003",
-    "title": "School of Natural Sciences Presentation",
-    "time": "9:00 AM - 10:00 AM",
-    "location": "COB 102",
-    "description": "The School of Natural Sciences is conducting cutting-edge research, from fighting disease to creating sustainable energy sources. Hear from the Dean and current students how working side-by-side with world-renowned faculty deepens your knowledge. Learn about student resources, academic planning, mentorships, internships, and career opportunities awaiting.",
-    "tags": ["na", "research", "presentation"]
-  },
-
-  {
-    "id": "event004",
-    "title": "School of Social Sciences, Humanities, and Arts Presentation",
-    "time": "9:00 AM - 10:00 AM",
-    "location": "ACS 120",
-    "description": "Come learn all that the School of Social Sciences, Humanities, and Arts (SSHA) at UC Merced has to offer! Our broad range of outstanding undergraduate programs prepares students for varied roles as responsible, informed citizens and leaders. The panel of SSHA Peer Navigators, who are current UC Merced undergraduate students, will allow you to ask them specific questions about their experience in SSHA and UC Merced.",
-    "tags": ["ssha", "research", "presentation"]
-  },
-
-  {
-    "id": "event005",
-    "title": "School of Engineering Presentation",
-    "time": "10:00 AM - 11:00 AM",
-    "location": "Conference Center Ballroom",
-    "description": "School of Engineering offers an engaging opportunity for students and families to discover more about the diverse engineering majors at UC Merced. Hear directly from faculty as they highlight the newest majors. Listen and engage with a student panel that will share their unique experiences as engineering students, including their participation in research opportunities and campus activities.",
-    "tags": ["engineering", "research", "presentation"]
-  },
-
-  {
-    "id": "event006",
-    "title": "School of Natural Sciences Presentation",
-    "time": "10:00 AM - 11:00 AM",
-    "location": "COB 102",
-    "description": "The School of Natural Sciences is conducting cutting-edge research, from fighting disease to creating sustainable energy sources. Hear from the Dean and current students how working side-by-side with world-renowned faculty deepens your knowledge. Learn about student resources, academic planning, mentorships, internships, and career opportunities awaiting.",
-    "tags": ["na", "research", "presentation"]
-  },
-
-  {
-    "id": "event007",
-    "title": "School of Social Sciences, Humanities, and Arts Presentation",
-    "time": "10:00 AM - 11:00 AM",
-    "location": "ACS 120",
-    "description": "Come learn all that the School of Social Sciences, Humanities, and Arts (SSHA) at UC Merced has to offer! Our broad range of outstanding undergraduate programs prepares students for varied roles as responsible, informed citizens and leaders. The panel of SSHA Peer Navigators, who are current UC Merced undergraduate students, will allow you to ask them specific questions about their experience in SSHA and UC Merced.",
-    "tags": ["ssha", "research", "presentation"]
-  },
-
-  {
-    "id": "event008",
-    "title": "The Heart of the Student Experience",
-    "time": "10:00 a.m. - 11:00 a.m.",
-    "description": "Join us for the 'At the Heart of the Student Experience' session, where current students will share firsthand accounts of their experiential education journeys. Discover how extracurricular engagements enrich academic learning, shape career aspirations, foster leadership skills, and fuel active participation in student clubs and organizations. Don't miss this opportunity to gain valuable insights and inspiration from our student community.",
-    "location": "COB 120",
+    "id": "evt_demo_1",
+    "title": "Campus Tour",
+    "description": "Guided tour for prospective students.",
+    "start": "2025-09-18T22:11:37Z",
+    "end": "2025-09-18T23:11:37Z",
+    "location": "UC Merced",
+    "lat": 37.3656,
+    "lon": -120.425,
+    "fromUser": false,
     "tags": [
-      "presentation",
-      "academics",
-      "community",
-      "information",
-      "student life"
-    ]
+      "demo"
+    ],
+    "source": {
+      "name": "demo",
+      "url": null,
+      "event_id": null,
+      "instance_id": null
+    },
+    "created_at": "2025-09-18T20:11:37Z",
+    "updated_at": "2025-09-18T20:11:37Z"
   },
-
   {
-    "id": "event009",
-    "title": "Study Abroad",
-    "time": "10:00 a.m. - 11:00 a.m.",
-    "description": "Discover how you can make study abroad a reality at UC Merced! In this session, you we will explore diverse global programs, learn how financial aid and scholarships make it affordable, and see how international experiences boost your academics and career. Get the facts, break common myths, and take the first step toward your global journey—your adventure starts here!",
-    "location": "SSB 120",
-    "tags": ["presentation", "student life", "information", "academics"]
+    "id": "evt_demo_2",
+    "title": "Biology Seminar",
+    "description": "Guest lecture on marine ecosystems.",
+    "start": "2025-09-17T20:11:37Z",
+    "end": "2025-09-17T22:11:37Z",
+    "location": "COB 1",
+    "lat": 37.3637,
+    "lon": -120.4245,
+    "fromUser": false,
+    "tags": [
+      "demo"
+    ],
+    "source": {
+      "name": "demo",
+      "url": null,
+      "event_id": null,
+      "instance_id": null
+    },
+    "created_at": "2025-09-18T20:11:37Z",
+    "updated_at": "2025-09-18T20:11:37Z"
   },
-
   {
-    "id": "event010",
-    "title": "On-Campus Student Employment and Internships",
-    "time": "10:00 a.m. - 11:00 a.m.",
-    "description": "Join us for an exciting session on on-campus student employment and internships. We’ll walk you through how to find and apply for paid opportunities that fit your schedule and career goals. Plus, you’ll hear firsthand from five current student employees and interns about their experiences, the skills they’ve gained, and how these opportunities have helped them prepare for the future. Don’t miss out on this chance to get ahead and make the most of your time on campus!",
+    "id": "evt_d9799ea23d6b11a8",
+    "title": "UC Carpentries Fall Workshop Series: Coding and Data Management",
+    "description": "This 9-day workshop series aims to teach participants basic concepts, skills, and tools for R in RStudio, Python in Jupyter Notebook, an introduction to the Unix Shell, Version Control with Git, SQL, and Tidy Data. This workshop is designed for researchers and enables non-experts to develop computing skills for research analysis. The workshops are free and open to all UC students, staff, postdocs, and faculty.\n\n \n\nThe workshops will be held on Zoom, September 15th – 25th, 8:30 am – 12:30 pm. Participants are free to sign up for any combination of workshops they find useful.\n\n \n\nFor more information and to register, visit: https://jmjamison.github.io/2025-09-15-UC/",
+    "start": "2025-09-18T15:30:00Z",
+    "end": "2025-09-18T19:30:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/uc-carpentries-fall-workshop-series-coding-and-data-management",
+      "event_id": 50649178162203,
+      "instance_id": 50649178167327,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_c47ac52315938d70",
+    "title": "Drag Queen Bingo Tabling Day 4",
+    "description": "A Bingo Night hosted by a Drag Queen, where students will be able to engage with her throughout the event in person. The Queen will also hold a performance/show of her choice for the students. During intermission, activities will be held and mini prizes will be given away. The winners of each of the Bingo rounds will receive a custom-made, Campus Activities Board: Drag Queen Bingo themed Goodie Bag.\n\n\n Learn more at http://ucmerced.presence.io/event/drag-queen-bingo-tabling-day-4",
+    "start": "2025-09-18T17:00:00Z",
+    "end": "2025-09-18T21:00:00Z",
+    "location": "Scholar's Lane",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/drag-queen-bingo-tabling-day-4",
+      "event_id": 50716409699675,
+      "instance_id": 50716409701725,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_c5c433adb4d30e1d",
+    "title": "Inside the Bureau: Careers Beyond Corrections (Health, Business, Psychology & MORE!)",
+    "description": "Think the Federal Bureau of Prisons is just about the Correctional pathway? Think again!\n\nJoin Jennifer Johnson, Recruitment Specialist from the National Recruitment Office and representative from U.S. Penitentiary Atwater, for an in-depth info session introducing the wide range of career opportunities available across the Bureau — right here in California and nationwide. From roles in psychology, medical services, and business operations to positions in dentistry, recruitment, paramedics, and beyond, the BOP offers diverse, mission-driven paths for students from many academic backgrounds.\n\nWhether you’re looking for meaningful public service work, exploring federal pathways, or just curious about the agency’s scope — this is your chance to ask questions, gain insights, and see where you might fit. \n\n \n\nHighlighted Pathways 💼\n\nPsychology, sociology, social workBusiness, HR, and financePre-health, pre-med, or allied health fieldsPublic service and federal careersBring a peer, come with questions, leave with a new perspective — you never know what may be your calling!\n\n \n\nRegister Here: https://ucmerced.joinhandshake.com/edu/events/1748504\n\n \n\nUC Merced’s Career Center is pleased to make this program known to our students and alumni. This is an event hosted by an external organization and included because it may be of interest to members of our University community.  Inclusion does not indicate University sponsorship or endorsement.",
+    "start": "2025-09-18T17:00:00Z",
+    "end": "2025-09-18T18:00:00Z",
+    "location": "Kolligian Library (KL) 360",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/inside-the-bureau-careers-beyond-corrections-health-business-psychology-more",
+      "event_id": 50596484702266,
+      "instance_id": 50596484703291,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_899a339b81aed928",
+    "title": "PhiDE Fundraiser",
+    "description": "Fundraiser \n\n Learn more at http://ucmerced.presence.io/event/phide-fundraiser",
+    "start": "2025-09-18T17:00:29Z",
+    "end": "2025-09-18T21:00:00Z",
+    "location": "Scholars Lane",
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/phide-fundraiser",
+      "event_id": 50778172811539,
+      "instance_id": 50778172813589,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_78da3551406f4561",
+    "title": "Delta Gamma",
+    "description": "Will be tabling on scholars to inform non members what Delta Gamma is and invite them to our COB events\n\n\n Learn more at http://ucmerced.presence.io/event/delta-gamma-10",
+    "start": "2025-09-18T18:00:00Z",
+    "end": "2025-09-18T21:00:00Z",
+    "location": "Scholars Lane",
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/delta-gamma",
+      "event_id": 50716405802244,
+      "instance_id": 50716405804294,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_7483015e993a8262",
+    "title": "Meet the Bureau: Q&A + Networking Hour with USP Atwater",
+    "description": "Have questions after the info session? Want face time with real hiring staff? Join us for a casual networking hour where you'll connect directly with Jennifer Johnson, Recruitment Specialist from the National Recruitment Office and representative from U.S. Penitentiary Atwater. Learn more about the federal hiring process, culture, what they look for in applicants — and how you can stand out.\n\n📌 Already attended the info session? You’re halfway there to finding your future career! Don’t forget to register for the Application Hour to take the next step.\n\n→ Inside the Bureau Info Session: https://ucmerced.joinhandshake.com/edu/events/1748504\n→ Appy Power Hour: https://ucmerced.joinhandshake.com/edu/events/1748508\n\n \n\nRegister Here: https://ucmerced.joinhandshake.com/edu/events/1748506\n\n \n\nUC Merced’s Career Center is pleased to make this program known to our students and alumni. This is an event hosted by an external organization and included because it may be of interest to members of our University community.  Inclusion does not indicate University sponsorship or endorsement.",
+    "start": "2025-09-18T18:00:00Z",
+    "end": "2025-09-18T18:30:00Z",
+    "location": "Kolligian Library (KL) 360",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/meet-the-bureau-qa-networking-hour-with-usp-atwater",
+      "event_id": 50596779745709,
+      "instance_id": 50596779745710,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_df289ef068445d9a",
+    "title": "Pi Kappa Phi Tabling",
+    "description": "Tabling for pi kapp recruitment.\n\n Learn more at http://ucmerced.presence.io/event/pi-kappa-phi-tabling-6",
+    "start": "2025-09-18T18:00:00Z",
+    "end": "2025-09-18T21:00:00Z",
+    "location": "Scholars lane",
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/pi-kappa-phi-tabling",
+      "event_id": 50698664778055,
+      "instance_id": 50698664779081,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_45428612c29e306b",
+    "title": "Appy Power Hour: Land the Role, Launch the Career",
+    "description": "Ready to take the next step toward a career with the Federal Bureau of Prisons? This hands-on session is built to help you move from interested to applicant — with support every step of the way.\n\nJennifer Johnson, Recruitment Specialist from the National Recruitment Office and representative from U.S. Penitentiary Atwater, will be there to walk you through the federal application process, guide you on creating a standout USAJobs profile, and help you prepare strong, targeted submissions. Recruiters want to hire — and we want you to feel confident and ready.\n\n📣 Attended the Info Session or Networking Hour? Perfect — now it’s time to take action.\n✅ Come ready to apply. Come ready to launch your future.\n\nInterested in this session and looking for more? See the below events happening that same day with Federal Bureau of Prisons!\n\n→ Inside the Bureau Info Session: https://ucmerced.joinhandshake.com/edu/events/1748504\n\n \n\n→ Q&A + Networking Hour: https://ucmerced.joinhandshake.com/edu/events/1748506\n\n \n\nRegister Here: https://ucmerced.joinhandshake.com/edu/events/1748508\n\n \n\nUC Merced’s Career Center is pleased to make this program known to our students and alumni. This is an event hosted by an external organization and included because it may be of interest to members of our University community.  Inclusion does not indicate University sponsorship or endorsement.",
+    "start": "2025-09-18T18:30:00Z",
+    "end": "2025-09-18T19:30:00Z",
+    "location": "Kolligian Library (KL) 360",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/appy-power-hour-land-the-role-launch-the-career",
+      "event_id": 50596801958605,
+      "instance_id": 50596801959630,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_ebb932a7c7ade357",
+    "title": "Grammar Masters Workshop: Avoiding Verb Agreement Errors",
+    "description": "Grammar Masters Workshop: Avoiding Verb Agreement Errors\n\n \n\nThursday, Sept. 18, 12:00-12:50pm, in Granite Pass #145\n\n \n\nCan you spot the error below?\n\n \n\nThe company's CEO, as well as his administrative staff, were asked to resign due to mismanagement of investor funds.\n\n \n\nCome practice recognizing when nouns and the verbs that follow them do and do not agree, even in long, complex sentences and when lengthy phrases come between the subjects and verbs. We'll also spend a little time making sure vague pronouns like \"it\" agree with the nouns they refer to.  This workshop is open to whole the campus community.\n\n \n\nSponsored by the English Language Institute (ELI). For more information, send email to eli@ucmerced.edu. View this semester's workshop schedule at http://eli.ucmerced.edu/grammar-workshops.",
+    "start": "2025-09-18T19:00:00Z",
+    "end": "2025-09-18T19:50:00Z",
+    "location": "Granite Pass #145",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/grammar-masters-workshop-avoiding-verb-agreement-errors-9914",
+      "event_id": 50757626746125,
+      "instance_id": 50757626747150,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_13aa11efef3fd2d1",
+    "title": "Mendeley Workshop",
+    "description": "Mendeley is a free citation manager that you can use to organize your research, create bibliographies, and share resources with others. You can use Mendeley as a standalone web tool, or offline. During this online workshop, you will learn how to:\n\n \n\nAdd citations / referencesCreate tags and folders to organize your referencesCreate bibliographiesUse the Mendeley Cite for MS Word to add references directly into documents",
+    "start": "2025-09-18T21:00:00Z",
+    "end": "2025-09-18T22:00:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/mendeley-workshop",
+      "event_id": 50713252269206,
+      "instance_id": 50713252269207,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_4760c9592e7d2547",
+    "title": "Public Humanities as Micro Joy: Building Human Connections in Tumultuous Times",
+    "description": "With Erica Kohl-Arenas, Director of Imagining America, Associate Professor of American Studies, UC Davis\n\nThursday, September 18, 2025\n\nStarting at 2:00 P.M.\n\nLocation: COB2-295\n\nRSVP: https://centerforhumanities.ucmerced.edu/form/rsvp-public-humanities-micro-joy-building-human-connections-tumultuous-times\n\nFor any questions please contact Manzhang@ucmerced.edu",
+    "start": "2025-09-18T21:00:00Z",
+    "end": null,
+    "location": "Classroom and Office Building 2 (COB2) 295",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/public-humanities-as-micro-joy-building-human-connections-in-tumultuous-times-6327",
+      "event_id": 50402336233510,
+      "instance_id": 50402336233511,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_153bacabf72ac209",
+    "title": "Sociology Club Mixer",
+    "description": "Come join us on September 18th from 3:30-4:30 at the Elizabeth Patio Garden for our Faculty Fall Mixer where you can network and engage with many students, graduate students, and faculty. \nFood and Refreshments will be provided!\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/sociology-club-mixer",
+    "start": "2025-09-18T22:30:00Z",
+    "end": "2025-09-18T23:30:00Z",
+    "location": "Elizabeths Garden Patio",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/sociology-club-mixer",
+      "event_id": 50716414185929,
+      "instance_id": 50716414187979,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_8c0a010e060adb74",
+    "title": "Pi Kappa Phi TRV Hangout",
+    "description": "Tabletop games (Monopoly, Uno, etc) while hanging out with the brothers of Pi Kappa Phi !\n\n Learn more at http://ucmerced.presence.io/event/pi-kappa-phi-trv-hangout",
+    "start": "2025-09-19T00:00:00Z",
+    "end": "2025-09-19T03:00:00Z",
+    "location": "TRV Lounge - Sentinel Rock",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/pi-kappa-phi-trv-hangout",
+      "event_id": 50698667662803,
+      "instance_id": 50698667664853,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_f22cd761321f1f33",
+    "title": "Every Girl Dreams to be a Phi Mu!",
+    "description": "Our 3rd recruitment event! Come out and meet our sisters while decorating claw clips with decoden!\n\n Learn more at http://ucmerced.presence.io/event/every-girl-dreams-to-be-a-phi-mu",
+    "start": "2025-09-19T00:30:00Z",
+    "end": "2025-09-19T02:30:00Z",
+    "location": "COB1 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/every-girl-dreams-to-be-a-phi-mu",
+      "event_id": 50663247408771,
+      "instance_id": 50663247410821,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_1130ece24414cefe",
+    "title": "Bingo Pictionary",
+    "description": "Join the UC Merced Catholic Newman Club's Bingo and Pictionary event for a night of fun and games.\n\n Learn more at http://ucmerced.presence.io/event/bingo-pictionary",
+    "start": "2025-09-19T01:00:00Z",
+    "end": "2025-09-19T02:00:00Z",
+    "location": "Granite Pass 162",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/bingo-pictionary",
+      "event_id": 50778171978948,
+      "instance_id": 50778171979974,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_348651ff9cfac7c3",
+    "title": "Delta Delta Delta COB Recruitment Day 3",
+    "description": "Join Delta Delta Delta for our Continuous Open Bidding (COB) events this semester! These gatherings are a great opportunity to meet our sisters, learn more about our values, and explore what Tri Delta has to offer. Whether you're curious about sorority life or looking to find your home on campus, we’d love to get to know you. All students interested in joining are welcome—come as you are!\n\n Learn more at http://ucmerced.presence.io/event/delta-delta-delta-cob-recruitment-day-3",
+    "start": "2025-09-19T01:00:00Z",
+    "end": "2025-09-19T04:00:00Z",
+    "location": "CLSSRM 207",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/delta-delta-delta-cob-recruitment-day-3",
+      "event_id": 50583624791412,
+      "instance_id": 50583624793462,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_6f5fb7a05019bdaf",
+    "title": "General Meeting",
+    "description": "Join to learn about the Chinese culture, traditions, history & language! Win cute prizes while participating in fun games! :) \n\n\n Learn more at http://ucmerced.presence.io/event/general-meeting-2051",
+    "start": "2025-09-19T01:00:00Z",
+    "end": "2025-09-19T03:00:00Z",
+    "location": "Granite 140",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/general-meeting-2566",
+      "event_id": 50698669171268,
+      "instance_id": 50698669172294,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_5f0effa8f7544c29",
+    "title": "Delta Gamma Recruitment Events",
+    "description": "Three recruitment day events on Tues., Wed., and Thurs.\n\n Learn more at http://ucmerced.presence.io/event/delta-gamma-recruitment-events",
+    "start": "2025-09-19T01:00:31Z",
+    "end": "2025-09-20T01:00:00Z",
+    "location": "COB1 203",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/delta-gamma-recruitment-events",
+      "event_id": 50769337459330,
+      "instance_id": 50769337468550,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_d00115da14fb7d3f",
+    "title": "Campus Compass General Meeting",
+    "description": "Campus Compass General Meeting to learn about the school! We will be going on a tour to see where our classes are and what services there are!\n\n Learn more at http://ucmerced.presence.io/event/campus-compass-general-meeting",
+    "start": "2025-09-19T01:27:30Z",
+    "end": "2025-09-19T03:28:00Z",
+    "location": "Glacier 165",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/campus-compass-general-meeting",
+      "event_id": 50760442755500,
+      "instance_id": 50760442756526,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_2cce6b386a98a54c",
+    "title": "How to get into Research workshop",
+    "description": "This workshop is designed to help students explore pathways into research and learn about the wide range of opportunities available at UC Merced. The event will provide guidance on how to get involved in research early on, highlight programs and resources that support student researchers, and showcase how research experience can strengthen both academic and career goals. Faculty members and representatives from the Undergraduate Research Opportunities Center (UROC) will be present to share their insights, answer questions, and connect directly with students, making this a valuable opportunity to build knowledge, confidence, and networks for future research involvement.\n\n\n Learn more at http://ucmerced.presence.io/event/how-to-get-into-research-workshop",
+    "start": "2025-09-19T01:59:00Z",
+    "end": "2025-09-19T03:30:00Z",
     "location": "COB 116",
-    "tags": [
-      "presentation",
-      "information",
-      "student engagement",
-      "student life"
-    ]
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/how-to-get-into-research-workshop",
+      "event_id": 50601320117699,
+      "instance_id": 50601320118725,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
-
   {
-    "id": "event011",
-    "title": "You've Committed to UC Merced, What's Next?",
-    "time": "10:00 a.m. - 11:00 a.m.",
-    "description": "",
+    "id": "evt_30867728c0fddbcf",
+    "title": "General Motors Collaboration",
+    "description": "We will be having General Motors present at our general meeting. They will be providing advice on how to succeed at a professional conference. \n\n Learn more at http://ucmerced.presence.io/event/general-motors-collaboration",
+    "start": "2025-09-19T02:00:00Z",
+    "end": "2025-09-19T04:00:00Z",
     "location": "SSB 160",
-    "tags": ["presentation", "academics", "information"]
-  },
-
-  {
-    "id": "event012",
-    "title": "Mock Experiment in Political Science Labs (PS) Labs",
-    "time": "10:00 a.m. - 11:00 a.m.",
-    "description": "",
-    "location": "COB2 356",
-    "tags": ["presentation", "legal", "ssha"]
-  },
-
-  {
-    "id": "event013",
-    "title": "School of Natural Sciences Lab Tours",
-    "time": "10:00 a.m. - 12:00 p.m",
-    "description": "Join a 50-minute guided tour of School of Natural Sciences instructional and faculty research labs. 10:00am-12:00pm. Sign up at the School of Natural Sciences' booth at the Information Fair.",
-    "location": "School of Natural Sciences Booth",
-    "tags": ["presentation", "tour", "na", "information"]
-  },
-
-  {
-    "id": "event014",
-    "title": "Campus Life and Safety (Panel - Chief of Police, Dean of Students, Housing)",
-    "time": "11:00 a.m. - 12:00 p.m.",
-    "description": "",
-    "location": "ACS 120",
-    "tags": ["panel", "housing", "student life"]
-  },
-
-  {
-    "id": "event015",
-    "title": "Pre-Health Presentation",
-    "time": "11:00 a.m. - 12:00 p.m.",
-    "description": "Please join the UC Merced Pre-Health presentation with Department of Medical Education faculty, Dr. Julia Alvarez, and Dr. Matthew Warren. If you are considering a career in health care, join our presentation to learn more about academic support available to pre-health students and information on graduate/professional pathways in various health fields. We will share opportunities and services available for pre-health students, and resources to navigate the best health career for you.",
-    "location": "COB 102",
-    "tags": ["presentation", "pre health", "information"]
-  },
-
-  {
-    "id": "event016",
-    "title": "How Cognitive Science got a Nobel Prize in AI",
-    "time": "11:00 a.m. - 12:00 p.m.",
-    "description": "Cognitive Science is young and growing field being propelled by advances in AI and neuroscience. Last year, the Nobel prize in Physics was shared with a Cognitive Scientist whose research on neural networks is foundational to the remarkable advances in AI. UC Merced Faculty in Cognitive Science will highlight some of the key breakthroughs that got us here, exciting new directions in the field, and the careers that students pursue as cognitive science majors.",
-    "location": "COB 120",
-    "tags": ["presentation", "cognitive science", "ai", "engr"]
-  },
-
-  {
-    "id": "event017",
-    "title": "Can you see the invisible? Engineers can!",
-    "time": "11:00 a.m. - 12:00 p.m.",
-    "description": "This lecture introduces three fundamental topics in engineering: modularity (how engineers design complex systems by connecting multiple components together), iterative design (the ability to tune parameters to achieve a desired performance), and an engineering presentation.",
-    "location": "COB 105",
-    "tags": ["presentation", "engr"]
-  },
-
-  {
-    "id": "event018",
-    "title": "Legislative Simulation Demonstration",
-    "time": "11:00 a.m. - 12:00 p.m.",
-    "description": "The Legislative Simulation Course (POLI 109) offers students immersive, hands-on experience in the California legislative process. By role-playing as state legislators, lobbyists, journalists, and executive officials, students navigate real-world policymaking challenges, draft and debate legislation, and engage in political negotiations.",
-    "location": "SSB 160",
-    "tags": ["demonstration", "legal", "ssha"]
-  },
-
-  {
-    "id": "event019",
-    "title": "Chemical and Materials Engineering - Hot Topics and Cool Demonstrations",
-    "time": "11:00 a.m. - 12:00 p.m.",
-    "description": "Chemical engineers are involved in the sustainable production of fuels, reagents, food, beverages, raw materials, and pharmaceuticals.  Materials engineers focus on the processing of metals, ceramics, semiconductors, polymers and composites into sustainable products that meet specifications for everyday objects and advanced technologies.  Considerable creativity is required in both professions.  For example, there are times when electrical conductors are made from plastics, springs are made from cement, glass is made from metals, and ceramics are made from stuff assembled by bacteria. Come and learn how Harry's invisibility cloak, Spidey's webs, and Frodo's mithril are closer to fact than fiction.",
-    "location": "SSB 170",
-    "tags": ["demostration", "engr", "materials"]
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/general-motors-collaboration",
+      "event_id": 50760442293631,
+      "instance_id": 50760442295681,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
   {
-    "id": "event020",
-    "title": "How can community service pay for my education",
-    "time": "12:00 p.m. - 1:00 p.m.",
-    "description": "",
-    "location": "SSB 160",
-    "tags": ["panel", "information", "scholarships"]
+    "id": "evt_fecd13464c0b5983",
+    "title": "How to Get Into Research (GBM 2)",
+    "description": "We will be going over how to get into research and how peers got into there respective research labs\n\n Learn more at http://ucmerced.presence.io/event/how-to-get-into-research-gbm-2",
+    "start": "2025-09-19T02:00:00Z",
+    "end": "2025-09-19T03:00:00Z",
+    "location": "COB 279",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/how-to-get-into-research-gbm-2",
+      "event_id": 50601317653803,
+      "instance_id": 50601317655853,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
-
   {
-    "id": "event021",
-    "title": "Campus Information Fair",
-    "time": "8 a.m. - 2 p.m.",
-    "description": "Explore over 200 tabling events to learn more about clubs and student organizations, summer session opportunities, greek life, cultural groups, sports, academics, health promotions, the university police department, and much more!",
-    "location": "Campus",
-    "tags": ["activities", "information", "student life", "academics"]
-  },
-
-  {
-    "id": "event022",
-    "title": "Campus Tours",
-    "time": "8 a.m. - 2 p.m.",
-    "description": "Explore and discover UC Merced. Tours leave from the Welcome Center. The last tour leaves at 2:00 p.m.",
-    "location": "Welcome Center",
-    "tags": ["activities", "tour", "student life", "academics", "information"]
-  },
-
-  {
-    "id": "event023",
-    "title": "Housing Tours",
-    "time": "8 a.m. - 1:30 p.m.",
-    "description": "Tours are available at Sentinel Rock, Glacier Point, and Granite Pass. The last tour leaves at 1:30 p.m.",
-    "location": "Academic Walk",
-    "tags": ["activities", "information", "housing", "student life"]
-  },
-
-  {
-    "id": "event024",
-    "title": "Actions for the Earth: Art, Care, & Ecology",
-    "time": "8 a.m. - 2 p.m.",
-    "description": "Presented by UC Merced Arts at La Galería",
-    "location": "El Portal 120",
-    "tags": ["activities", "ssha", "enviormental"]
-  },
-
-  {
-    "id": "event025",
-    "title": "Electron Microscope Tours",
-    "time": "8 a.m. - 1:30 p.m.",
-    "description": "",
-    "location": "Materials Science and Engineering Table at the Campus Information fair",
-    "tags": ["activities", "engr", "tour"]
-  },
-
-  {
-    "id": "event026",
-    "title": "VISION - Into the Quantum World",
-    "time": "9 a.m.",
-    "description": "Offered by the VISION-PREM (https://visionprem.ucmerced.edu/), this event involves both Quantum Play Time (hands-on demos) and a Quantum Talk with VISION student researchers. Sessions begin every two hours starting at 9:00am. Sign up at the Physics department table at the Campus Information Fair.",
-    "location": "Physics Department Table at the Campus Info Fair",
-    "tags": ["activities", "Quantum Materials", "demonstration"]
-  },
-
-  {
-    "id": "event027",
-    "title": "VISION - Into the Quantum World",
-    "time": "11 a.m.",
-    "description": "Offered by the VISION-PREM (https://visionprem.ucmerced.edu/), this event involves both Quantum Play Time (hands-on demos) and a Quantum Talk with VISION student researchers. Sessions begin every two hours starting at 9:00am. Sign up at the Physics department table at the Campus Information Fair.",
-    "location": "Physics Department Table at the Campus Info Fair",
-    "tags": ["activities", "Quantum Materials", "demonstration"]
-  },
-
-  {
-    "id": "event028",
-    "title": "VISION - Into the Quantum World",
-    "time": "1 p.m.",
-    "description": "Offered by the VISION-PREM (https://visionprem.ucmerced.edu/), this event involves both Quantum Play Time (hands-on demos) and a Quantum Talk with VISION student researchers. Sessions begin every two hours starting at 9:00am. Sign up at the Physics department table at the Campus Information Fair.",
-    "location": "Physics Department Table at the Campus Info Fair",
-    "tags": ["activities", "Quantum Materials", "demonstration"]
-  },
-
-  {
-    "id": "event029",
-    "title": "Physics with Phones",
-    "time": "10 a.m.",
-    "description": "Learn how you can make scientific measurements with the smartphone in your pocket. Some of these activities have been used in physics lab classes here at UC Merced. Eleven UC Merced undergraduates have spent paid summers working with Dr. Rakestraw on developing these activities and you could too! These 30-minute sessions begin at 10:00am, 11:00am and 12:00pm. Sign up at the Physics department table at the Campus Information Fair.",
-    "location": "Physics Department Table at the Campus Info Fair",
-    "tags": ["activities", "physics", "demonstration"]
-  },
-
-  {
-    "id": "event030",
-    "title": "Physics with Phones",
-    "time": "11 a.m.",
-    "description": "Learn how you can make scientific measurements with the smartphone in your pocket. Some of these activities have been used in physics lab classes here at UC Merced. Eleven UC Merced undergraduates have spent paid summers working with Dr. Rakestraw on developing these activities and you could too! These 30-minute sessions begin at 10:00am, 11:00am and 12:00pm. Sign up at the Physics department table at the Campus Information Fair.",
-    "location": "Physics Department Table at the Campus Info Fair",
-    "tags": ["activities", "physics", "demonstration"]
-  },
-
-  {
-    "id": "event031",
-    "title": "Physics with Phones",
-    "time": "12 p.m.",
-    "description": "Learn how you can make scientific measurements with the smartphone in your pocket. Some of these activities have been used in physics lab classes here at UC Merced. Eleven UC Merced undergraduates have spent paid summers working with Dr. Rakestraw on developing these activities and you could too! These 30-minute sessions begin at 10:00am, 11:00am and 12:00pm. Sign up at the Physics department table at the Campus Information Fair.",
-    "location": "Physics Department Table at the Campus Info Fair",
-    "tags": ["activities", "physics", "demonstration"]
-  },
-
-  {
-    "id": "event032",
-    "title": "OPEN HOUSES: Discover Your Community. Find Your Support.",
-    "time": "8 a.m. - 2 p.m.",
-    "description": "Prospective students and families—step inside UC Merced's vibrant student support spaces! Explore the resources, programs, and centers designed to help you thrive. Whether you're looking for career guidance, leadership opportunities, or a sense of belonging, these spaces are here to empower your journey. Drop by, meet the teams, and see how UC Merced supports your success!",
-    "location": "\nKolligian Library (KL) \n\tStudent Career Center (KL 184)\n\tSouza Leadership Center + Yosemite Leadership Program (KL 172)\n\tCommunity Engagement Center (KL 190)\n\tCampus Advocacy, Resources, and Education (CARE) (KL 107) – Enter via Social Justice Quad\n\tLGBTQ+ Pride Center (KL 159)\n\tMulticultural Center (KL 169)\nGranite Pass (GP)\n\tBlack Scholar's Resource Center (GP 101 & 102)\nSentinel Rock (SR)\n\tAsian & Pacific Islander Resource Center (SR 101 & 102)",
-    "tags": ["Student Engagement", "information", "community"]
-  },
-
-  {
-    "id": "event033",
-    "title": "Bobcat Day Bash: The Ultimate Pavilion Lawn Experience!",
-    "time": "8 a.m. - 2 p.m.",
-    "description": "Step into the heart of campus excitement as the Pavilion Lawn comes alive with music, activities, and unforgettable experiences! This is your chance to immerse yourself in student life, connect with Bobcats, and make lasting memories. Get ready to feel the UC Merced spirit—we can’t wait to welcome you!\n\tHands-On Fun & Games – Win prizes, take part in interactive activities, and explore student programs brought to you by the Office of Student Involvement & Student Health & Wellness.\n\tLive Entertainment – Feel the energy with student performances and live DJs keeping the vibe going all day long!\n\tBobcat Family Photo Op – Capture the moment! Gather with your family for a special keepsake photo at the iconic UCM Letters.\n\tDiscover Merced’s Best – Meet local businesses and community partners showcasing what makes the City of Mercedspecial.",
-    "location": "",
-    "tags": ["student engagement", "activities", "community"]
-  },
-
-  {
-    "id": "event034",
-    "title": "Get in the Game: Recreation & Athletics Experience",
-    "time": "8 a.m. - 2 p.m.",
-    "description": "Stop by the Recreation Fields & the Joseph Edward Gallo Recreation Center for a fun-filled day of sports, games, and activities—jump into the action, get moving, and win some Bobcat swag!",
-    "location": "Recreation Fields, Jospeh Edwards Recreation fields",
-    "tags": ["student engagement", "activities", "community"]
-  },
-
-  {
-    "id": "event035",
-    "title": "University Honors Program Meet & Greet (Invite Only) (Presentations offered at 9:00 a.m. and 11:00 a.m.)",
-    "time": "8 a.m. - 12 p.m.",
-    "description": "Welcome new Bobcats! Join us to hear more about the UC Merced University Honors Program and all the opportunities this campus-wide program has to offer! Honors Program faculty, staff, and students will provide information on program eligibility, application, benefits, and requirements. Scheduled presentations will be at 9 am and 11 am, and we will be available between 8 am – 12 pm to answer any questions you may have! More information can be found on our website here: https://honors.ucmerced.edu/.",
-    "location": "Granite Pass 140",
-    "tags": ["reception", "information", "academics", "scholarships"]
-  },
-
-  {
-    "id": "event036",
-    "title": "Community Partners Program Reception",
-    "time": "8 a.m. - 9 a.m.",
-    "description": "Join us on Saturday, April 19, 2025, for the Community Partners Program Meet N' Greet at Bobcat Day! Stop by Granite Pass 145 between 8 AM - 9 AM or 10 AM - 11 AM to connect with Dr. Danielle Bermúdez, Associate Director of Educational Equity and Access, and Mr. Jose Medina III, Coordinator for Educational Equity and Access. Enjoy light refreshments and great conversation as we share how the Community Partners Program supports students on their educational journey. We look forward to meeting you!",
-    "location": "Granite Pass 145",
-    "tags": ["reception", "community", "information"]
-  },
-
-  {
-    "id": "event037",
-    "title": "Community Partners Program Reception",
-    "time": "10 a.m. - 11 a.m.",
-    "description": "Join us on Saturday, April 19, 2025, for the Community Partners Program Meet N' Greet at Bobcat Day! Stop by Granite Pass 145 between 8 AM - 9 AM or 10 AM - 11 AM to connect with Dr. Danielle Bermúdez, Associate Director of Educational Equity and Access, and Mr. Jose Medina III, Coordinator for Educational Equity and Access. Enjoy light refreshments and great conversation as we share how the Community Partners Program supports students on their educational journey. We look forward to meeting you!",
-    "location": "Granite Pass 145",
-    "tags": ["reception", "community", "information"]
-  },
-
-  {
-    "id": "event038",
-    "title": "Fiat Lux Meet & Greet (Invite Only)",
-    "time": "10:00 a.m. - 2:00 p.m.",
-    "description": "",
-    "location": "Granite Pass 150",
-    "tags": ["reception", "scholarships", "information"]
-  },
-
-  {
-    "id": "event039",
-    "title": "Transfer Reception",
-    "time": "12:00 p.m. - 1:00 p.m.",
-    "description": "",
-    "location": "Sentinal Rock 145",
-    "tags": ["reception", "information"]
-  },
-
-  {
-    "id": "event040",
-    "title": "Cognitive Science Reception",
-    "time": "12:00 PM - 1:00 PM",
-    "location": "COB 120",
-    "tags": ["cognitive science", "ai", "reception"]
-  },
-
-  {
-    "id": "event041",
-    "title": "UC Merced Division of Professional & Continuing Education (PACE) and CalTeach Reception",
-    "time": "12:00 p.m. - 1:00 p.m",
-    "description": "Are you interested in becoming a PK-12 teacher? UC Merced offers a full pathway with any degree plus an education minor that stack into a preliminary post-bacc teaching credential. Join us for a networking and reception style event in the state of the art CalTeach Learning Lab (SRE 201) from 12-1 to learn more about teacher education pathways.",
-    "location": "SRE 201",
-    "tags": ["reception", "information", "academics"]
-  },
-
-  {
-    "id": "event042",
-    "title": "Economics and Management and Business Economics Prospective Majors Reception",
-    "time": "12:00 p.m. - 2:00 p.m",
-    "description": "",
-    "location": "SSB 120",
-    "tags": ["reception", "ssha", "information"]
-  },
-
-  {
-    "id": "event043",
-    "title": "History and Critical Race and Ethnic Studies",
-    "time": "12:00 p.m. - 1:00 p.m.",
-    "description": "",
+    "id": "evt_11eb16c946d88531",
+    "title": "Canes & SigTrivia Night",
+    "description": "Trivia night event with food sponsored from Raising Cane’s. Students will compete in trivia games (general knowledge, fraternity history, fun topics) while meeting brothers and learning more about Sigma Chi.\n\n\n Learn more at http://ucmerced.presence.io/event/canes-sigtrivia-night",
+    "start": "2025-09-19T02:30:00Z",
+    "end": "2025-09-19T05:00:00Z",
     "location": "SSB 130",
-    "tags": ["reception", "ssha", "information"]
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/canes-sigtrivia-night",
+      "event_id": 50645599763777,
+      "instance_id": 50645599764803,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
-
   {
-    "id": "event044",
-    "title": "Chemical Engineering and Material Science Engineering Sweet Treat and Faculty Meet & Greet",
-    "time": "12:00 p.m. - 1:00 p.m",
-    "description": "",
+    "id": "evt_d1743afa1fe1ca4a",
+    "title": "Dermatology Club GB Meeting #1",
+    "description": "Come join our FIRST Dermatology Club General Body Meeting of the school year! Get to know the officers, what Dermatology Club is about, and what we plan on offering our members!\n\n Learn more at http://ucmerced.presence.io/event/dermatology-club-gb-meeting-1",
+    "start": "2025-09-19T02:30:00Z",
+    "end": "2025-09-19T03:30:00Z",
+    "location": "Glacier 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/dermatology-club-gb-meeting-1",
+      "event_id": 50760442941881,
+      "instance_id": 50760442942907,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_df55a4ed4d3b6e3c",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-19T03:00:00Z",
+    "end": "2025-09-19T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691393121,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_c0f062daafff5077",
+    "title": "UC Carpentries Fall Workshop Series: Coding and Data Management",
+    "description": "This 9-day workshop series aims to teach participants basic concepts, skills, and tools for R in RStudio, Python in Jupyter Notebook, an introduction to the Unix Shell, Version Control with Git, SQL, and Tidy Data. This workshop is designed for researchers and enables non-experts to develop computing skills for research analysis. The workshops are free and open to all UC students, staff, postdocs, and faculty.\n\n \n\nThe workshops will be held on Zoom, September 15th – 25th, 8:30 am – 12:30 pm. Participants are free to sign up for any combination of workshops they find useful.\n\n \n\nFor more information and to register, visit: https://jmjamison.github.io/2025-09-15-UC/",
+    "start": "2025-09-19T15:30:00Z",
+    "end": "2025-09-19T19:30:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/uc-carpentries-fall-workshop-series-coding-and-data-management",
+      "event_id": 50649178162203,
+      "instance_id": 50649178168352,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_cb8698f274e625f5",
+    "title": "MBA Dissertation Openhouse",
+    "description": "MBA dissertations workshop - Effective every Friday throughout semester times only.",
+    "start": "2025-09-19T16:00:00Z",
+    "end": "2025-09-19T18:00:00Z",
+    "location": "Kolligan Library",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/mba_dissertation_openhouse_5223",
+      "event_id": 41598668307935,
+      "instance_id": 41598668574320,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_e50615d944d4ed0a",
+    "title": "Drag Queen Bingo Tabling Day 5",
+    "description": "A Bingo Night hosted by a Drag Queen, where students will be able to engage with her throughout the event in person. The Queen will also hold a performance/show of her choice for the students. During intermission, activities will be held and mini prizes will be given away. The winners of each of the Bingo rounds will receive a custom-made, Campus Activities Board: Drag Queen Bingo themed Goodie Bag. Learn more at http://ucmerced.presence.io/event/drag-queen-bingo-tabling-day-5",
+    "start": "2025-09-19T17:00:00Z",
+    "end": "2025-09-19T21:00:00Z",
+    "location": "Scholar's Lane",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/drag-queen-bingo-tabling-day-5",
+      "event_id": 50716414394834,
+      "instance_id": 50716414396884,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_deaebe9cf3471319",
+    "title": "Tabling 9/19",
+    "description": "We will be tabling in order to inform the student body about our mission and events.\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/tabling-9-19",
+    "start": "2025-09-19T17:00:00Z",
+    "end": "2025-09-19T21:00:00Z",
+    "location": "Scholar's Lane",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/tabling-919",
+      "event_id": 50769337588364,
+      "instance_id": 50769337589390,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_66a95946cfd7a952",
+    "title": "Phi Mu Tabling",
+    "description": "We would like to table to promote panhellenic recruitment!\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/phi-mu-tabling-11",
+    "start": "2025-09-19T17:00:59Z",
+    "end": "2025-09-19T21:00:00Z",
+    "location": "Scholars Lane",
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/phi-mu-tabling-8979",
+      "event_id": 50760440654095,
+      "instance_id": 50760440655121,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_b3883ba504ba43b1",
+    "title": "Em-Tea Fundraiser",
+    "description": "Join us for our Fundraiser at Em-Tea on Thursday, 9/18! Make sure you present the flyer before ordering \n\n Learn more at http://ucmerced.presence.io/event/em-tea-fundraiser-13",
+    "start": "2025-09-19T18:00:00Z",
+    "end": "2025-09-20T06:00:00Z",
+    "location": "3570 G St, Merced, CA 95340",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/em-tea-fundraiser-502",
+      "event_id": 50778172124372,
+      "instance_id": 50778172125398,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_a168d451a83f2a42",
+    "title": "PAA PCN & CMCD Meeting",
+    "description": "The Pilipinx American Alliance's Directors of Pilipino Cultural Night and Choir, Modern, and Cultural Dance branches host check in meetings with one another to plan our annual Barrio Fiesta, our large scale event of the semester. These regular check-in meetings are primarily for aligning our creative visions and coordinating logistics.\n\n\n Learn more at http://ucmerced.presence.io/event/paa-pcn-cmcd-meeting-2",
+    "start": "2025-09-19T23:30:00Z",
+    "end": "2025-09-20T00:30:00Z",
+    "location": "GLCR 165",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-pcn-cmcd-meeting-3832",
+      "event_id": 50654429801817,
+      "instance_id": 50654429804891,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_92ee90971349040a",
+    "title": "Drag Queen Bingo 2025",
+    "description": "A Bingo Night hosted by a Drag Queen, where students will be able to engage with her throughout the event in person. The Queen will also hold a performance/show of her choice for the students. During intermission, activities will be held and mini prizes will be given away. The winners of each of the Bingo rounds will receive a custom-made, Campus Activities Board: Drag Queen Bingo themed Goodie Bag.\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/drag-queen-bingo-2025",
+    "start": "2025-09-19T23:59:00Z",
+    "end": "2025-09-20T04:00:00Z",
+    "location": "Conference Center",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/drag-queen-bingo-2025",
+      "event_id": 50734013793323,
+      "instance_id": 50734013795373,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_5f18692c4d6a7c5f",
+    "title": "Animal Restraint Techniques Workshop",
+    "description": "Join us for a hands-on workshop designed to teach safe and effective animal restraint techniques essential for veterinary professionals and animal welfare. Build your confidence, enhance safety, and gain hands-on skills that will form the foundation of good restraint practice!\n\n Learn more at http://ucmerced.presence.io/event/animal-restraint-techniques-workshop",
+    "start": "2025-09-20T00:30:00Z",
+    "end": "2025-09-20T01:30:00Z",
+    "location": "Glacier 125",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/animal-restraint-techniques-workshop",
+      "event_id": 50769336515138,
+      "instance_id": 50769336516164,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_a4704bdd80208d23",
+    "title": "Build A Buddy for CMNH",
+    "description": "Our 4th recruitment event! Come hang out with our sisters while we build bears for our sorority's philanthropy, Children's Miracle Network Hospitals!\n\n Learn more at http://ucmerced.presence.io/event/build-a-buddy-for-cmnh",
+    "start": "2025-09-20T00:30:00Z",
+    "end": "2025-09-20T02:30:00Z",
+    "location": "COB1 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/build-a-buddy-for-cmnh",
+      "event_id": 50663248435897,
+      "instance_id": 50663248437947,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_e4de736ee8fee073",
+    "title": "Lambda General Meeting 2 - Paint Your Identity",
+    "description": "Lambda alliance is hosting our second general meeting of the academic year. This week, we will be doing Paint Your Identity, where you will learn how to navigate UC Merced's student life and bureaucracy as a trans student, all the while expressing yourself with FREE tote bags to paint and take home!\n\n Learn more at http://ucmerced.presence.io/event/lambda-general-meeting-2-paint-your-identity",
+    "start": "2025-09-20T00:30:00Z",
+    "end": "2025-09-20T02:00:00Z",
+    "location": "GLCR 165",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/lambda-general-meeting-2-paint-your-identity",
+      "event_id": 50769336739409,
+      "instance_id": 50769336740435,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_86989efd537306da",
+    "title": "PAA KAAMPI Mixer #2",
+    "description": "The Pilipinx American Alliance hosts a Kuya-Ate-Ading Mentorship Program Initiative every semester, with the aim to provide scholarly, professional, and personal mentorship to our incoming general members. These mixers give opportunity for our new general members to meet returning members.\n\n\n Learn more at http://ucmerced.presence.io/event/paa-kaampi-mixer-2",
+    "start": "2025-09-20T00:30:00Z",
+    "end": "2025-09-20T03:30:00Z",
+    "location": "GRAN 135",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-kaampi-mixer-2",
+      "event_id": 50725231181691,
+      "instance_id": 50725231183741,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_d6e859a6bd2d1827",
+    "title": "Cultural Dance Practice",
+    "description": "An opportunity for general members to gather and learn dance cultural dances\n\n\n Learn more at http://ucmerced.presence.io/event/cultural-dance-practice-19",
+    "start": "2025-09-20T01:00:00Z",
+    "end": "2025-09-20T03:00:00Z",
+    "location": "GLCR 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/cultural-dance-practice-369",
+      "event_id": 50397683826602,
+      "instance_id": 50397683828652,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_ee609a5c8f5e2f04",
+    "title": "La Familia 2nd Meeting",
+    "description": "We will be celebrating Hispanic Heritage Month, and having a fun general weekly meeting.\n\n Learn more at http://ucmerced.presence.io/event/la-familia-2nd-meeting",
+    "start": "2025-09-20T01:00:51Z",
+    "end": "2025-09-20T03:00:00Z",
+    "location": "COB 2, 170",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/la-familia-2nd-meeting",
+      "event_id": 50769335857673,
+      "instance_id": 50769335858699,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_df5422c6f645920c",
+    "title": "Prayer Night",
+    "description": "Join us for Chi Alpha Prayer at UC Merced! Fridays at 7 pm in ADMIN 365, we gather to seek God together through prayer, worship, and encouragement. It's a peaceful space to recharge, connect with God, and support one another. All are welcome, whether you're new to prayer or have been walking with Jesus for years. \n\n\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/prayer-night-2",
+    "start": "2025-09-20T02:00:00Z",
+    "end": "2025-09-20T04:00:00Z",
+    "location": "ADMIN 365",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/prayer-night-190",
+      "event_id": 50734008402748,
+      "instance_id": 50734008404798,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_c3422d629385256b",
+    "title": "Stories with Sigs",
+    "description": "An evening event where members of Sigma Chi share personal stories and experiences about brotherhood, leadership, and values. The purpose is to give recruits a deeper understanding of our fraternity culture and allow for open discussion in a welcoming environment.\n\n\n Learn more at http://ucmerced.presence.io/event/stories-with-sigs-4",
+    "start": "2025-09-20T02:30:00Z",
+    "end": "2025-09-20T05:00:00Z",
+    "location": "SSB 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/stories-with-sigs-7921",
+      "event_id": 50645601973767,
+      "instance_id": 50645601974793,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_b1b43c886d44765f",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-20T03:00:00Z",
+    "end": "2025-09-20T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691415650,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_ac7c1df51e35ab75",
+    "title": "NorCal Filipino Games Tryouts",
+    "description": "NorCal Filipino Games Tryout is an event open to the public that creates the space to comfortably teach the Friendship Games to general members. We teach Alpine, Nasty, Groundhog, Conveyor, and Up N Under. Members get to try out for any games they like and potentially claim a spot on the games roster.\n\n Learn more at http://ucmerced.presence.io/event/norcal-filipino-games-tryouts",
+    "start": "2025-09-20T15:30:00Z",
+    "end": "2025-09-20T19:30:00Z",
+    "location": "CTK Quad",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/norcal-filipino-games-tryouts",
+      "event_id": 50698665425256,
+      "instance_id": 50698665426282,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_46063f0fc10fe069",
+    "title": "Panda Express Fundraiser",
+    "description": "This event is a club fundraiser organized to raise funds in support of our club’s activities and initiatives. All proceeds from this fundraiser will go directly toward supporting our projects, events, and resources for members. By participating, attendees will be helping our club continue providing meaningful opportunities and experiences for our members and the community we serve.\n\n Learn more at http://ucmerced.presence.io/event/panda-express-fundraiser-2026",
+    "start": "2025-09-20T16:30:00Z",
+    "end": "2025-09-21T05:00:00Z",
+    "location": "Panda Express - 165 E. Yosemite Ave Merced, CA",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/panda-express-fundraiser-2203",
+      "event_id": 50778171502772,
+      "instance_id": 50778171503798,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_7abd78f05d3218d3",
+    "title": "Fahren's Park Clean Up",
+    "description": "Join Mayor Serrato and the CEC team for the first park clean up of the semester on Saturday, September 20th! Our next park to beautify is Fahrens Park  (945 Buena Vista Dr, Merced, CA 95348). It is happening September 20th from 10:00 AM - 12:00 PM. A short lunch will be provided at 12:00 PM - 1:00 PM! If you like helping making your community cleaner or if you're even looking for new experiences, we would love to have you! \n\n\n\n\n Learn more at http://ucmerced.presence.io/event/fahrens-park-clean-up",
+    "start": "2025-09-20T17:00:00Z",
+    "end": "2025-09-20T19:00:00Z",
+    "location": "945 Buena Vista Dr, Merced, CA 95348",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fahrens-park-clean-up",
+      "event_id": 50760440040664,
+      "instance_id": 50760440041690,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_e269de93e7c93cea",
+    "title": "Steaks with Sigs – Feast of the Gods (Invite Only)",
+    "description": "Steaks with Sigs is Sigma Chi’s exclusive, invite only capstone recruitment event. This formal brunch is designed to offer a more intimate space for potential new members (PNMs) who have been identified as strong fits for the chapter. Attendees will enjoy a full steak meal alongside active brothers and alumni in a professional, respectful, and engaging environment. The purpose of the event is to deepen relationships with PNMs, answer final questions, and allow alumni to share their experiences and perspectives. It also allows us to gauge which PNMs demonstrate genuine interest and alignment with our values before bids are extended.\n\n Learn more at http://ucmerced.presence.io/event/steaks-with-sigs-feast-of-the-gods-invite-only",
+    "start": "2025-09-20T17:00:00Z",
+    "end": "2025-09-20T19:00:00Z",
+    "location": "SSB 160",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/steaks-with-sigs-feast-of-the-gods-invite-only",
+      "event_id": 49353668350031,
+      "instance_id": 49353668353105,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_c36b849cf1b07114",
+    "title": "Manitos Program",
+    "description": "The Manitos Program is a mentorship event where underclassmen connect with upperclassmen to build community, receive guidance, and foster academic and professional growth. Students will meet potential mentors, select who they’d like to be paired with, and participate in a reveal event that formally launches the mentor–mentee relationships. The program promotes student success, leadership development, and long-lasting connections within SHPE and the campus community.\n\n Learn more at http://ucmerced.presence.io/event/manitos-program",
+    "start": "2025-09-20T19:00:00Z",
+    "end": "2025-09-20T20:30:00Z",
     "location": "SSB 170",
-    "tags": ["reception", "engr", "materials", "information", "community"]
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/manitos-program",
+      "event_id": 50760442037607,
+      "instance_id": 50760442038633,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
-
   {
-    "id": "event045",
-    "title": "Native American / Indigenous Heritage Community - Wide Celebration",
-    "time": "1:00 p.m. - 2:00 p.m.",
-    "description": "Native American / Indigenous Heritage Community - Wide Celebration We are excited to invite you to Native American / Indigenous Heritage Community Wide Celebration, a special event where you'll have the opportunity to connect with staff and students of UC Merced’s Native American / Indigenous community. You’ll meet other incoming First Year and Transfer students, be introduced to campus resources, have an opportunity to ask questions and get a head start in networking with future peers!",
-    "location": "Granite Pass 145",
-    "tags": ["reception", "information", "community"]
+    "id": "evt_9f9f9d038e09ecbb",
+    "title": "PAA Choir Practice",
+    "description": "Choir practice for UCM PAA general members, one of the divisions in PAA, to cultivate their performances and pieces for Pilipino Cultural Night and other events that PAA has to offer in the spring semester.\n\n\n\n\n\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/paa-choir-practice-11",
+    "start": "2025-09-20T19:00:00Z",
+    "end": "2025-09-20T21:00:00Z",
+    "location": "GL 150",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-choir-practice-3145",
+      "event_id": 50362408734930,
+      "instance_id": 50362408738004,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
-
   {
-    "id": "event046",
-    "title": "African American Community - Wide Celebration",
-    "time": "1:00 p.m. - 2:15 p.m.",
-    "description": "UC Merced and other sister UC Campuses strive to increase education opportunities for underrepresented ethnic populations. Bobcat Day, being the biggest calendar event of the year, provides prospective FY and TR students time to check out what the campus offers in a variety of ways: majors, housing, admissions, and financial aid. While checking off those boxes, most ethnic groups want to know if there is an existing community. More importantly, the community is supportive of their students. The African American Community-Wide Celebration will allow students and their families to meet with existing Faculty/Staff, Students, Alumni and Organizations.",
+    "id": "evt_8c79eeabdc5fe8c7",
+    "title": "Grillin Con La Familia",
+    "description": "This will be our first social event of La Familia. It will be taking place off campus at Yosemite Lake.\n\n Learn more at http://ucmerced.presence.io/event/grillin-con-la-familia",
+    "start": "2025-09-20T22:00:37Z",
+    "end": "2025-09-21T01:00:00Z",
+    "location": "Yosemite Lake",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/grillin-con-la-familia",
+      "event_id": 50769335124428,
+      "instance_id": 50769335125454,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_72fbce667c134c32",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-21T03:00:00Z",
+    "end": "2025-09-21T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691434083,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_22ff8207245eb5de",
+    "title": "Delta Delta Delta COB Recruitment Day 4 (Bid Night)",
+    "description": "Hopefully, you joined Delta Delta Delta for our Continuous Open Bidding (COB) events this semester! These COB gatherings were a great opportunity to meet our sisters, learn more about our values, and explore what Tri Delta has to offer. Whether you're curious about sorority life or looking to find your home on campus, we’d still love to get to know you! \n\nAll students interested in joining are welcome to this Bid Night, as we extend warm invitations to students to join our organization! We hope to see you there!\n\n Learn more at http://ucmerced.presence.io/event/delta-delta-delta-cob-recruitment-day-4-bid-night",
+    "start": "2025-09-22T01:00:00Z",
+    "end": "2025-09-22T04:00:00Z",
+    "location": "SSB 110",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/delta-delta-delta-cob-recruitment-day-4-bid-night",
+      "event_id": 50583625219467,
+      "instance_id": 50583625221517,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_39bb2f266bb080ff",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-22T03:00:00Z",
+    "end": "2025-09-22T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691459684,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_bcb934f8b3a294af",
+    "title": "UC Carpentries Fall Workshop Series: Coding and Data Management",
+    "description": "This 9-day workshop series aims to teach participants basic concepts, skills, and tools for R in RStudio, Python in Jupyter Notebook, an introduction to the Unix Shell, Version Control with Git, SQL, and Tidy Data. This workshop is designed for researchers and enables non-experts to develop computing skills for research analysis. The workshops are free and open to all UC students, staff, postdocs, and faculty.\n\n \n\nThe workshops will be held on Zoom, September 15th – 25th, 8:30 am – 12:30 pm. Participants are free to sign up for any combination of workshops they find useful.\n\n \n\nFor more information and to register, visit: https://jmjamison.github.io/2025-09-15-UC/",
+    "start": "2025-09-22T15:30:00Z",
+    "end": "2025-09-22T19:30:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/uc-carpentries-fall-workshop-series-coding-and-data-management",
+      "event_id": 50649178162203,
+      "instance_id": 50649178170401,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_beff1c929e99d07f",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-22T16:00:00Z",
+    "end": "2025-09-22T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760440949033,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_2f78d4d2bad296c0",
+    "title": "Tabling Women in Automotive Engineering",
+    "description": "I want to do tabling so I can share information about our club with more people.\n\nIt will help promote the club and get more members involved.\n\n\n Learn more at http://ucmerced.presence.io/event/tabling-women-in-automotive-engineering",
+    "start": "2025-09-22T17:00:00Z",
+    "end": "2025-09-22T20:00:00Z",
+    "location": "scholars lane",
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/tabling-women-in-automotive-engineering",
+      "event_id": 50778173515078,
+      "instance_id": 50778173517128,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_9cd9107999a47591",
+    "title": "MTS Series Speaker: Erica Cartmill",
+    "description": "Cognitive and Information Sciences' Mind, Technology, and Society (MTS) Speaker Series presents Erica Cartmill, Professor of Cognitive Science, Anthropology, & Animal Science at Indiana University.\n\n \n\nCartmill will present on \"Play and Projection: Social and Physical Problem Solving in Great Apes\".\n\n \n\nDescription:\n\nThe ability to anticipate events and project outcomes is crucial for creative problem solving in many species, including humans. Simulation of possible futures is difficult to prove in biological systems but may often be the best way to explain behavior. Play behavior in particular, likely involves rehearsal and testing of possible outcomes in a low(er) stakes environment. In this talk, I examine two areas in which great apes might productively use projection and play: teasing and tool use. I present our work on playful teasing, a behavior between play and aggression, in which apes explore, test, and advertise their social relationships. I then discuss an in-progress study on physical cognition using a video game interface to test how apes select and apply tools to solve physical tasks. Together, these studies help reveal the complex ways non-human primates strategically and creatively navigate their social and physical environments.\n\n \n\nStudents, faculty, and staff are welcome to attend!",
+    "start": "2025-09-22T22:00:00Z",
+    "end": "2025-09-22T23:30:00Z",
+    "location": "Classroom and Office Building (COB1) 116",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/mts-series-speaker-erica-cartmill",
+      "event_id": 50755979073519,
+      "instance_id": 50755979073520,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_de6239adc1856523",
+    "title": "PAA KAAMPI Mixer #3",
+    "description": "The Pilipinx American Alliance hosts a Kuya-Ate-Ading Mentorship Program Initiative every semester, with the aim to provide scholarly, professional, and personal mentorship to our incoming general members. These mixers give opportunity for our new general members to meet returning members.\n\n\n Learn more at http://ucmerced.presence.io/event/paa-kaampi-mixer-3",
+    "start": "2025-09-23T00:30:04Z",
+    "end": "2025-09-23T03:30:00Z",
+    "location": "COB2 263, 266, 267",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-kaampi-mixer-3",
+      "event_id": 50725229518649,
+      "instance_id": 50725229521723,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_eda443c6de518899",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-23T03:00:00Z",
+    "end": "2025-09-23T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691484261,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_03a48f06af12ff30",
+    "title": "Observation Night",
+    "description": "We will talk about astronomy and observe planets, constellations and other astronomical objects.\n\n Learn more at http://ucmerced.presence.io/event/observation-night-2",
+    "start": "2025-09-23T03:30:00Z",
+    "end": "2025-09-23T05:30:00Z",
+    "location": "Behind SE2",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/observation-night",
+      "event_id": 50769335690748,
+      "instance_id": 50769335691774,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_3aa348d00cd12f0f",
+    "title": "Observation Night",
+    "description": "We will be hosting an Observation Night that takes advantage of a new moon. We'll guide attendees in identifying major star patterns, explain science behind them, and provide star maps and telescopes (3) for a hands-on experience. We will also be using interactive star map apps to encourage hands-on learning and engagement with the night sky. This event will promote scientific curiosity, community involvement, and appreciation for astronomy in an accessible and enjoyable setting.\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/observation-night-3",
+    "start": "2025-09-23T03:30:00Z",
+    "end": "2025-09-23T05:30:00Z",
+    "location": "SE2 Breezeway",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/observation-night-5614",
+      "event_id": 50778172217568,
+      "instance_id": 50778172218594,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_73b5c4449b3d8477",
+    "title": "UC Carpentries Fall Workshop Series: Coding and Data Management",
+    "description": "This 9-day workshop series aims to teach participants basic concepts, skills, and tools for R in RStudio, Python in Jupyter Notebook, an introduction to the Unix Shell, Version Control with Git, SQL, and Tidy Data. This workshop is designed for researchers and enables non-experts to develop computing skills for research analysis. The workshops are free and open to all UC students, staff, postdocs, and faculty.\n\n \n\nThe workshops will be held on Zoom, September 15th – 25th, 8:30 am – 12:30 pm. Participants are free to sign up for any combination of workshops they find useful.\n\n \n\nFor more information and to register, visit: https://jmjamison.github.io/2025-09-15-UC/",
+    "start": "2025-09-23T15:30:00Z",
+    "end": "2025-09-23T19:30:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/uc-carpentries-fall-workshop-series-coding-and-data-management",
+      "event_id": 50649178162203,
+      "instance_id": 50649178172450,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_2ff4df0671fe59ac",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-23T16:00:00Z",
+    "end": "2025-09-23T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760440983851,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_56a4923a7d5b1364",
+    "title": "Antojitos Sale",
+    "description": "We will be selling aguas frescas, Sandía and lemon con pepino, hot Cheetos and cheese, and tamarind candy. \n\n Learn more at http://ucmerced.presence.io/event/antojitos-sale-5",
+    "start": "2025-09-23T17:00:00Z",
+    "end": "2025-09-23T22:00:00Z",
+    "location": "Scholars lane",
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/antojitos-sale-459",
+      "event_id": 50778173289777,
+      "instance_id": 50778173290803,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_f6e6a69dca2b2437",
+    "title": "ASME Tabling",
+    "description": "We will be tabling on Scholar's Lane! Learn more about our club, what we do, and meet some of the board!\n\n Learn more at http://ucmerced.presence.io/event/asme-tabling",
+    "start": "2025-09-23T17:00:00Z",
+    "end": "2025-09-23T21:00:00Z",
+    "location": "Scholar's Lane",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/asme-tabling",
+      "event_id": 50778174385548,
+      "instance_id": 50778174386574,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_edf6b0ae2ec71846",
+    "title": "BCB General Body Meeting",
+    "description": "Come learn about different ways we can create positive change within our local community!\n\n Learn more at http://ucmerced.presence.io/event/bcb-general-body-meeting-4",
+    "start": "2025-09-24T00:30:00Z",
+    "end": "2025-09-24T01:30:00Z",
+    "location": "GRAN 145",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/bcb-general-body-meeting-4298",
+      "event_id": 50769335982612,
+      "instance_id": 50769335984662,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_d91d66b4a033868b",
+    "title": "Cultural Dance Practice",
+    "description": "An opportunity for general members to gather and learn dance cultural dances.\n\n\n Learn more at http://ucmerced.presence.io/event/cultural-dance-practice-18",
+    "start": "2025-09-24T01:00:00Z",
+    "end": "2025-09-24T03:00:00Z",
+    "location": "GLCR 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/cultural-dance-practice-8409",
+      "event_id": 50388831325093,
+      "instance_id": 50388831326119,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_90dfb412fe6f86e9",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-24T03:00:00Z",
+    "end": "2025-09-24T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691508838,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_bb1a3d97a8c6d03f",
+    "title": "UC Carpentries Fall Workshop Series: Coding and Data Management",
+    "description": "This 9-day workshop series aims to teach participants basic concepts, skills, and tools for R in RStudio, Python in Jupyter Notebook, an introduction to the Unix Shell, Version Control with Git, SQL, and Tidy Data. This workshop is designed for researchers and enables non-experts to develop computing skills for research analysis. The workshops are free and open to all UC students, staff, postdocs, and faculty.\n\n \n\nThe workshops will be held on Zoom, September 15th – 25th, 8:30 am – 12:30 pm. Participants are free to sign up for any combination of workshops they find useful.\n\n \n\nFor more information and to register, visit: https://jmjamison.github.io/2025-09-15-UC/",
+    "start": "2025-09-24T15:30:00Z",
+    "end": "2025-09-24T19:30:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/uc-carpentries-fall-workshop-series-coding-and-data-management",
+      "event_id": 50649178162203,
+      "instance_id": 50649178173475,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_5494d8bfd4563570",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-24T16:00:00Z",
+    "end": "2025-09-24T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441014572,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_08850910bf54fe56",
+    "title": "Panda Express Fundraiser",
+    "description": "This event is a club fundraiser organized to raise funds in support of our club’s activities and initiatives. All proceeds from this fundraiser will go directly toward supporting our projects, events, and resources for members. By participating, attendees will be helping our club continue providing meaningful opportunities and experiences for our members and the community we serve.\n\n Learn more at http://ucmerced.presence.io/event/panda-express-fundraiser-2027",
+    "start": "2025-09-24T16:30:00Z",
+    "end": "2025-09-25T05:00:00Z",
+    "location": "Panda Express - 165 E. Yosemite Ave. Merced, CA",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/panda-express-fundraiser-7237",
+      "event_id": 50778172139736,
+      "instance_id": 50778172140762,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_86dee0d43216b08f",
+    "title": "Wake Up Wednesday",
+    "description": "Free donuts and coffee every Wednesday morning\n\n\n Learn more at http://ucmerced.presence.io/event/wake-up-wednesday-91",
+    "start": "2025-09-24T17:00:00Z",
+    "end": "2025-09-24T19:00:00Z",
+    "location": "Granite 174",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/wake-up-wednesday-7791",
+      "event_id": 49601248047096,
+      "instance_id": 49601248050170,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_6ed758172ad32092",
+    "title": "Wake Up Wednesday",
+    "description": "Free donuts and coffee\n\n Learn more at http://ucmerced.presence.io/event/wake-up-wednesday-108",
+    "start": "2025-09-24T17:00:00Z",
+    "end": "2025-09-24T19:00:00Z",
+    "location": "Granite Pass 174",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/wake-up-wednesday-9391",
+      "event_id": 49716296968976,
+      "instance_id": 49716296972050,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_c2db17fdf7836f7b",
+    "title": "CALLING ALL ENGINEERS: Lunch + Learn with Webcor Builders!",
+    "description": "Looking for an internship that’s more than just coffee runs and spreadsheets?\n\nWebcor, one of the industry's top commercial builders, offers an internship program that puts students on real project teams- learning directly from construction pros and gaining hands-on experience that actually matters. They’re known for a culture of collaboration, innovation, and transparency; and for building some pretty incredible things.\n\nIn fact, they helped build our campus. Webcor was THE lead builder on the UC Merced 2020 Project: an award-winning project, as well as the largest higher education expansion of its kind in North America. And they love hiring Bobcats like you! Our partnership has already opened doors for many UC Merced students. You could be next.\n\nJoin the info session to learn about the internship roles they’re hiring for and the full-time opportunities available after graduation. Plus, yes- there will be free pizza. 🍕\n\n \n\nRegister here: https://ucmerced.joinhandshake.com/edu/events/1777679\n\n \n\nUC Merced’s Career Center is pleased to make this program known to our students and alumni. This is an event hosted by an external organization and included because it may be of interest to members of our University community.  Inclusion does not indicate University sponsorship or endorsement.",
+    "start": "2025-09-24T18:30:00Z",
+    "end": "2025-09-24T19:30:00Z",
+    "location": "COB2 390",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/calling-all-engineers-lunch-learn-with-webcor-builders",
+      "event_id": 50658488913102,
+      "instance_id": 50658488913103,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_0fb39107656bec2c",
+    "title": "Creating GIS Maps on the Web",
+    "description": "This workshop will guide you in accessing UC Merced's ArcGIS Online GIS portal and the tools to build web maps. Learn how to create and share maps using ArcGIS Online, a web mapping portal free to staff, faculty, and students.",
+    "start": "2025-09-24T19:00:00Z",
+    "end": "2025-09-24T20:30:00Z",
+    "location": "Kolligian Library (KL) 260",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/creating-gis-maps-on-the-web",
+      "event_id": 50658277779620,
+      "instance_id": 50658277780645,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_00659b3f10d03fe8",
+    "title": "PAA Choir Practice",
+    "description": "Choir practice for UCM PAA general members, one of the divisions in PAA, to cultivate their performances and pieces for Pilipino Cultural Night and other events that PAA has to offer in the spring semester.\n\n\n\n\n\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/paa-choir-practice-23",
+    "start": "2025-09-25T01:00:00Z",
+    "end": "2025-09-25T03:00:00Z",
+    "location": "GL 150",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-choir-practice-1503",
+      "event_id": 50362409378041,
+      "instance_id": 50362409380091,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_ef62d5214a2bba58",
+    "title": "PAA Choir Practice",
+    "description": "Choir practice for UCM PAA general members, one of the divisions in PAA, to cultivate their performances and pieces for Pilipino Cultural Night and other events that PAA has to offer in the spring semester.\n\n\n\n\n\n\n\n\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/paa-choir-practice-24",
+    "start": "2025-09-25T01:00:00Z",
+    "end": "2025-09-25T03:00:00Z",
+    "location": "GL 135",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-choir-practice-9961",
+      "event_id": 50388830935941,
+      "instance_id": 50388830937991,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_bd2e025fa31183e6",
+    "title": "Gathering",
+    "description": "Join us for Chi Alpha Gatherings at UC Merced! Wednesdays at 7pm in COB2 130, we gather for a welcoming time of community, worship, prayer, and engaging in God's Word. Whether you're exploring faith, looking for meaningful friendships, or wanting to grow deeper in your walk with Jesus, you'll find a place here. Everyone is welcome! 7-9pm\n\n Learn more at http://ucmerced.presence.io/event/gathering-12",
+    "start": "2025-09-25T02:00:00Z",
+    "end": "2025-09-25T04:00:00Z",
+    "location": "COB2 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/gathering-8631",
+      "event_id": 50645602904635,
+      "instance_id": 50645602905661,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_37d4a05ac750b03b",
+    "title": "GB Retreat",
+    "description": "Join us for our official general body meeting kick-off!\n\n Learn more at http://ucmerced.presence.io/event/gb-retreat",
+    "start": "2025-09-25T02:30:00Z",
+    "end": "2025-09-25T04:00:00Z",
+    "location": "COB1 114",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/gb-retreat",
+      "event_id": 50778173167910,
+      "instance_id": 50778173172008,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_8b3dc82a3e3a0fd5",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-25T03:00:00Z",
+    "end": "2025-09-25T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691552871,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_628ee180390b2714",
+    "title": "UC Carpentries Fall Workshop Series: Coding and Data Management",
+    "description": "This 9-day workshop series aims to teach participants basic concepts, skills, and tools for R in RStudio, Python in Jupyter Notebook, an introduction to the Unix Shell, Version Control with Git, SQL, and Tidy Data. This workshop is designed for researchers and enables non-experts to develop computing skills for research analysis. The workshops are free and open to all UC students, staff, postdocs, and faculty.\n\n \n\nThe workshops will be held on Zoom, September 15th – 25th, 8:30 am – 12:30 pm. Participants are free to sign up for any combination of workshops they find useful.\n\n \n\nFor more information and to register, visit: https://jmjamison.github.io/2025-09-15-UC/",
+    "start": "2025-09-25T15:30:00Z",
+    "end": "2025-09-25T19:30:00Z",
+    "location": null,
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/uc-carpentries-fall-workshop-series-coding-and-data-management",
+      "event_id": 50649178162203,
+      "instance_id": 50649178174500,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_faa84b982bdfe23f",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-25T16:00:00Z",
+    "end": "2025-09-25T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441047341,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_14aafb47a5b0d6b6",
+    "title": "Faculty Author Series: Dr. Daniel K. Thompson",
+    "description": "Please join us for an author talk featuring Assistant Professor of Anthropology, Daniel K. Thompson. \n\n \n\nIn this talk, Dr. Thompson will discuss his new book, Smugglers, Speculators, and the City in the Ethiopia-Somalia Borderlands. The book explores the work of Ethiopian-Somali smugglers and investors and examines links between cities and borders in rapid urbanization.  \n\n \n\nEvent Time: Noon-1pm \n\nEvent Date: Thursday, September 25, 2025 \n\nEvent Location: Kolligian Library Building, KL 232 \n\n \n\nRegistration is encouraged as seating is limited. Light refreshments provided. We will give away a few copies of the book during the event.",
+    "start": "2025-09-25T19:00:00Z",
+    "end": "2025-09-25T20:30:00Z",
+    "location": "Kolligian Library (KL) 232",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/faculty-author-series-dr-daniel-k-thompson",
+      "event_id": 50693741167847,
+      "instance_id": 50693741168872,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_7c7836c0e6c4b213",
+    "title": "General Meeting",
+    "description": "Join to learn about the Chinese culture, traditions, history & language! Win cute prizes while participating in fun games! :) \n\n\n Learn more at http://ucmerced.presence.io/event/general-meeting-2050",
+    "start": "2025-09-26T01:00:00Z",
+    "end": "2025-09-26T03:00:00Z",
+    "location": "Granite 140",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/general-meeting-2527",
+      "event_id": 50698664683837,
+      "instance_id": 50698664686911,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_1557a7ea90e92a62",
+    "title": "UCM SASA CULTURAL SHOWCASE",
+    "description": "Our event is a cultural gathering, welcoming the students to a new year filled with new beginnings. We will have a themed dance, to show the pride of South Asia. \n\n Learn more at http://ucmerced.presence.io/event/ucm-sasa-cultural-showcase",
+    "start": "2025-09-26T01:00:00Z",
+    "end": "2025-09-26T05:00:00Z",
+    "location": "Amphitheater",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/ucm-sasa-cultural-showcase",
+      "event_id": 50725230102351,
+      "instance_id": 50725230107473,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_0f014deaf067ef22",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-26T03:00:00Z",
+    "end": "2025-09-26T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691571304,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_f9695ce3b00a81cd",
+    "title": "MBA Dissertation Openhouse",
+    "description": "MBA dissertations workshop - Effective every Friday throughout semester times only.",
+    "start": "2025-09-26T16:00:00Z",
+    "end": "2025-09-26T18:00:00Z",
+    "location": "Kolligan Library",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/mba_dissertation_openhouse_5223",
+      "event_id": 41598668307935,
+      "instance_id": 41598668576369,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_53782fe718cbfd56",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-26T16:00:00Z",
+    "end": "2025-09-26T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441057582,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_061763bc18687b66",
+    "title": "Reading Club Tabling Event",
+    "description": "We will be tabling to promote reading on-campus and the club's activities/future events to the general public. Furthermore,  we will also be selling books, bookmarks and crocheted goodies at affordable and accessible prices to help fund future club activities.\n\n Learn more at http://ucmerced.presence.io/event/reading-club-tabling-event",
+    "start": "2025-09-26T17:00:00Z",
+    "end": "2025-09-26T21:00:00Z",
+    "location": "Scholar's Lane",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/reading-club-tabling-event",
+      "event_id": 50760440339695,
+      "instance_id": 50760440340721,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_8a0f3f1418376431",
+    "title": "2025 UC Merced Student Leadership Conference",
+    "description": "SAVE THE DATE: Friday, September 26th, 2025 3PM - 8PM in Lakireddy Grand Ballroom - Conference Center at UC Merced. \n\nThe annual UC Merced Leadership Conference is one of the longest-running conferences at UC Merced! The annual conference brings together students, alumni, and guest speakers for a full day in which students learn from speakers the many strategies and skills necessary to engage in leadership and remain life-long learners.  Every year, The Souza Leadership Center brings inspiring speakers who have learned to overcome challenges to find their voice and their confidence as leaders.\n\nQuestions? Contact us at Lead@ucmerced.edu \n\nConference Theme: The Leadership Multiverse: Connecting with IntegrityFor better or worse, we are living in a world shaped by the leaders who came before us—and today, we are shaping the future for those who will come after us. Our actions matter. Whether we recognize it or not, we are part of a deeply connected society. That’s why it’s essential to lead and connect with integrity. \n\nOur theme acknowledges the complexity of our current world—where connection and division often coexist—and calls on student leaders to lead with vision, empathy, and authenticity. “The Leadership Multiverse” represents the many dimensions in which leadership occurs today: on campus, online, within communities, across cultures, and within ourselves.\n\n \n\nThe Student Leadership conference will feature workshops on authentic leadership, identity, leadership and much more! Registration will open soon, all are welcome to attend! \n\n RSVP link - https://studentleadership.ucmerced.edu/conference Learn more at http://ucmerced.presence.io/event/2025-uc-merced-student-leadership-conference",
+    "start": "2025-09-26T22:00:00Z",
+    "end": "2025-09-27T03:00:00Z",
     "location": "Conference Center Ballroom",
-    "tags": ["reception", "community", "information", "scholarships"]
-  },
-
-  {
-    "id": "event047",
-    "title": "You Belong Here: Latino / A Heritage Community - Wide Celebration",
-    "time": "1:00 p.m. - 2:15 p.m.",
-    "description": "We are excited to invite you to You Belong Here: The Latino/a UC Community Welcome Celebration, a special event where you’ll have the opportunity to connect with UC Merced’s vibrant Latino/a community. Meet fellow incoming first-year and Transfer students, engage with staff and student leaders, and get introduced to the many resources that support Latino/a student success. This is your chance to ask questions, build connections, and start creating your community at UC Merced—because you belong here.",
-    "location": "Admin 306",
-    "tags": ["reception", "community", "information"]
-  },
-
-  {
-    "id": "event048",
-    "title": "Dining Option 1",
-    "time": "7:00 a.m. - 9:00 p.m.",
-    "description": "Breakfast: 7:00 a.m. - 10:30 a.m. Lunch: 11:00 a.m. - 3:00 p.m. Dinner: 4:00 p.m. - 9:00 p.m. Payment Options: All campus dining is cashless (only debit/credit cards)",
-    "location": "Pavilion",
-    "tags": ["Dining", "Food", "breakfast"]
-  },
-
-  {
-    "id": "event049",
-    "title": "Dining Option 2",
-    "time": "10:00 a.m. - 2:00 p.m.",
-    "description": "Lunch. Payment Options: All campus dining is cashless (only debit/credit cards)",
-    "location": "Yablakoff-Wallace Dining Center",
-    "tags": ["Dining", "Food", "lunch"]
+    "lat": 37.369,
+    "lon": -120.4209,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/2025-uc-merced-student-leadership-conference",
+      "event_id": 50663247228533,
+      "instance_id": 50663247229559,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
   {
-    "id": "event050",
-    "title": "Dining Option 3",
-    "time": "7:00 a.m. - 4:00 p.m.",
-    "description": "Lantern Cafe. Payment Options: All campus dining is cashless (only debit/credit cards)",
-    "location": "Kolligian Library",
-    "tags": ["Cafe", "Food", "snacks", "Drinks"]
+    "id": "evt_31da83fe74c9094a",
+    "title": "Cultural Dance Practice",
+    "description": "An opportunity for general members to gather and learn dance cultural dances.\n\n\n Learn more at http://ucmerced.presence.io/event/cultural-dance-practice-17",
+    "start": "2025-09-27T01:00:00Z",
+    "end": "2025-09-27T03:00:00Z",
+    "location": "GLCR 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/cultural-dance-practice-8460",
+      "event_id": 50388831860681,
+      "instance_id": 50388831862731,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
   {
-    "id": "event051",
-    "title": "Dining Option 4",
-    "time": "8:00 a.m. - 3:00 p.m.",
-    "description": "Bobcat Snack Stop. Payment Options: All campus dining is cashless (only debit/credit cards)",
-    "location": "Kolligian Library",
-    "tags": ["Food", "snacks", "Drinks"]
+    "id": "evt_182cba05f333676f",
+    "title": "Adulting 101",
+    "description": "A series of various workshops with the aim of helping students grow as professionals, learning about basic finances, professional developments, emotional intelligence and cooking. Through these workshops we aim to help the community develop and form connections through working and learning together.\n\n Learn more at http://ucmerced.presence.io/event/adulting-101",
+    "start": "2025-09-27T01:30:00Z",
+    "end": "2025-09-27T03:30:00Z",
+    "location": "Granite 140, 145, 150",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/adulting-101-7541",
+      "event_id": 50760443471323,
+      "instance_id": 50760443475421,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
   },
   {
-    "id": "event052",
-    "title": "Dining Option 5",
-    "time": "10:00 a.m. - 3:00 p.m.",
-    "description": "Food Trucks. Food trucks accept cash, debit, and credit cards",
+    "id": "evt_8e03cad061ff60a3",
+    "title": "Merced’s 2nd Annual LitFest Hope & Hard Times",
+    "description": "Keynote reading from Lori Ostlund at El Capitan Courtyard\n\nFriday, September 26, 2025\n\nAt 7:00 PM\n\n55+ Writers and 16 Literary events @ the MAC, Hi-Fi Wine, Sensory Lab by Asip, & Second Time Around Books\n\nSaturday, September 27, 2025\n\nAt 1:00 PM - 5:00 PM\n\n[View full schedule here]",
+    "start": "2025-09-27T02:00:00Z",
+    "end": null,
+    "location": "Downtown Merced",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/merceds-2nd-annual-litfest-hope-hard-times",
+      "event_id": 50650178268052,
+      "instance_id": 50650178269077,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_380c37c81de2321c",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-27T03:00:00Z",
+    "end": "2025-09-27T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691612265,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_1addafa12c1869ff",
+    "title": "Elevator Pitch + Networking 101",
+    "description": "Come learn how to catch the attention of recruiters and industry professionals with a 30-second sales pitch highlighting your experience and interest in working with the desired company! Learn how to properly sell yourself and receive tips and tricks on how to make you stand out among the rest by upperclassmen who have worked in the industry! You will also learn how to leave a good impression when you are networking, ensuring you are remembered, and keeping close connections with everyone you meet in a professional setting.\n\n Learn more at http://ucmerced.presence.io/event/elevator-pitch-networking-101",
+    "start": "2025-09-27T15:00:55Z",
+    "end": "2025-09-28T08:00:00Z",
+    "location": "COB2 170",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/elevator-pitch-networking-101",
+      "event_id": 50601318942092,
+      "instance_id": 50601318944142,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_964a455ca4d26a59",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-27T16:00:00Z",
+    "end": "2025-09-27T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441067823,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_7274feafb976544d",
+    "title": "Local Author Fair",
+    "description": "Saturday, September 27, 2025\n\n10:00 AM - 12:00 PM\n\nMerced County Library\n\n2100 O St, Merced, CA 95340",
+    "start": "2025-09-27T17:00:00Z",
+    "end": null,
+    "location": "Merced County Library",
+    "lat": 37.306875,
+    "lon": -120.485014,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/local-author-fair-4065",
+      "event_id": 50650211193667,
+      "instance_id": 50650211194692,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_5bf0813e1b97bbf6",
+    "title": "UCM PAA Choir Practice",
+    "description": "Choir practice for UCM PAA general members, one of the divisions in PAA, to cultivate their performances and pieces for Pilipino Cultural Night and other events that PAA has to offer in the spring semester.\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/ucm-paa-choir-practice-2",
+    "start": "2025-09-27T19:00:00Z",
+    "end": "2025-09-27T21:00:00Z",
+    "location": "GL 150",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/ucm-paa-choir-practice-6811",
+      "event_id": 50362409734419,
+      "instance_id": 50362409736469,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:49Z",
+    "updated_at": "2025-09-18T20:12:49Z"
+  },
+  {
+    "id": "evt_261720ecb761add8",
+    "title": "Merced’s 2nd Annual LitFest Hope & Hard Times",
+    "description": "Keynote reading from Lori Ostlund at El Capitan Courtyard\n\nFriday, September 26, 2025\n\nAt 7:00 PM\n\n55+ Writers and 16 Literary events @ the MAC, Hi-Fi Wine, Sensory Lab by Asip, & Second Time Around Books\n\nSaturday, September 27, 2025\n\nAt 1:00 PM - 5:00 PM\n\n[View full schedule here]",
+    "start": "2025-09-28T02:00:00Z",
+    "end": null,
+    "location": "Downtown Merced",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/merceds-2nd-annual-litfest-hope-hard-times",
+      "event_id": 50650178268052,
+      "instance_id": 50650178271126,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_c9fa6697050ec067",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-28T03:00:00Z",
+    "end": "2025-09-28T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691654250,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_5063e0a50ebc3d67",
+    "title": "Elevator Pitch + Networking 101",
+    "description": "Come learn how to catch the attention of recruiters and industry professionals with a 30-second sales pitch highlighting your experience and interest in working with the desired company! Learn how to properly sell yourself and receive tips and tricks on how to make you stand out among the rest by upperclassmen who have worked in the industry! You will also learn how to leave a good impression when you are networking, ensuring you are remembered, and keeping close connections with everyone you meet in a professional setting.\n\n Learn more at http://ucmerced.presence.io/event/elevator-pitch-networking-101",
+    "start": "2025-09-28T15:00:55Z",
+    "end": "2025-09-29T08:00:00Z",
+    "location": "COB2 170",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/elevator-pitch-networking-101",
+      "event_id": 50601318942092,
+      "instance_id": 50601318959504,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_c914d802b0cdbc23",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-28T16:00:00Z",
+    "end": "2025-09-28T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441078064,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_95d17839b84e4d3f",
+    "title": "3v3 Pick Up",
+    "description": "Join us in our first event this semester!\n\nFour 3v3 pick-up games played simultaneously!\n\nSnacks & drinks provided!\n\nDate: Sunday, September 28th\n\nLocation: UCM Gym - Indoor Courts\n\nTime: 2:00PM - 4:00PM \n\n Learn more at http://ucmerced.presence.io/event/3v3-pick-up",
+    "start": "2025-09-28T21:00:41Z",
+    "end": "2025-09-28T23:00:00Z",
+    "location": "Indoor Court - Joseph E. Gallo Recreation & Wellness Center",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/3v3-pick-up",
+      "event_id": 50778172782862,
+      "instance_id": 50778172783888,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_a3c8bebe0a1b6acb",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-29T03:00:00Z",
+    "end": "2025-09-29T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691679851,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_fc380891cef5f1bf",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-29T16:00:00Z",
+    "end": "2025-09-29T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441089329,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_bb56e56ea2f0d4af",
+    "title": "Pi Kappa Ph - AQUA FRESCA fundraiser",
+    "description": "Fundraiser to support our chapter, come out and enjoy some delicious water. \n\n Learn more at http://ucmerced.presence.io/event/pi-kappa-ph-aqua-fresca-fundraiser",
+    "start": "2025-09-29T17:00:10Z",
+    "end": "2025-09-29T21:00:00Z",
     "location": "Scholars Lane",
-    "tags": ["Food", "snacks", "Drinks"]
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/pi-kappa-ph-aqua-fresca-fundraiser",
+      "event_id": 50707526896931,
+      "instance_id": 50707526898981,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
   },
   {
-    "id": "event053",
-    "title": "Dining Option 6",
-    "time": "8:00 a.m. - 4:00 p.m.",
-    "description": "Summits Marketplace. Payment Options: All campus dining is cashless (only debit/credit cards)",
+    "id": "evt_e32c8de6100b3d59",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-09-30T03:00:00Z",
+    "end": "2025-09-30T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691700332,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_5db5356af22807a1",
+    "title": "Potential Champion of Anchor Mixer",
+    "description": "Potential champion of the anchors will be able to presnet ot the chapter why they want ot run for champion of the anchor and what does DG mean to them\n\n Learn more at http://ucmerced.presence.io/event/potential-champion-of-anchor-mixer",
+    "start": "2025-09-30T03:00:00Z",
+    "end": "2025-09-30T05:00:00Z",
+    "location": "SSB 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/potential-champion-of-anchor-mixer",
+      "event_id": 50769336423993,
+      "instance_id": 50769336425019,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_cd8434414cc1314c",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-09-30T16:00:00Z",
+    "end": "2025-09-30T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441103666,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_767574b2208ecfde",
+    "title": "GPA & CETL Principles of Pedagogy Workshops",
+    "description": "The Graduate Pedagogy Association in collaboration with the Center for Engaged Teaching and Learning is hosting the Principles of Pedagogy workshop series centered on the book \"How Learning Works\" by Ambrose, S. A., Bridges, M. W., DiPietro, M., Lovett, M. C., & Norman, M. K. (2010). Throughout the academic year there will 7 workshops on the last Tuesday of each Month (with the exception of May) and students who complete 5 out of the 7 workshops along with their associated activities will receive a certificate of participation! If you're interested, please register using the QR code in the flier! \n\n\n RSVP link - https://forms.office.com/r/me7QnBwufu Learn more at http://ucmerced.presence.io/event/gpa-cetl-principles-of-pedagogy-workshops",
+    "start": "2025-09-30T20:00:00Z",
+    "end": "2025-09-30T21:00:00Z",
+    "location": "COB2 392",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/gpa-cetl-principles-of-pedagogy-workshops",
+      "event_id": 50778171358375,
+      "instance_id": 50778171359401,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_ef9d9e9f7af31b1a",
+    "title": "Cultural Dance Practice",
+    "description": "An opportunity for general members to gather and learn dance cultural dances.\n\n\n Learn more at http://ucmerced.presence.io/event/cultural-dance-practice-16",
+    "start": "2025-10-01T01:00:00Z",
+    "end": "2025-10-01T03:00:00Z",
+    "location": "GLCR 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/cultural-dance-practice-3818",
+      "event_id": 50388831677373,
+      "instance_id": 50388831679423,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_8603c06dc0d99eb2",
+    "title": "Tiny Health Tales General Body Meeting #3",
+    "description": "Tiny Health Tales is a club that is dedicated to improving health literacy across the San Joaquin Valley. To do this, we create videos that educate others about prevalent health issues in the Valley, such as asthma, diabetes, ADHD, and the flu.\n\n\n Learn more at http://ucmerced.presence.io/event/tiny-health-tales-general-body-meeting-3",
+    "start": "2025-10-01T02:00:09Z",
+    "end": "2025-10-01T03:00:00Z",
+    "location": "SSB 120",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/tiny-health-tales-general-body-meeting-3",
+      "event_id": 50734011627447,
+      "instance_id": 50734011629497,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_95763bde8c3cf625",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-10-01T03:00:00Z",
+    "end": "2025-10-01T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691720813,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_aeede83e27881e22",
+    "title": "Potential Champion of Anchor Mixer",
+    "description": "Potential champion of the anchors will be able to presnet ot the chapter why they want ot run for champion of the anchor and what does DG mean to them\n\n Learn more at http://ucmerced.presence.io/event/potential-champion-of-anchor-mixer",
+    "start": "2025-10-01T03:00:00Z",
+    "end": "2025-10-01T05:00:00Z",
+    "location": "SSB 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/potential-champion-of-anchor-mixer",
+      "event_id": 50769336423993,
+      "instance_id": 50769336434237,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_0c486a90189970a9",
+    "title": "Delta Sigma Pi Aguas Frescas Fundraiser",
+    "description": "Delta Sigma Pi is hosting our first fundraiser of the year! Come cool off with a refreshing agua fresca.\n\n Learn more at http://ucmerced.presence.io/event/delta-sigma-pi-aguas-frescas-fundraiser",
+    "start": "2025-10-01T16:00:00Z",
+    "end": "2025-10-01T21:00:00Z",
     "location": "Scholars Lane",
-    "tags": ["Food", "snacks", "Drinks"]
+    "lat": 37.366117,
+    "lon": -120.424205,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/delta-sigma-pi-aguas-frescas-fundraiser",
+      "event_id": 50760440384756,
+      "instance_id": 50760440385782,
+      "coord_source": "lookup"
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_8291851fed028ba1",
+    "title": "Free Spiritual Reading",
+    "description": "This initiative provides a unique opportunity for students to deepen their personal relationship with Jesus while also building a strong community with their peers. Whether you are new to faith or have been on this journey for a while, there is also an opportunity for you to learn more about who Jesus is in a supportive environment.\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/free-spiritual-reading-5",
+    "start": "2025-10-01T16:00:00Z",
+    "end": "2025-10-01T21:30:00Z",
+    "location": "Pav Lawn",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/free-spiritual-reading-3279",
+      "event_id": 50672084103459,
+      "instance_id": 50672084104485,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_0f783087b2b33e53",
+    "title": "Private Event!",
+    "description": "We will be having a private event together as an active body!\n\n Learn more at http://ucmerced.presence.io/event/private-event-5",
+    "start": "2025-10-01T16:00:00Z",
+    "end": "2025-10-01T19:00:00Z",
+    "location": "COB 2 265",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/private-event-80",
+      "event_id": 50760440948007,
+      "instance_id": 50760441113907,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_940782178989f977",
+    "title": "Paleta Fundraiser!",
+    "description": "We will be selling paletas on scholar's lane!\n\n Learn more at http://ucmerced.presence.io/event/paleta-fundraiser",
+    "start": "2025-10-01T17:00:00Z",
+    "end": "2025-10-01T22:00:00Z",
+    "location": "Scholar's Lane",
+    "lat": 37.363734,
+    "lon": -120.43111,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paleta-fundraiser",
+      "event_id": 50760442925493,
+      "instance_id": 50760442926519,
+      "coord_source": "feed"
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_7a7610985d6d498c",
+    "title": "Wake Up Wednesday",
+    "description": "Free donuts and coffee every Wednesday morning\n\n\n Learn more at http://ucmerced.presence.io/event/wake-up-wednesday-90",
+    "start": "2025-10-01T17:00:00Z",
+    "end": "2025-10-01T19:00:00Z",
+    "location": "Granite 174",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/wake-up-wednesday-597",
+      "event_id": 49601248776192,
+      "instance_id": 49601248779266,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_395eaf7897fb66ab",
+    "title": "Wake Up Wednesday",
+    "description": "Free donuts and coffee\n\n Learn more at http://ucmerced.presence.io/event/wake-up-wednesday-107",
+    "start": "2025-10-01T17:00:00Z",
+    "end": "2025-10-01T19:00:00Z",
+    "location": "Granite Pass 174",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/wake-up-wednesday-2265",
+      "event_id": 49716295732978,
+      "instance_id": 49716295736052,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_a2593a4ed68605eb",
+    "title": "DG Trivia Night",
+    "description": "there will be multiple rounds regarding to dg history. \n\n Learn more at http://ucmerced.presence.io/event/dg-trivia-night-3",
+    "start": "2025-10-02T01:00:00Z",
+    "end": "2025-10-02T04:00:00Z",
+    "location": "COB 104",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/dg-trivia-night-959",
+      "event_id": 50769336718925,
+      "instance_id": 50769336719951,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_a19d1c79807fd477",
+    "title": "PAA Choir Practice",
+    "description": "Choir practice for UCM PAA general members, one of the divisions in PAA, to cultivate their performances and pieces for Pilipino Cultural Night and other events that PAA has to offer in the spring semester.\n\n\n\n\n\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/paa-choir-practice-21",
+    "start": "2025-10-02T01:00:00Z",
+    "end": "2025-10-02T03:00:00Z",
+    "location": "GL 150",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-choir-practice-9328",
+      "event_id": 50362408838361,
+      "instance_id": 50362408840411,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_9cb8c416476102d3",
+    "title": "PAA Choir Practice",
+    "description": "Choir practice for UCM PAA general members, one of the divisions in PAA, to cultivate their performances and pieces for Pilipino Cultural Night and other events that PAA has to offer in the spring semester.\n\n\n\n\n\n\n\n\n\n\n Learn more at http://ucmerced.presence.io/event/paa-choir-practice-22",
+    "start": "2025-10-02T01:00:00Z",
+    "end": "2025-10-02T03:00:00Z",
+    "location": "GL 135",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/paa-choir-practice-1557",
+      "event_id": 50362409477376,
+      "instance_id": 50362409479426,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_315aa5352b296ddb",
+    "title": "Gathering",
+    "description": "Join us for Chi Alpha Gatherings at UC Merced! Wednesdays at 7pm in COB2 130, we gather for a welcoming time of community, worship, prayer, and engaging in God's Word. Whether you're exploring faith, looking for meaningful friendships, or wanting to grow deeper in your walk with Jesus, you'll find a place here. Everyone is welcome! 7-9pm\n\n Learn more at http://ucmerced.presence.io/event/gathering-11",
+    "start": "2025-10-02T02:00:00Z",
+    "end": "2025-10-02T04:00:00Z",
+    "location": "COB2 130",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/gathering-7475",
+      "event_id": 50645599314213,
+      "instance_id": 50645599315239,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_bd07c4e77d787861",
+    "title": "FSC General Meeting",
+    "description": "This is for the general fsc meeting which repeat weekly unless otherwise.\n\n\n\n\n? Learn more at http://ucmerced.presence.io/event/fsc-general-meeting-21",
+    "start": "2025-10-02T03:00:00Z",
+    "end": "2025-10-02T05:00:00Z",
+    "location": "COB 2 264",
+    "lat": null,
+    "lon": null,
+    "fromUser": false,
+    "tags": [],
+    "source": {
+      "name": "ucm",
+      "url": "https://events.ucmerced.edu/event/fsc-general-meeting",
+      "event_id": 50521691059279,
+      "instance_id": 50521691747438,
+      "coord_source": null
+    },
+    "created_at": "2025-09-18T20:12:50Z",
+    "updated_at": "2025-09-18T20:12:50Z"
+  },
+  {
+    "id": "evt_b98f4b6bb529f03c",
+    "title": "2025 California Forum for Diversity in Graduate Education",
+    "description": "The Forum is a free event aimed to increase access to graduate degree programs. Learn about academic pathways and opportunities for graduate education. Participate in workshops and explore graduate opportunities with recruiters.",
+    "start": "2025-10-18T16:00:00Z",
+    "end": "2025-10-18T23:00:00Z",
+    "location": "University of California, Merced",
+    "lat": null,
+    "lon": null,
+    "fromUser": true,
+    "tags": [],
+    "source": {
+      "name": "user",
+      "url": null,
+      "event_id": null,
+      "instance_id": null
+    },
+    "created_at": "2025-09-18T20:31:05Z",
+    "updated_at": "2025-09-18T20:31:05Z"
   }
 ]
