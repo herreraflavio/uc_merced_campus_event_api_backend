@@ -30,6 +30,7 @@ def get_events():
             "start_at": d.get("start_at"),
             "end_at": d.get("end_at"),
             "host": d.get("host"),
+            "title": d.get("title"),
             "description": d.get("description"),
             "poster_path": d.get("poster_path"),
             "poster_url": d.get("poster_url"),
@@ -48,6 +49,7 @@ def add_events():
     start_at = request.form.get("start_at")    # e.g., "18:00"
     end_at = request.form.get("end_at")        # e.g., "21:00"
     host = request.form.get("host")
+    title = request.form.get("title")
     description = request.form.get("description")
 
     # File comes from request.files
@@ -60,6 +62,7 @@ def add_events():
         "start_at": start_at,
         "end_at": end_at,
         "host": host,
+        "title": title,
         "description": description,
         "poster": poster_file.filename if poster_file else None
     }.items() if not v]
@@ -95,6 +98,7 @@ def add_events():
         "start_at": start_at,
         "end_at": end_at,
         "host": host,
+        "title": title,
         "description": description,
         "poster_path": poster_path,
         "poster_url": poster_url,
