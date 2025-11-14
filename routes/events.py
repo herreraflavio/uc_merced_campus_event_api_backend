@@ -15,13 +15,65 @@ def allowed_file(filename: str) -> bool:
     return "." in filename and filename.rsplit(".", 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+# @events_bp.route("/get/events", methods=["GET"])
+# def get_events():
+#     events_col = current_app.config["EVENTS_COL"]
+#     docs = list(events_col.find().sort("start_dt", 1))
+
+#     events = []
+#     for d in docs:
+#         events.append({
+#             "id": d.get("id"),
+#             "_id": str(d["_id"]),
+#             "location": d.get("location"),
+#             "date": d.get("date"),  # stored as ISO string below
+#             "start_at": d.get("start_at"),
+#             "end_at": d.get("end_at"),
+#             "host": d.get("host"),
+#             "title": d.get("title"),
+#             "description": d.get("description"),
+#             "poster_path": d.get("poster_path"),
+#             "poster_url": d.get("poster_url"),
+#             "start_dt": d.get("start_dt").isoformat() if d.get("start_dt") else None,
+#             "created_at": d.get("created_at").isoformat() if d.get("created_at") else None,
+#         })
+
+#     return jsonify(events)
+
 @events_bp.route("/get/events", methods=["GET"])
 def get_events():
     events_col = current_app.config["EVENTS_COL"]
+
+    # "Now" in PST (we're assuming server is PST; otherwise see note below)
+    now = datetime.now()
+
     docs = list(events_col.find().sort("start_dt", 1))
 
     events = []
     for d in docs:
+        date_str = d.get("date")      # e.g., "2025-11-30"
+        end_at_str = d.get("end_at")  # e.g., "21:00"
+
+        # Default: assume event has ended if we can't parse date/end_at
+        keep = False
+
+        if date_str and end_at_str:
+            try:
+                event_date = datetime.strptime(date_str, "%Y-%m-%d").date()
+                end_time = datetime.strptime(end_at_str, "%H:%M").time()
+                end_dt = datetime.combine(event_date, end_time)  # naive PST
+
+                # Only keep events that have not ended yet
+                if end_dt > now:
+                    keep = True
+
+            except ValueError:
+                # Bad formatting -> treat as ended / drop from list
+                keep = False
+
+        if not keep:
+            continue  # skip this event
+
         events.append({
             "id": d.get("id"),
             "_id": str(d["_id"]),
