@@ -9,7 +9,7 @@ from flask_cors import CORS
 from dotenv import load_dotenv
 
 from routes import (
-    ask_bp,
+    # ask_bp,
     events_bp
 )
 
@@ -23,12 +23,12 @@ from pymongo.errors import DuplicateKeyError
 # Setup
 # ─────────────────────────────
 load_dotenv()
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 app = Flask(__name__)
 CORS(app)
 
-app.register_blueprint(ask_bp, url_prefix="/")
+# app.register_blueprint(ask_bp, url_prefix="/")
 app.register_blueprint(events_bp, url_prefix="/")
 
 MONGODB_URI = os.getenv("MONGODB_URI")

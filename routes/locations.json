@@ -1,0 +1,482 @@
+[
+  {
+    "id": 16,
+    "name": [
+      "Bellevue Lot",
+      "Bellevue",
+      "Bellevue Lot - Green Zone",
+      "Bellevue Lot - Gold Zone",
+      "BL",
+      "BEL"
+    ]
+  },
+  {
+    "id": 296,
+    "name": ["Scholars Lot", "Scholars", "SL"]
+  },
+  {
+    "id": 535,
+    "name": [
+      "Scholars Lot Blue Zone",
+      "Scholars Lot - Blue Zone",
+      "SL Blue",
+      "SLBZ"
+    ]
+  },
+  {
+    "id": 229,
+    "name": ["Scholars Lot H Zone", "Scholars Lot - H Zone", "SL H", "SLHZ"]
+  },
+  {
+    "id": 542,
+    "name": ["Bobcat Field", "BF"]
+  },
+  {
+    "id": 462,
+    "name": ["Recreation Field", "Rec Field", "RF"]
+  },
+  {
+    "id": 860,
+    "name": ["ECEC Lot Blue Zone", "ECEC Lot", "ECEC Blue", "ECEC BZ"]
+  },
+  {
+    "id": 864,
+    "name": ["Early Childhood Education Center", "ECEC"]
+  },
+  {
+    "id": 618,
+    "name": ["Cathedral", "Cathedral Hall", "CH"]
+  },
+  {
+    "id": 731,
+    "name": ["Tenaya", "Tenaya Hall", "TH"]
+  },
+  {
+    "id": 976,
+    "name": ["Half Dome", "Half Dome Housing", "Half Dome Hall", "HDH"]
+  },
+  {
+    "id": 848,
+    "name": [
+      "Summits",
+      "The Summits Housing",
+      "The Summits (Cathedral, Tenaya, Half Dome)"
+    ]
+  },
+  {
+    "id": 876,
+    "name": ["Summits Quad", "Summits Courtyard", "SQ"]
+  },
+  {
+    "id": 634,
+    "name": ["Tulare", "Tulare Hall"]
+  },
+  {
+    "id": 752,
+    "name": ["Madera", "Madera Hall"]
+  },
+  {
+    "id": 946,
+    "name": ["Stanislaus", "Stanislaus Hall"]
+  },
+  {
+    "id": 984,
+    "name": ["Fresno", "Fresno Hall"]
+  },
+  {
+    "id": 762,
+    "name": ["Kings", "Kings Hall"]
+  },
+  {
+    "id": 642,
+    "name": ["Kern", "Kern Hall"]
+  },
+  {
+    "id": 1100,
+    "name": ["San Joaquin", "San Joaquin Hall"]
+  },
+  {
+    "id": 1180,
+    "name": ["Calaveras", "Calaveras Hall"]
+  },
+  {
+    "id": 1110,
+    "name": ["Merced", "Merced Hall"]
+  },
+  {
+    "id": 900,
+    "name": ["Terrace Center", "Valley Dining Commons", "TC"]
+  },
+  {
+    "id": 786,
+    "name": ["Cat Quad", "Cat Quad (Housing Courtyard)", "CQ"]
+  },
+  {
+    "id": 1130,
+    "name": [
+      "Yablokoff-Wallace Dining Center",
+      "Yablokoff-Wallace Dining Center",
+      "Dining Center",
+      "YWDC",
+      "DC"
+    ]
+  },
+  {
+    "id": 1154,
+    "name": ["Scholars Ln / Muir Pass Road"]
+  },
+  {
+    "id": 1313,
+    "name": ["Mariposa Lawn", "MLawn"]
+  },
+  {
+    "id": 1362,
+    "name": ["Mariposa", "Mariposa Hall"]
+  },
+  {
+    "id": 1262,
+    "name": ["Tuolumne", "Tuolumne Hall"]
+  },
+  {
+    "id": 1478,
+    "name": ["Muir Lot", "Muir Parking", "MLot"]
+  },
+  {
+    "id": 1524,
+    "name": ["Student Activities & Athletic Center", "SAAC"]
+  },
+  {
+    "id": 1536,
+    "name": [
+      "Hostetler Court Gymnasium",
+      "Greg & Cathie Hostetler Court",
+      "Hostetler Court",
+      "HCG"
+    ]
+  },
+  {
+    "id": 1320,
+    "name": [
+      "Joseph E. Gallo Recreation & Wellness Center",
+      "Gallo Rec Center",
+      "Gallo Rec",
+      "GRC"
+    ]
+  },
+  {
+    "id": 1612,
+    "name": [
+      "Kolligian Library",
+      "Leo & Dottie Kolligian Library",
+      "Library (KL)",
+      "KL"
+    ]
+  },
+  {
+    "id": 1574,
+    "name": ["Scholar's Lane Spot 1"]
+  },
+  {
+    "id": 1568,
+    "name": ["Scholar's Lane Spot 2"]
+  },
+  {
+    "id": 1610,
+    "name": ["Scholar's Lane Spot 3"]
+  },
+  {
+    "id": 1672,
+    "name": ["Scholar's Lane Spot 4"]
+  },
+  {
+    "id": 1764,
+    "name": ["Library Lot 2", "LL2"]
+  },
+  {
+    "id": 1650,
+    "name": ["Library Lot 1", "LL1"]
+  },
+  {
+    "id": 1848,
+    "name": ["Social Justice Plaza", "SJP"]
+  },
+  {
+    "id": 1846,
+    "name": ["COB2", "Classroom and Office Building 2 (COB2)"]
+  },
+  {
+    "id": 1804,
+    "name": ["COB", "Classroom and Office Building 1 (COB1)", "COB1"]
+  },
+  {
+    "id": 1924,
+    "name": ["AOA", "Academic Office Annex"]
+  },
+  {
+    "id": 1936,
+    "name": ["SSB", "Student Services", "Student Services Building (SSB)"]
+  },
+  {
+    "id": 1978,
+    "name": ["SSB Triangle", "SSB Triangle Lawn", "SSBT"]
+  },
+  {
+    "id": 1882,
+    "name": [
+      "SSM",
+      "Social Sciences and Management",
+      "Social Sciences and Management Building (SSM)"
+    ]
+  },
+  {
+    "id": 1791,
+    "name": ["Le Grand Lot", "Le Grand Lot (Parking)", "LGL"]
+  },
+  {
+    "id": 1694,
+    "name": ["Central Plant", "Central Utility Plant", "CP"]
+  },
+  {
+    "id": 1844,
+    "name": [
+      "TAPS",
+      "Transportation and Parking Services",
+      "Transportation & Parking Services",
+      "TAPS Office"
+    ]
+  },
+  {
+    "id": 1748,
+    "name": ["Facilities Services A", "Facilities Services Building A", "FSA"]
+  },
+  {
+    "id": 1742,
+    "name": ["Facilities Services B", "Facilities Services Building B", "FSB"]
+  },
+  {
+    "id": 1714,
+    "name": ["Research Server", "Data Center", "DCenter"]
+  },
+  {
+    "id": 1974,
+    "name": ["North Bowl Lot 2", "North Bowl Parking Lot 2", "NB2"]
+  },
+  {
+    "id": 2050,
+    "name": ["P3 Lot", "Parking Lot P3", "P3"]
+  },
+  {
+    "id": 1960,
+    "name": ["North Bowl Lot 1", "North Bowl Parking Lot 1", "NB1"]
+  },
+  {
+    "id": 1540,
+    "name": ["Northern Pond", "NPond"]
+  },
+  {
+    "id": 1706,
+    "name": [
+      "University Police",
+      "UC Merced Police Station",
+      "Campus Police",
+      "UCPD"
+    ]
+  },
+  {
+    "id": 1552,
+    "name": [
+      "SE2",
+      "Science and Engineering 2",
+      "Science and Engineering Building 2 (SE2)"
+    ]
+  },
+  {
+    "id": 1544,
+    "name": ["Solar Breezeway", "SBreezeway", "SB"]
+  },
+  {
+    "id": 1670,
+    "name": [
+      "SE1",
+      "Science and Engineering 1",
+      "Science and Engineering Building 1 (SE1)"
+    ]
+  },
+  {
+    "id": 1626,
+    "name": [
+      "Quad Area",
+      "Carol Tomlinson-Keasey Quadrangle",
+      "CTK Quadrangle",
+
+      "CTK",
+      "CTKQ"
+    ]
+  },
+  {
+    "id": 1556,
+    "name": ["Beginnings Sculpture", "Beginnings Statue", "Beginnings"]
+  },
+  {
+    "id": 1232,
+    "name": ["South Bowl", "SBowl"]
+  },
+  {
+    "id": 1084,
+    "name": [
+      "SRE",
+      "Sustainability Research & Engineering",
+      "Sustainability Research & Engineering Building (SRE)"
+    ]
+  },
+  {
+    "id": 1085,
+    "name": ["Academic Quad", "AQ"]
+  },
+  {
+    "id": 1162,
+    "name": [
+      "BSP",
+      "Biomedical Sciences & Physics",
+      "Biomedical Sciences and Physics Building (BSP)"
+    ]
+  },
+  {
+    "id": 1176,
+    "name": ["Greenhouse", "Greenhouses", "GH"]
+  },
+  {
+    "id": 1068,
+    "name": [
+      "EH&S Facility",
+      "Environmental Health & Safety Facility",
+      "EHS",
+      "EH&S"
+    ]
+  },
+  {
+    "id": 712,
+    "name": [
+      "ACS",
+      "Arts & Computational Sciences",
+      "Arts & Computational Sciences Building (ACS)"
+    ]
+  },
+  {
+    "id": 774,
+    "name": ["PAV", "Pavilion"]
+  },
+  {
+    "id": 1106,
+    "name": ["Pavilion Lawn", "PLawn"]
+  },
+  {
+    "id": 1102,
+    "name": ["Little Terrace", "LT"]
+  },
+  {
+    "id": 951,
+    "name": ["Wallace-Dutra Amphitheater", "Campus Amphitheater", "WDA"]
+  },
+  {
+    "id": 816,
+    "name": ["Little Lake", "LLake"]
+  },
+  {
+    "id": 590,
+    "name": [
+      "Glacier Point",
+      "Glacier Point & Glacier Point Housing",
+      "Glacier Point Hall",
+
+      "GP"
+    ]
+  },
+  {
+    "id": 492,
+    "name": ["Glacier Point Green", "Glacier Point Lawn", "GPG"]
+  },
+  {
+    "id": 526,
+    "name": [
+      "Granite Pass",
+      "Granite Pass & Granite Pass Housing",
+      "Granite Pass Hall",
+
+      "GRP"
+    ]
+  },
+  {
+    "id": 484,
+    "name": [
+      "Sentinel Rock",
+      "Sentinel Rock Housing",
+      "Sentinel Rock Hall",
+
+      "SRH"
+    ]
+  },
+  {
+    "id": 356,
+    "name": ["Tennis Courts", "TCourts"]
+  },
+  {
+    "id": 244,
+    "name": ["Basketball Courts", "BCourts"]
+  },
+  {
+    "id": 476,
+    "name": ["Conference Center", "CC"]
+  },
+  {
+    "id": 366,
+    "name": ["Welcome Center", "WC"]
+  },
+  {
+    "id": 361,
+    "name": [
+      "Admin",
+      "Fred and Mitzie Ruiz Administration Center",
+      "Administration Building",
+      "Admin Center",
+      "ADMIN"
+    ]
+  },
+  {
+    "id": 346,
+    "name": ["Book Store", "Bookstore", "Campus Store"]
+  },
+  {
+    "id": 372,
+    "name": ["University Lot", "ULot", "UL"]
+  },
+  {
+    "id": 116,
+    "name": ["El Portal", "El Portal Hall", "EP"]
+  },
+  {
+    "id": 195,
+    "name": ["University Plaza", "UP"]
+  },
+  {
+    "id": 212,
+    "name": ["Welcome Center 2", "WC2"]
+  },
+  {
+    "id": 144,
+    "name": [
+      "Health & Aquatic Center",
+      "Health & Athletics Center",
+      "Aquatics Center",
+      "HAC"
+    ]
+  },
+  {
+    "id": 100,
+    "name": ["University Transit Center", "Transit Center", "UTC"]
+  },
+  {
+    "id": 77,
+    "name": ["Pump House", "PH"]
+  }
+]
