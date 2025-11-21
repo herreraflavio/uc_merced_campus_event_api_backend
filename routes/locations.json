@@ -169,7 +169,8 @@
       "Kolligian Library",
       "Leo & Dottie Kolligian Library",
       "Library (KL)",
-      "KL"
+      "KL",
+      "Library"
     ]
   },
   {
@@ -182,7 +183,7 @@
   },
   {
     "id": 1610,
-    "name": ["Scholar's Lane Spot 3"]
+    "name": ["Scholar's Lane Spot 3", "Scholar's Lane", "Scholars Lane"]
   },
   {
     "id": 1672,
@@ -368,7 +369,7 @@
   },
   {
     "id": 1106,
-    "name": ["Pavilion Lawn", "PLawn"]
+    "name": ["Pavilion Lawn", "PLawn", "PAV Lawn"]
   },
   {
     "id": 1102,
@@ -388,6 +389,7 @@
       "Glacier Point",
       "Glacier Point & Glacier Point Housing",
       "Glacier Point Hall",
+      "GLCR",
 
       "GP"
     ]
@@ -402,6 +404,8 @@
       "Granite Pass",
       "Granite Pass & Granite Pass Housing",
       "Granite Pass Hall",
+      "Granite",
+      "GRAN",
 
       "GRP"
     ]
