@@ -1,12 +1,18 @@
 from flask import Blueprint, jsonify, request
 import json
 import os
+import base64
 from collections import defaultdict, deque
 
+from openai import OpenAI
+from dotenv import load_dotenv
+
+load_dotenv()
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 ask_bp = Blueprint('ask', __name__)
-# ─────────────────────────────
-# Shared helpers
-# ─────────────────────────────
+
+ask_bp = Blueprint('ask', __name__)
 
 
 def extract_json(raw: str) -> dict:
