@@ -7,6 +7,8 @@ from collections import defaultdict, deque
 from openai import OpenAI
 from dotenv import load_dotenv
 
+from helper.normalize_location import normalize_event_location
+
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -20,7 +22,6 @@ def extract_json(raw: str) -> dict:
     """
     # Strip fenced code blocks if present
     if raw.startswith("```") and raw.endswith("```"):
-        # remove the fences, keep internal content
         raw = raw.strip("`").strip()
 
     # Find first '{'
@@ -44,7 +45,27 @@ def extract_json(raw: str) -> dict:
         raise ValueError("Unbalanced braces in model output")
 
     json_str = raw[start: end + 1]
-    return json.loads(json_str)
+
+    event_json = json.loads(json_str)
+    print(event_json)  # This prints successfully because it is a valid dict
+
+    # Make sure we got a dict
+    if not isinstance(event_json, dict):
+        raise ValueError(
+            f"Expected JSON object but got {type(event_json).__name__}")
+
+    # Normalize the location field if present
+    # CORRECT: Using .get() and bracket notation
+    loc = event_json.get("location")
+    print(loc)
+    if loc is not None:
+        normalized = normalize_event_location(loc)
+        # if normalize_event_location returns None, fall back to the original string
+        event_json["location"] = normalized if normalized is not None else loc
+
+    # DELETED: The line causing the crash (event_json.location) was here.
+
+    return event_json
 
 
 # ─────────────────────────────
