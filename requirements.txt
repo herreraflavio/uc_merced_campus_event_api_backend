@@ -4,3 +4,4 @@ flask-cors
 python-dotenv
 requests
 pymongo
+base64
