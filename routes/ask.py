@@ -12,8 +12,6 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ask_bp = Blueprint('ask', __name__)
 
-ask_bp = Blueprint('ask', __name__)
-
 
 def extract_json(raw: str) -> dict:
     """

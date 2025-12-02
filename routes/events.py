@@ -15,7 +15,10 @@ from zoneinfo import ZoneInfo
 from html import unescape
 import logging
 
+from helper import normalize_location
+
 logger = logging.getLogger(__name__)
+
 
 # ─────────────────────────────────────────
 # Blueprint & constants
@@ -69,13 +72,14 @@ def clean_html_to_text(html_text: str) -> str:
 
 # Maps lowercase alias -> Canonical Name
 # Example: {'kl': 'Kolligian Library', 'library (kl)': 'Kolligian Library'}
-LOCATION_MAP: dict[str, str] = {}
+# LOCATION_MAP: dict[str, str] = {}
 
 
 def load_location_map() -> None:
     """
     Load locations.json and build a map of ALL aliases to the first (canonical) name.
     """
+
     global LOCATION_MAP
 
     try:
@@ -110,99 +114,6 @@ def load_location_map() -> None:
 
 # Build location map at import time
 load_location_map()
-
-
-# def normalize_location(raw_location: str | None) -> str | None:
-#     """
-#     1. Removes numbers and special characters from the input.
-#     2. Checks if the result matches a known alias.
-#     3. Returns the Canonical Name if matched, otherwise the cleaned raw string.
-
-#     Example: "KL 184" -> removes "184" -> finds "KL" -> returns "Kolligian Library"
-#     """
-#     if not raw_location:
-#         return None
-
-#     # 1. Lowercase the input
-#     text = raw_location.lower()
-
-#     # 2. Remove numbers (e.g., "184")
-#     text = re.sub(r'\d+', '', text)
-
-#     # 3. Remove special characters like "()" or "-" (leaves only letters and spaces)
-#     text = re.sub(r'[^\w\s]', '', text)
-
-#     # 4. Collapse multiple spaces into one and strip edges
-#     #    "kl   " -> "kl"
-#     cleaned_text = " ".join(text.split())
-
-#     # 5. Check for Exact Match in our map
-#     if cleaned_text in LOCATION_MAP:
-#         return LOCATION_MAP[cleaned_text]
-
-#     # 6. Fallback: Check if a known alias exists *inside* the string
-#     #    We sort keys by length (descending) to match "Bellevue Lot" before "Bellevue"
-#     #    so we don't accidentally match partial words.
-#     sorted_aliases = sorted(LOCATION_MAP.keys(), key=len, reverse=True)
-
-#     for alias in sorted_aliases:
-#         # We use regex \b to ensure we match whole words
-#         pattern = r'\b' + re.escape(alias) + r'\b'
-#         if re.search(pattern, cleaned_text):
-#             return LOCATION_MAP[alias]
-
-#     # If no match found, return the raw string (or cleaned_text if you prefer)
-#     return raw_location.strip()
-
-def normalize_location(raw_location: str | None) -> str | None:
-    """
-    1. PROTECTS specific tokens like COB1/COB2 from number stripping.
-    2. Removes other numbers (room numbers) and special characters.
-    3. Checks if the result matches a known alias.
-    4. Returns the Canonical Name if matched.
-
-    Example: "COB2 130" -> Protect "COB2" -> Remove "130" -> "COB2" -> Lookup
-    """
-    if not raw_location:
-        return None
-
-    # 1. Lowercase the input
-    text = raw_location.lower()
-
-    # 2. PROTECTION: Handle specific cases where we WANT the number kept.
-    #    We replace them with a temporary text-only placeholder so the next step
-    #    doesn't delete the number.
-    #    Matches: "cob1", "cob 1", "cob-1", "cob2", "cob 2", "cob-2"
-    text = re.sub(r'\bcob[\s-]?1\b', '__cob_one__', text)
-    text = re.sub(r'\bcob[\s-]?2\b', '__cob_two__', text)
-
-    # 3. Remove all remaining numbers (e.g., the "130" in "COB2 130")
-    text = re.sub(r'\d+', '', text)
-
-    # 4. Restore the protected tokens back to "cob1" / "cob2"
-    text = text.replace('__cob_one__', 'cob1')
-    text = text.replace('__cob_two__', 'cob2')
-
-    # 5. Remove special characters (leaves only letters, numbers, underscores, spaces)
-    #    We allow alphanumeric so "cob1" survives.
-    text = re.sub(r'[^\w\s]', '', text)
-
-    # 6. Collapse multiple spaces into one and strip edges
-    cleaned_text = " ".join(text.split())
-
-    # 7. Check for Exact Match in our map
-    if cleaned_text in LOCATION_MAP:
-        return LOCATION_MAP[cleaned_text]
-
-    # 8. Fallback: Check if a known alias exists *inside* the string
-    sorted_aliases = sorted(LOCATION_MAP.keys(), key=len, reverse=True)
-
-    for alias in sorted_aliases:
-        pattern = r'\b' + re.escape(alias) + r'\b'
-        if re.search(pattern, cleaned_text):
-            return LOCATION_MAP[alias]
-
-    return raw_location.strip()
 
 
 def extract_slug_from_guid(guid_url: str) -> str | None:
