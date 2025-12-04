@@ -20,7 +20,7 @@ def normalize_event_location(raw_location: str | None) -> str | None:
     # 1. Lowercase the input
     text = raw_location.lower()
 
-    print(text)
+    # print(text)
 
     # 2. PROTECTION: Handle specific cases where we WANT the number kept.
     #    We replace them with a temporary text-only placeholder so the next step
@@ -45,10 +45,10 @@ def normalize_event_location(raw_location: str | None) -> str | None:
 
     # 7. Check for Exact Match in our map
 
-    print(cleaned_text)
-    print(LOCATION_MAP)
+    # print(cleaned_text)
+    # print(LOCATION_MAP)
     if cleaned_text in LOCATION_MAP:
-        print("found")
+        # print("found")
         return LOCATION_MAP[cleaned_text]
 
     # 8. Fallback: Check if a known alias exists *inside* the string

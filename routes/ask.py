@@ -47,6 +47,7 @@ def extract_json(raw: str) -> dict:
     json_str = raw[start: end + 1]
 
     event_json = json.loads(json_str)
+    # add new field location_at = event_json["location"] will keep original raw location
     print(event_json)  # This prints successfully because it is a valid dict
 
     # Make sure we got a dict
@@ -57,6 +58,7 @@ def extract_json(raw: str) -> dict:
     # Normalize the location field if present
     # CORRECT: Using .get() and bracket notation
     loc = event_json.get("location")
+    event_json["location_at"] = loc
     print(loc)
     if loc is not None:
         normalized = normalize_event_location(loc)
