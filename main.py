@@ -62,5 +62,5 @@ app.config["EVENTS_COL"] = events_col
 # Entrypoint
 # ─────────────────────────────
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", "6050"))
+    port = int(os.getenv("PORT", "5050"))
     app.run(host="0.0.0.0", port=port)

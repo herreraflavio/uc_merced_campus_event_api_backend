@@ -37,40 +37,14 @@ FEED_URL = "https://events.ucmerced.edu/live/rss/events/header/All%20Events"
 PRESENCE_EVENTS_URL = "https://api.presence.io/ucmerced/v1/events"
 PRESENCE_CAMPUS_URL = "https://api.presence.io/ucmerced/v1/app/campus"
 
-# Warm-up URL (often helps obtain cookies / pass basic bot checks)
-PRESENCE_WARMUP_URL = "https://ucmerced.presence.io/"
-
-# Browser-like headers (mirrors what you pasted; trimmed to the parts that matter)
-PRESENCE_HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-        "AppleWebKit/537.36 (KHTML, like Gecko) "
-        "Chrome/143.0.0.0 Safari/537.36"
-    ),
-    # Your browser showed a navigation Accept header; keep it close.
-    "Accept": (
-        "text/html,application/xhtml+xml,application/xml;q=0.9,"
-        "image/avif,image/webp,image/apng,*/*;q=0.8,"
-        "application/signed-exchange;v=b3;q=0.7"
-    ),
-    "Accept-Language": "en-US,en;q=0.9,es-US;q=0.8,es;q=0.7",
-    "Upgrade-Insecure-Requests": "1",
-    "Cache-Control": "max-age=0",
-}
-
-# Optional: if you absolutely must send a cookie (not recommended to hardcode),
-# set env var PRESENCE_COOKIE to something like:
-#   export PRESENCE_COOKIE='fs_uid=...'
-PRESENCE_COOKIE_ENV = "PRESENCE_COOKIE"
-
 # Location data (your locations.json)
-# NOTE: your previous join used "/helper/locations.json" which becomes an absolute path on Unix.
 LOCATIONS_JSON_PATH = os.path.join(
-    os.path.dirname(__file__), "helper", "locations.json")
+    os.path.dirname(__file__), "/helper/locations.json")
 
 # Presence cache config
 PRESENCE_CACHE_FILE = os.path.join(
-    os.path.dirname(__file__), "presence_events_cache.json")
+    os.path.dirname(__file__), "presence_events_cache.json"
+)
 PRESENCE_CACHE_TTL = timedelta(hours=6)
 
 # In-process cache
@@ -93,59 +67,55 @@ def clean_html_to_text(html_text: str) -> str:
     return " ".join(text.split())        # collapse whitespace
 
 
-def _presence_session() -> requests.Session:
-    """
-    Create a session that mimics a browser more closely than vanilla requests.
-    Warm up once to potentially acquire cookies on .presence.io and pass basic bot checks.
-    """
-    s = requests.Session()
-    s.headers.update(PRESENCE_HEADERS)
-
-    # If user provided a cookie explicitly, attach it.
-    cookie = os.getenv(PRESENCE_COOKIE_ENV)
-    if cookie:
-        # Do not parse; just pass through as a raw Cookie header.
-        s.headers["Cookie"] = cookie
-
-    # Warm-up navigation (best-effort; non-fatal)
-    try:
-        s.get(PRESENCE_WARMUP_URL, timeout=15)
-    except Exception as e:
-        logger.info("[presence] warm-up skipped/failed: %s", e)
-
-    return s
-
-
-def _get_json_or_raise(session: requests.Session, url: str, timeout: int = 15) -> object:
-    """
-    GET JSON with better diagnostics on failure.
-    """
-    # Referer often matters for WAF rules
-    headers = {"Referer": PRESENCE_WARMUP_URL}
-
-    r = session.get(url, headers=headers, timeout=timeout)
-
-    if r.status_code != 200:
-        body_snip = (r.text or "")[:700]
-        raise RuntimeError(
-            f"Presence request failed: status={r.status_code} url={url} "
-            f"content_type={r.headers.get('content-type')} server={r.headers.get('server')} "
-            f"body_snip={body_snip!r}"
-        )
-
-    # If it says JSON but isn't, you'll see it immediately.
-    try:
-        return r.json()
-    except Exception as e:
-        body_snip = (r.text or "")[:700]
-        raise RuntimeError(
-            f"Presence returned non-JSON for url={url}: {e}; body_snip={body_snip!r}"
-        )
-
-
 # ─────────────────────────────────────────
 # Location Mapping & Normalization
 # ─────────────────────────────────────────
+
+# Maps lowercase alias -> Canonical Name
+# Example: {'kl': 'Kolligian Library', 'library (kl)': 'Kolligian Library'}
+# LOCATION_MAP: dict[str, str] = {}
+
+
+# def load_location_map() -> None:
+#     """
+#     Load locations.json and build a map of ALL aliases to the first (canonical) name.
+#     """
+
+#     global LOCATION_MAP
+
+#     try:
+#         with open(LOCATIONS_JSON_PATH, "r", encoding="utf-8") as f:
+#             locations = json.load(f)
+#     except OSError as e:
+#         logger.warning("Could not load locations.json from %s: %s",
+#                        LOCATIONS_JSON_PATH, e)
+#         LOCATION_MAP = {}
+#         return
+
+#     new_map = {}
+
+#     for loc in locations:
+#         names = loc.get("name") or []
+#         if not names:
+#             continue
+
+#         # The first name in the list is the "Official" name we want to return
+#         canonical_name = names[0]
+
+#         # Map every name in the list to the canonical name
+#         for alias in names:
+#             # Store as lowercase for case-insensitive matching
+#             clean_alias = alias.lower().strip()
+#             new_map[clean_alias] = canonical_name
+
+#     LOCATION_MAP = new_map
+
+#     logger.info("[locations] loaded %d location aliases", len(LOCATION_MAP))
+
+
+# # Build location map at import time
+# load_location_map()
+
 
 def extract_slug_from_guid(guid_url: str) -> str | None:
     """
@@ -176,22 +146,24 @@ def build_presence_events() -> list[dict]:
     Fetch Presence events, normalize to /get/events shape,
     and return a list of event dicts (no caching here).
     """
-    s = _presence_session()
 
     # 1) Campus info (for poster URLs)
     cdn_base = None
     campus_api_id = None
     try:
-        campus_info = _get_json_or_raise(s, PRESENCE_CAMPUS_URL, timeout=15)
-        if isinstance(campus_info, dict):
-            cdn_base = campus_info.get("cdn")
-            campus_api_id = campus_info.get("apiId")
-    except Exception as e:
+        campus_resp = requests.get(PRESENCE_CAMPUS_URL, timeout=10)
+        campus_resp.raise_for_status()
+        campus_info = campus_resp.json()
+        cdn_base = campus_info.get("cdn")
+        campus_api_id = campus_info.get("apiId")
+    except requests.RequestException as e:
         logger.warning("Failed to fetch Presence campus info: %s", e)
         # Non-fatal: fallback to placeholder posters
 
     # 2) Events
-    data = _get_json_or_raise(s, PRESENCE_EVENTS_URL, timeout=20)
+    resp = requests.get(PRESENCE_EVENTS_URL, timeout=10)
+    resp.raise_for_status()
+    data = resp.json()
 
     if not isinstance(data, list):
         raise RuntimeError("Presence API did not return a list")
@@ -247,6 +219,7 @@ def build_presence_events() -> list[dict]:
                 "id": f"presence-{ev.get('eventNoSqlId') or ev.get('uri')}",
                 "_id": ev.get("eventNoSqlId"),  # not a Mongo ObjectId
 
+                # cleaned name for matching, raw for display if needed
                 "location_at": raw_loc,
                 "location": cleaned_loc,
 
@@ -375,13 +348,23 @@ def presence_events():
         events = get_presence_events_cached()
         return jsonify(events)
     except Exception as e:
-        return jsonify({"error": "Failed to load Presence events", "details": str(e)}), 502
+        return jsonify(
+            {"error": "Failed to load Presence events", "details": str(e)}
+        ), 502
 
 
 @events_bp.route("/rss_events", methods=["GET"])
 def rss_events():
     """
     Fetch LiveWhale RSS and return all slugs extracted from <guid> URLs.
+    Example response:
+      {
+        "slugs": [
+          "7571-fsc-general-meeting",
+          "15203-gift-of-life",
+          ...
+        ]
+      }
     """
     try:
         resp = requests.get(FEED_URL, timeout=10)
@@ -401,6 +384,7 @@ def rss_events():
         return jsonify({"error": "No <channel> element in RSS"}), 500
 
     slugs = []
+
     for item in channel.findall("item"):
         guid_el = item.find("guid")
         if guid_el is None or not guid_el.text:
