@@ -344,7 +344,7 @@ def build_presence_events_ios() -> list[dict]:
         image_urls = [poster_url]
 
         # Pin URL (Generic default)
-        pin_url = "https://mapbuilder.ucmercedhub.com/icons/event-pin.png"
+        pin_url = "/event-pin.png"
 
         # Unique ID for iOS
         # Using eventNoSqlId is usually safe, or fall back to uri
