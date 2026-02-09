@@ -344,7 +344,7 @@ def build_presence_events_ios() -> list[dict]:
         image_urls = [poster_url]
 
         # Pin URL (Generic default)
-        pin_url = "https://img.icons8.com/color/96/marker.png"
+        pin_url = "https://mapbuilder.ucmercedhub.com/icons/event-pin.png"
 
         # Unique ID for iOS
         # Using eventNoSqlId is usually safe, or fall back to uri
@@ -547,7 +547,7 @@ def presence_events_ios():
     """iOS version: Modified format + locations.json location matching."""
     try:
         events = get_presence_events_ios_cached()
-        return jsonify(events)
+        return jsonify({"events": events})
     except Exception as e:
         return jsonify({"error": "Failed to load Presence iOS events", "details": str(e)}), 502
 
