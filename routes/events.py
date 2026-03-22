@@ -16,6 +16,7 @@ from html import unescape
 import logging
 
 from helper.normalize_location import normalize_event_location
+from helper.location_map import LOCATION_MAP
 
 logger = logging.getLogger(__name__)
 
@@ -333,8 +334,21 @@ def build_presence_events_ios() -> list[dict]:
         raw_loc = ev.get("location") or ""
         cleaned_loc = normalize_event_location(raw_loc)
 
-        # Lookup Location ID
-        loc_id = find_location_id(cleaned_loc, locations_data)
+        # # Lookup Location ID
+        # loc_id = find_location_id(cleaned_loc, locations_data)
+        # Lookup Location ID and Coordinates directly from our new LOCATION_MAP
+        loc_id = None
+        lat, lon = 37.3655, -120.4245  # Default fallback coordinates
+
+        if cleaned_loc:
+            # normalize_event_location returns the canonical name, which is guaranteed
+            # to be in LOCATION_MAP (since we mapped aliases to themselves too)
+            loc_data = LOCATION_MAP.get(cleaned_loc.lower())
+            if loc_data:
+                loc_id = loc_data.get("id")
+                coords = loc_data.get("coordinates")
+                if coords and len(coords) == 2:
+                    lon, lat = coords  # GeoJSON is [longitude, latitude]
 
         # Prepare Image URLs
         poster_url = "https://via.placeholder.com/600x800.png?text=Event+Poster"
@@ -359,6 +373,7 @@ def build_presence_events_ios() -> list[dict]:
                 "description": description_text,
                 "start": start_utc_str,  # Keep original UTC ISO string "2026-02-08T10:00:00Z"
                 "end": end_utc_str,
+                "location_at": raw_loc,
                 "location": cleaned_loc,
                 "host": ev.get("organizationName") or ev.get("campusName"),
                 "source_url": f"https://ucmerced.presence.io/event/{ev.get('urlName')}" if ev.get('urlName') else "https://ucmerced.presence.io",
@@ -366,8 +381,8 @@ def build_presence_events_ios() -> list[dict]:
                 "pin_url": pin_url
             },
             "geometry": {
-                "latitude": 37.3655,
-                "longitude": -120.4245
+                "latitude": lat,
+                "longitude": lon
             }
         }
 
