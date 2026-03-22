@@ -45,11 +45,8 @@ def normalize_event_location(raw_location: str | None) -> str | None:
 
     # 7. Check for Exact Match in our map
 
-    # print(cleaned_text)
-    # print(LOCATION_MAP)
     if cleaned_text in LOCATION_MAP:
-        # print("found")
-        return LOCATION_MAP[cleaned_text]
+        return LOCATION_MAP[cleaned_text]["name"]
 
     # 8. Fallback: Check if a known alias exists *inside* the string
     sorted_aliases = sorted(LOCATION_MAP.keys(), key=len, reverse=True)
@@ -57,6 +54,21 @@ def normalize_event_location(raw_location: str | None) -> str | None:
     for alias in sorted_aliases:
         pattern = r'\b' + re.escape(alias) + r'\b'
         if re.search(pattern, cleaned_text):
-            return LOCATION_MAP[alias]
+            return LOCATION_MAP[alias]["name"]
 
     return raw_location.strip()
+    # # print(cleaned_text)
+    # # print(LOCATION_MAP)
+    # if cleaned_text in LOCATION_MAP:
+    #     # print("found")
+    #     return LOCATION_MAP[cleaned_text]
+
+    # # 8. Fallback: Check if a known alias exists *inside* the string
+    # sorted_aliases = sorted(LOCATION_MAP.keys(), key=len, reverse=True)
+
+    # for alias in sorted_aliases:
+    #     pattern = r'\b' + re.escape(alias) + r'\b'
+    #     if re.search(pattern, cleaned_text):
+    #         return LOCATION_MAP[alias]
+
+    # return raw_location.strip()
