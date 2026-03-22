@@ -6,6 +6,7 @@
       "Bellevue",
       "Bellevue Lot - Green Zone",
       "Bellevue Lot - Gold Zone",
+      "Bellevue Lot Gold Zone",
       "BL",
       "BEL"
     ]
@@ -20,12 +21,19 @@
       "Scholars Lot Blue Zone",
       "Scholars Lot - Blue Zone",
       "SL Blue",
-      "SLBZ"
+      "SLBZ",
+      "Scholar's Lot Blue Zone"
     ]
   },
   {
     "id": 229,
-    "name": ["Scholars Lot H Zone", "Scholars Lot - H Zone", "SL H", "SLHZ"]
+    "name": [
+      "Scholars Lot H Zone",
+      "Scholars Lot - H Zone",
+      "SL H",
+      "SLHZ",
+      "Scholar's Lot H Zone"
+    ]
   },
   {
     "id": 542,
@@ -187,7 +195,12 @@
   },
   {
     "id": 1610,
-    "name": ["Scholar's Lane Spot 3", "Scholar's Lane", "Scholars Lane"]
+    "name": [
+      "Scholar's Lane Spot 3",
+      "Scholar's Lane",
+      "Scholars Lane",
+      "Scholar’s Lane"
+    ]
   },
   {
     "id": 1672,
@@ -195,7 +208,7 @@
   },
   {
     "id": 1764,
-    "name": ["Library Lot 2", "LL2"]
+    "name": ["Library Lot 2", "LL2", "Library Lot 2 Gold Zone"]
   },
   {
     "id": 1650,
@@ -436,7 +449,7 @@
   },
   {
     "id": 476,
-    "name": ["Conference Center", "Conference Center Room", "CC"]
+    "name": ["Conference Center", "CC"]
   },
   {
     "id": 366,
