@@ -5,6 +5,8 @@ import os
 import re
 import base64
 import requests
+import math
+from collections import Counter
 import unicodedata
 from difflib import SequenceMatcher
 from collections import defaultdict, deque
@@ -348,10 +350,6 @@ if os.path.exists(PRESENCE_CACHE_PATH):
 # ─────────────────────────────
 # New AI Smart Search Route
 # ─────────────────────────────
-# ─────────────────────────────
-# New AI Smart Search Route
-# ─────────────────────────────
-
 
 # Make sure these exist in your app:
 # ask_bp = Blueprint("ask", __name__)
@@ -362,10 +360,16 @@ CONTENT_API_URL = "https://uc-merced-campus-event-api-backend.onrender.com/conte
 # ------------------------------------------------------------------------------
 # CONFIG
 # ------------------------------------------------------------------------------
+# Bumped up to the latest flagship model (swap to "gpt-5" when available in your org)
 MODEL_NAME = "gpt-4o"
+# MODEL_NAME = "gpt-5"
 
 MAX_DESC_CHARS = 220
-MAX_CONTEXT_ITEMS = 8
+
+# Increased max context items for a larger LLM context window
+MAX_CONTEXT_ITEMS = 15
+# Added a minimum floor to ensure the LLM has choices
+MIN_CONTEXT_ITEMS = 4
 
 # Keep full-ish structured nested content for local search only
 MAX_NESTED_SEARCH_CHARS = 16000
@@ -384,7 +388,21 @@ SKIP_NESTED_KEYS = {
 }
 
 # ------------------------------------------------------------------------------
-# WORD BANK / ALIASES
+# STOP WORDS & DYNAMIC WORD BANK
+# ------------------------------------------------------------------------------
+STOP_WORDS = {
+    "a", "an", "the", "and", "or", "but", "in", "on", "at", "to", "for", "of",
+    "with", "is", "are", "was", "were", "it", "this", "that", "these", "those",
+    "then", "just", "so", "than", "such", "both", "through", "about", "while",
+    "during", "what", "they", "we", "he", "she", "if", "because", "as", "when",
+    "where", "how", "who", "which", "be", "has", "have", "had", "do", "does", "did"
+}
+
+# This will be populated dynamically per request
+DYNAMIC_EXPANSIONS = {}
+
+# ------------------------------------------------------------------------------
+# STATIC WORD BANK / ALIASES
 # ------------------------------------------------------------------------------
 DAY_ALIASES = {
     "monday": {"monday", "mon"},
@@ -410,7 +428,6 @@ LOCATION_ALIASES = {
 TOKEN_WORD_BANK = {
     "pav": {"pavilion"},
     "pavilion": {"pav"},
-
     "fri": {"friday"},
     "friday": {"fri"},
     "thu": {"thursday"},
@@ -427,28 +444,22 @@ TOKEN_WORD_BANK = {
     "saturday": {"sat"},
     "sun": {"sunday"},
     "sunday": {"sun"},
-
     "veggie": {"vegetarian", "vegan", "plant", "plantbased"},
     "veg": {"vegetarian", "vegan", "plant", "plantbased"},
     "vegan": {"vegetarian", "plant", "plantbased"},
     "vegetarian": {"vegan", "plant", "plantbased"},
     "plant": {"plantbased", "vegan", "vegetarian"},
     "plantbased": {"plant", "vegan", "vegetarian"},
-
     "gf": {"gluten", "free", "glutenfree"},
     "glutenfree": {"gluten", "free", "gf"},
-
     "coffee": {"decaf", "drinks", "tea"},
     "tea": {"drinks", "coffee"},
-
     "burger": {"burgers"},
     "taco": {"tacos"},
     "ramen": {"noodle", "pho"},
     "pho": {"ramen", "noodle"},
     "pizza": {"pies"},
     "salad": {"greens"},
-
-    # Parking extensions
     "park": {"parking", "lot"},
     "parking": {"park", "lot"},
     "lot": {"park", "parking"},
@@ -463,11 +474,23 @@ PHRASE_WORD_BANK = {
 # ------------------------------------------------------------------------------
 # TEXT HELPERS
 # ------------------------------------------------------------------------------
+def make_singular(word: str) -> str:
+    """Basic plural to singular conversion to make matching less strict."""
+    if len(word) <= 3:
+        return word
+    if word.endswith('ies'):
+        return word[:-3] + 'y'
+    elif word.endswith('es') and not word.endswith('ss'):
+        return word[:-2]
+    elif word.endswith('s') and not word.endswith('ss'):
+        return word[:-1]
+    return word
+
+
 def normalize_text(value: str) -> str:
     """Lowercase, ASCII-normalize, remove noise, collapse whitespace."""
     if value is None:
         return ""
-
     text = str(value)
     text = unicodedata.normalize("NFKD", text)
     text = text.encode("ascii", "ignore").decode("ascii")
@@ -478,7 +501,13 @@ def normalize_text(value: str) -> str:
 
 
 def tokenize(text: str):
-    return {tok for tok in normalize_text(text).split() if len(tok) > 1}
+    """Tokenize and automatically include singular versions of words."""
+    tokens = set()
+    for tok in normalize_text(text).split():
+        if len(tok) > 1 and tok not in STOP_WORDS:
+            tokens.add(tok)
+            tokens.add(make_singular(tok))
+    return tokens
 
 
 def strip_urls(text: str) -> str:
@@ -497,13 +526,6 @@ def compact_description(text: str, limit: int = MAX_DESC_CHARS) -> str:
 
 
 def compact_nested_value(value: str) -> str:
-    """
-    Compress nested text while preserving meaning.
-    Examples:
-      'Station: Lake Wok' -> 'station=Lake Wok'
-      'Description: Choice of ...' -> 'desc=Choice of ...'
-      'Calories: 940 Cal.' -> 'cal=940'
-    """
     text = strip_urls(value)
     if not text:
         return ""
@@ -527,19 +549,59 @@ def compact_nested_value(value: str) -> str:
 def join_with_limit(parts, max_chars):
     out = []
     total = 0
-
     for part in parts:
         if not part:
             continue
-
-        add_len = len(part) if not out else len(part) + 5  # " ### "
+        add_len = len(part) if not out else len(part) + 5
         if total + add_len > max_chars:
             break
-
         out.append(part)
         total += add_len
-
     return " ### ".join(out)
+
+
+# ------------------------------------------------------------------------------
+# DYNAMIC GENERATION HELPERS
+# ------------------------------------------------------------------------------
+def generate_dynamic_word_bank(pages: list):
+    """
+    Builds a dynamic word bank by analyzing the text payload using a 
+    Gaussian distribution approach to isolate meaningful keywords.
+    """
+    global DYNAMIC_EXPANSIONS
+    DYNAMIC_EXPANSIONS.clear()
+
+    all_words = []
+    for p in pages:
+        text_blob = f"{p.get('title', '')} {p.get('description', '')} {json.dumps(p.get('nested_content', ''))}"
+        norm = normalize_text(text_blob)
+        words = [make_singular(w) for w in norm.split()
+                 if len(w) > 2 and w not in STOP_WORDS]
+        all_words.extend(words)
+
+    if not all_words:
+        return
+
+    counts = Counter(all_words)
+    freqs = list(counts.values())
+
+    mean_freq = sum(freqs) / len(freqs)
+    variance = sum((f - mean_freq) ** 2 for f in freqs) / len(freqs)
+    std_dev = math.sqrt(variance) if variance > 0 else 1
+
+    # Keep words that fall within 1 standard deviation of the mean (removes extreme outliers/corpus stopwords)
+    valid_words = [w for w, f in counts.items() if (
+        mean_freq - std_dev) <= f <= (mean_freq + std_dev)]
+
+    for w in valid_words:
+        sing = make_singular(w)
+        if sing not in DYNAMIC_EXPANSIONS:
+            DYNAMIC_EXPANSIONS[sing] = set()
+        DYNAMIC_EXPANSIONS[sing].add(w)
+        if w != sing:
+            if w not in DYNAMIC_EXPANSIONS:
+                DYNAMIC_EXPANSIONS[w] = set()
+            DYNAMIC_EXPANSIONS[w].add(sing)
 
 
 # ------------------------------------------------------------------------------
@@ -562,10 +624,10 @@ def detect_canonical_matches(text: str, alias_map: dict) -> set:
                     found.add(canonical)
                     break
             else:
-                if alias_norm in tokens:
+                # Check normal or singular forms
+                if alias_norm in tokens or make_singular(alias_norm) in tokens:
                     found.add(canonical)
                     break
-
     return found
 
 
@@ -574,21 +636,25 @@ def build_query_hints(query: str) -> dict:
     raw_tokens = set(query_norm.split())
     expanded_tokens = set(raw_tokens)
 
-    # phrase expansion
+    # Singularize raw tokens
+    for tok in list(raw_tokens):
+        expanded_tokens.add(make_singular(tok))
+
+    # Phrase expansion
     for phrase, expansions in PHRASE_WORD_BANK.items():
         phrase_norm = normalize_text(phrase)
         if phrase_norm in query_norm:
             expanded_tokens.update(expansions)
 
-    # token expansion
-    for tok in list(raw_tokens):
+    # Token expansion (Static + Dynamic)
+    for tok in list(expanded_tokens):
         expanded_tokens.update(TOKEN_WORD_BANK.get(tok, set()))
+        expanded_tokens.update(DYNAMIC_EXPANSIONS.get(tok, set()))
 
     days = detect_canonical_matches(query, DAY_ALIASES)
     meals = detect_canonical_matches(query, MEAL_ALIASES)
     locations = detect_canonical_matches(query, LOCATION_ALIASES)
 
-    # include canonical forms and aliases in expanded token bag
     for d in days:
         expanded_tokens.add(d)
         expanded_tokens.update(DAY_ALIASES.get(d, set()))
@@ -623,26 +689,19 @@ def canonicalize_from_aliases(value: str, alias_map: dict) -> str:
 # NESTED CONTENT EXTRACTION
 # ------------------------------------------------------------------------------
 def gather_generic_strings(obj, fragments):
-    """
-    Fallback walker for unexpected nested structures.
-    Pulls string values while skipping known URL/image/link keys.
-    """
     if isinstance(obj, dict):
         for key, value in obj.items():
             if key in SKIP_NESTED_KEYS:
                 continue
-
             if isinstance(value, str):
                 compact = compact_nested_value(value)
                 if compact:
                     fragments.append(compact)
             elif isinstance(value, (dict, list)):
                 gather_generic_strings(value, fragments)
-
     elif isinstance(obj, list):
         for item in obj:
             gather_generic_strings(item, fragments)
-
     elif isinstance(obj, str):
         compact = compact_nested_value(obj)
         if compact:
@@ -651,7 +710,6 @@ def gather_generic_strings(obj, fragments):
 
 def make_segment_text(day_title: str, tab_title: str, header: str, extra_parts: list) -> str:
     parts = []
-
     if day_title:
         parts.append(f"day={day_title}")
     if tab_title:
@@ -676,11 +734,6 @@ def make_segment_text(day_title: str, tab_title: str, header: str, extra_parts: 
 
 
 def extract_nested_segments(nested_content):
-    """
-    Preserve nested content as compact, structured, delimited segments.
-    Example segment:
-      day=Friday || tab=Lunch || item=Blackened Salmon || station=Rufus || desc=Protein Choice ...
-    """
     segments = []
     seq = 0
 
@@ -693,16 +746,16 @@ def extract_nested_segments(nested_content):
                 continue
 
             day_title = strip_urls(day_obj.get("title", "") or "")
-
             tabs = day_obj.get("tabs", [])
+
             if isinstance(tabs, list) and tabs:
                 for tab_obj in tabs:
                     if not isinstance(tab_obj, dict):
                         continue
 
                     tab_title = strip_urls(tab_obj.get("title", "") or "")
-
                     sections = tab_obj.get("sections", [])
+
                     if isinstance(sections, list) and sections:
                         for section in sections:
                             if not isinstance(section, dict):
@@ -716,7 +769,6 @@ def extract_nested_segments(nested_content):
                             if isinstance(bullets, list):
                                 extra_parts.extend(bullets)
 
-                            # include any other string fields except skipped structural/media keys
                             for key, value in section.items():
                                 if key in {"header", "bullets"} or key in SKIP_NESTED_KEYS:
                                     continue
@@ -741,7 +793,6 @@ def extract_nested_segments(nested_content):
                             })
                             seq += 1
                     else:
-                        # fallback for a tab with no sections
                         fallback_parts = []
                         gather_generic_strings(tab_obj, fallback_parts)
                         text = make_segment_text(
@@ -760,7 +811,6 @@ def extract_nested_segments(nested_content):
                             })
                             seq += 1
             else:
-                # fallback for a day object with no tabs
                 fallback_parts = []
                 gather_generic_strings(day_obj, fallback_parts)
                 text = make_segment_text(day_title, "", "", fallback_parts)
@@ -825,7 +875,6 @@ def score_segment(query_hints: dict, segment: dict) -> float:
 
     if query_hints["days"] and segment["day_canonical"] in query_hints["days"]:
         day_bonus += 0.60
-
     if query_hints["meals"] and segment["tab_canonical"] in query_hints["meals"]:
         meal_bonus += 0.50
 
@@ -834,9 +883,10 @@ def score_segment(query_hints: dict, segment: dict) -> float:
     if header_norm:
         header_hits = sum(1 for tok in expanded_tokens if tok in header_norm)
 
+    # Less strict: Bumped sequence weight, slightly lowered rigid overlap threshold
     score = (
-        (overlap_ratio * 0.45) +
-        (seq_ratio * 0.20) +
+        (overlap_ratio * 0.35) +
+        (seq_ratio * 0.25) +
         (contains_boost * 0.15) +
         day_bonus +
         meal_bonus +
@@ -847,10 +897,6 @@ def score_segment(query_hints: dict, segment: dict) -> float:
 
 
 def build_query_aware_nested_excerpt(segments, query_hints, max_chars=MAX_NESTED_CONTEXT_CHARS) -> str:
-    """
-    Selects the most relevant structured nested segments for the LLM.
-    Keeps delimiters and structure.
-    """
     if not segments:
         return ""
 
@@ -875,7 +921,7 @@ def build_query_aware_nested_excerpt(segments, query_hints, max_chars=MAX_NESTED
             continue
 
         text = seg["text"]
-        add_len = len(text) if not selected else len(text) + 5  # " ### "
+        add_len = len(text) if not selected else len(text) + 5
 
         if selected_chars + add_len > max_chars:
             continue
@@ -887,7 +933,6 @@ def build_query_aware_nested_excerpt(segments, query_hints, max_chars=MAX_NESTED
         if len(selected) >= 8:
             break
 
-    # fallback: if nothing scored, use the first segments in original order
     if not selected:
         for seg in sorted(segments, key=lambda s: s["idx"]):
             text = seg["text"]
@@ -897,9 +942,7 @@ def build_query_aware_nested_excerpt(segments, query_hints, max_chars=MAX_NESTED
             selected.append(seg)
             selected_chars += add_len
 
-    # restore original order for readability
     selected.sort(key=lambda s: s["idx"])
-
     return " ### ".join(seg["text"] for seg in selected)
 
 
@@ -918,23 +961,12 @@ def encode_item(item: dict) -> dict:
 
     nested_segments = extract_nested_segments(item.get("nested_content", []))
     nested_structured_text = collapse_structured_segments(
-        nested_segments,
-        max_chars=MAX_NESTED_SEARCH_CHARS
-    )
+        nested_segments, max_chars=MAX_NESTED_SEARCH_CHARS)
 
     tags_text = " ".join(str(t) for t in tags)
 
-    # this larger search blob is only for local ranking
     search_blob = " | ".join(
-        part for part in [
-            title,
-            subtitle,
-            host,
-            tags_text,
-            description,
-            nested_structured_text,
-            item_type
-        ] if part
+        part for part in [title, subtitle, host, tags_text, description, nested_structured_text, item_type] if part
     )
 
     compact_item = {
@@ -961,10 +993,6 @@ def encode_item(item: dict) -> dict:
 
 
 def score_encoded_item(query_hints: dict, encoded: dict) -> float:
-    """
-    Local pre-ranker.
-    Combines top-level field relevance + best nested segment relevance.
-    """
     query_norm = query_hints["query_norm"]
     expanded_tokens = query_hints["expanded_tokens"]
 
@@ -1004,11 +1032,14 @@ def score_encoded_item(query_hints: dict, encoded: dict) -> float:
     nested_scores = [score_segment(query_hints, seg)
                      for seg in encoded["nested_segments"]]
     best_nested_score = max(nested_scores) if nested_scores else 0.0
-    nested_match_count = sum(1 for s in nested_scores if s >= 0.60)
 
+    # Less strict: lowered nested match count threshold from 0.60 to 0.40
+    nested_match_count = sum(1 for s in nested_scores if s >= 0.40)
+
+    # Increased seq_ratio weight, slightly reduced overlap_ratio dependency
     score = (
-        (overlap_ratio * 0.35) +
-        (seq_ratio * 0.15) +
+        (overlap_ratio * 0.30) +
+        (seq_ratio * 0.20) +
         (contains_boost * 0.12) +
         field_boost +
         (best_nested_score * 0.40) +
@@ -1028,151 +1059,65 @@ def ask_ai():
     print("=" * 100)
 
     try:
-        # ------------------------------------------------------------------
-        # 1) LOG REQUEST
-        # ------------------------------------------------------------------
         print(f"Method: {request.method}")
         print(f"Path: {request.path}")
         print(f"Content-Type: {request.content_type}")
 
         raw_body = request.get_data(cache=True, as_text=True)
-        print("\n--- RAW REQUEST BODY ---")
-        print(raw_body if raw_body else "(empty body)")
-
         data = request.get_json(silent=True) or {}
-        print("\n--- PARSED JSON BODY ---")
-        print(json.dumps(data, indent=2, ensure_ascii=False))
 
         query = str(data.get("query", "")).strip()
         item_ids = data.get("item_ids", [])
 
-        print("\n--- EXTRACTED FIELDS ---")
-        print(f"query: {query!r}")
-        print(f"item_ids type: {type(item_ids).__name__}")
-        print(
-            f"item_ids count: {len(item_ids) if isinstance(item_ids, list) else 'N/A'}")
-        print(f"item_ids value: {item_ids}")
-
         if not query:
-            print("❌ No query provided")
             return jsonify({"error": "No query provided"}), 400
-
         if not isinstance(item_ids, list):
-            print("❌ item_ids must be an array")
             return jsonify({"error": "item_ids must be an array"}), 400
-
         if not item_ids:
-            empty_response = {
+            return jsonify({
                 "ai_overview": "No item_ids were provided in the request.",
                 "citations": [],
                 "ranked_item_ids": []
-            }
-            print("\n--- FINAL RESPONSE (NO item_ids) ---")
-            print(json.dumps(empty_response, indent=2, ensure_ascii=False))
-            print("=" * 100)
-            print("📤 /ai REQUEST END")
-            print("=" * 100 + "\n")
-            return jsonify(empty_response), 200
+            }), 200
+
+        # ------------------------------------------------------------------
+        # 1) FETCH LIVE CONTENT & GENERATE DYNAMIC WORD BANK
+        # ------------------------------------------------------------------
+        content_resp = requests.get(CONTENT_API_URL, timeout=15)
+        content_resp.raise_for_status()
+        content_json = content_resp.json()
+
+        pages = content_json.get("pages", [])
+        if not isinstance(pages, list):
+            return jsonify({"error": "Invalid content API response"}), 500
+
+        # Build the dynamic Gaussian word bank on the fly
+        generate_dynamic_word_bank(pages)
 
         # ------------------------------------------------------------------
         # 2) QUERY HINTS / WORD BANK EXPANSION
         # ------------------------------------------------------------------
         query_hints = build_query_hints(query)
 
-        print("\n--- QUERY HINTS / WORD BANK EXPANSION ---")
-        print(json.dumps({
-            "query_norm": query_hints["query_norm"],
-            "raw_tokens": sorted(query_hints["raw_tokens"]),
-            "expanded_tokens": sorted(query_hints["expanded_tokens"]),
-            "days": sorted(query_hints["days"]),
-            "meals": sorted(query_hints["meals"]),
-            "locations": sorted(query_hints["locations"]),
-        }, indent=2, ensure_ascii=False))
-
         # ------------------------------------------------------------------
-        # 3) FETCH LIVE CONTENT
-        # ------------------------------------------------------------------
-        print("\n--- FETCHING CONTENT API ---")
-        print(f"GET {CONTENT_API_URL}")
-
-        content_resp = requests.get(CONTENT_API_URL, timeout=15)
-        print(f"Content API status: {content_resp.status_code}")
-
-        print("\n--- CONTENT API RAW TEXT (truncated) ---")
-        print(content_resp.text[:5000])
-
-        content_resp.raise_for_status()
-        content_json = content_resp.json()
-
-        print("\n--- CONTENT API PARSED JSON (truncated) ---")
-        print(json.dumps(content_json, indent=2, ensure_ascii=False)[:5000])
-
-        pages = content_json.get("pages", [])
-        if not isinstance(pages, list):
-            print("❌ Invalid content API response: 'pages' is not a list")
-            return jsonify({
-                "error": "Invalid content API response",
-                "details": "'pages' was not a list"
-            }), 500
-
-        print("\n--- CONTENT API SUMMARY ---")
-        print(f"Total pages returned: {len(pages)}")
-
-        available_ids = [p.get("id") for p in pages if p.get("id")]
-        print(f"Available page IDs ({len(available_ids)}):")
-        print(json.dumps(available_ids, indent=2))
-
-        # ------------------------------------------------------------------
-        # 4) FILTER TO USER item_ids
+        # 3) FILTER TO USER item_ids
         # ------------------------------------------------------------------
         valid_items = [p for p in pages if p.get("id") in item_ids]
 
-        print("\n--- MATCHING ITEMS AFTER item_ids FILTER ---")
-        print(f"Matched valid_items count: {len(valid_items)}")
-        print("Matched IDs:")
-        print(json.dumps([item.get("id") for item in valid_items], indent=2))
-
         if not valid_items:
-            no_match_response = {
+            return jsonify({
                 "ai_overview": "I could not find any matching items for the item_ids you sent.",
                 "citations": [],
                 "ranked_item_ids": []
-            }
-            print("\n--- FINAL RESPONSE (NO MATCHING ITEMS) ---")
-            print(json.dumps(no_match_response, indent=2, ensure_ascii=False))
-            print("=" * 100)
-            print("📤 /ai REQUEST END")
-            print("=" * 100 + "\n")
-            return jsonify(no_match_response), 200
+            }), 200
 
         # ------------------------------------------------------------------
-        # 5) ENCODE ITEMS WITH FULL STRUCTURED NESTED CONTENT
+        # 4) ENCODE ITEMS
         # ------------------------------------------------------------------
         encoded_items = [encode_item(item) for item in valid_items]
 
-        original_payload_size = len(
-            json.dumps(valid_items, ensure_ascii=False))
-        compact_payload_size = len(json.dumps(
-            [e["compact"] for e in encoded_items], ensure_ascii=False))
-        nested_structured_size = len(json.dumps(
-            [e["nested_structured_text"] for e in encoded_items], ensure_ascii=False))
-
-        print("\n--- CONTEXT SIZE BEFORE / AFTER COMPACTION ---")
-        print(f"Original valid_items JSON chars:  {original_payload_size}")
-        print(f"Compact encoded JSON chars:      {compact_payload_size}")
-        print(f"Structured nested JSON chars:    {nested_structured_size}")
-
-        print("\n--- STRUCTURED NESTED CONTENT PREVIEW ---")
-        for enc in encoded_items[:5]:
-            print(json.dumps({
-                "id": enc["compact"]["id"],
-                "title": enc["compact"]["title"],
-                "nested_segment_count": len(enc["nested_segments"]),
-                "nested_structured_preview": enc["nested_structured_text"][:700]
-            }, indent=2, ensure_ascii=False))
-
         # ------------------------------------------------------------------
-        # 6) LOCAL PRE-RANK
+        # 5) LOCAL PRE-RANK
         # ------------------------------------------------------------------
         scored = []
         for enc in encoded_items:
@@ -1184,34 +1129,21 @@ def ask_ai():
 
         scored.sort(key=lambda x: x["score"], reverse=True)
 
-        print("\n--- LOCAL PRE-RANK RESULTS ---")
-        for row in scored:
-            c = row["encoded"]["compact"]
-            best_excerpt = build_query_aware_nested_excerpt(
-                row["encoded"]["nested_segments"],
-                query_hints,
-                max_chars=350
-            )
-
-            print(json.dumps({
-                "score": row["score"],
-                "id": c["id"],
-                "title": c["title"],
-                "subtitle": c.get("subtitle", ""),
-                "tags": c.get("tags", []),
-                "nested_segment_count": len(row["encoded"]["nested_segments"]),
-                "query_aware_nested_preview": best_excerpt
-            }, indent=2, ensure_ascii=False))
-
         # ------------------------------------------------------------------
-        # 7) BUILD LLM CANDIDATES
+        # 6) BUILD LLM CANDIDATES (Enforce Max and Min Rankings)
         # ------------------------------------------------------------------
         top_scored = scored[:MAX_CONTEXT_ITEMS]
-        llm_candidates = []
 
+        # Ensure we always provide at least MIN_CONTEXT_ITEMS if available
+        if len(top_scored) < MIN_CONTEXT_ITEMS and len(scored) >= MIN_CONTEXT_ITEMS:
+            top_scored = scored[:MIN_CONTEXT_ITEMS]
+        elif len(top_scored) == 0 and scored:
+            top_scored = scored
+
+        llm_candidates = []
         for row in top_scored:
             enc = row["encoded"]
-            compact = dict(enc["compact"])  # copy
+            compact = dict(enc["compact"])
 
             nested_compact = build_query_aware_nested_excerpt(
                 enc["nested_segments"],
@@ -1224,18 +1156,8 @@ def ask_ai():
 
             llm_candidates.append(compact)
 
-        print("\n--- TOP ITEMS SENT TO LLM ---")
-        print(json.dumps(llm_candidates, indent=2, ensure_ascii=False))
-
-        print("\n--- TOP ITEM IDS SENT TO LLM ---")
-        print([item["id"] for item in llm_candidates])
-
-        reduced_payload_size = len(json.dumps(
-            llm_candidates, ensure_ascii=False))
-        print(f"\nReduced LLM context JSON chars: {reduced_payload_size}")
-
         # ------------------------------------------------------------------
-        # 8) BUILD PROMPT
+        # 7) BUILD PROMPT
         # ------------------------------------------------------------------
         system_prompt = (
             "You are an intelligent campus content assistant. "
@@ -1255,18 +1177,8 @@ def ask_ai():
             "available_items": llm_candidates
         }, indent=2, ensure_ascii=False)
 
-        print("\n" + "-" * 100)
-        print("🧠 SYSTEM PROMPT")
-        print("-" * 100)
-        print(system_prompt)
-
-        print("\n" + "-" * 100)
-        print("🧠 USER CONTENT TO MODEL")
-        print("-" * 100)
-        print(user_content)
-
         # ------------------------------------------------------------------
-        # 9) CALL MODEL
+        # 8) CALL MODEL
         # ------------------------------------------------------------------
         resp = client.chat.completions.create(
             model=MODEL_NAME,
@@ -1280,13 +1192,8 @@ def ask_ai():
 
         raw = (resp.choices[0].message.content or "").strip()
 
-        print("\n" + "-" * 100)
-        print("🤖 RAW LLM RESPONSE")
-        print("-" * 100)
-        print(raw if raw else "(empty model response)")
-
         # ------------------------------------------------------------------
-        # 10) EXTRACT RANKED IDS
+        # 9) EXTRACT RANKED IDS
         # ------------------------------------------------------------------
         ranked_item_ids = []
 
@@ -1295,26 +1202,15 @@ def ask_ai():
             found_ids = [x.strip()
                          for x in tag_match.group(1).split(",") if x.strip()]
             ranked_item_ids = [x for x in found_ids if x in item_ids]
-
-            print("\n--- ID EXTRACTION: TAG MATCH ---")
-            print(f"Found IDs: {found_ids}")
-            print(f"Validated ranked_item_ids: {ranked_item_ids}")
-
         elif re.search(r"IDs?:\s*(.*)", raw, re.IGNORECASE):
             fallback_match = re.search(r"IDs?:\s*(.*)", raw, re.IGNORECASE)
             found_ids = fallback_match.group(1).replace(",", " ").split()
             ranked_item_ids = [x.strip()
                                for x in found_ids if x.strip() in item_ids]
 
-            print("\n--- ID EXTRACTION: FALLBACK MATCH ---")
-            print(f"Found IDs: {found_ids}")
-            print(f"Validated ranked_item_ids: {ranked_item_ids}")
-
         if not ranked_item_ids:
             ranked_item_ids = [row["encoded"]["compact"]["id"]
                                for row in top_scored]
-            print("\n--- ID EXTRACTION FALLBACK: USE LOCAL PRE-RANK ---")
-            print(f"ranked_item_ids: {ranked_item_ids}")
 
         ai_overview = re.sub(r"\[IDS:.*?\]", "", raw,
                              flags=re.IGNORECASE).strip()
@@ -1324,7 +1220,7 @@ def ask_ai():
             ai_overview = "Here are the top matches based on your search."
 
         # ------------------------------------------------------------------
-        # 11) BUILD CITATIONS
+        # 10) BUILD CITATIONS
         # ------------------------------------------------------------------
         citations = []
         for pid in ranked_item_ids:
@@ -1333,9 +1229,7 @@ def ask_ai():
             if not matched_item:
                 continue
 
-            # Prioritize label name (for map polygons), then fallback to location or host.
             snippet = ""
-
             if isinstance(matched_item.get("label"), dict) and matched_item["label"].get("name"):
                 snippet = str(matched_item["label"].get("name")).strip()
             elif matched_item.get("location"):
@@ -1358,9 +1252,6 @@ def ask_ai():
             "ranked_item_ids": ranked_item_ids
         }
 
-        print("\n--- FINAL RESPONSE PAYLOAD ---")
-        print(json.dumps(final_response, indent=2, ensure_ascii=False))
-
         print("=" * 100)
         print("📤 /ai REQUEST END")
         print("=" * 100 + "\n")
@@ -1368,27 +1259,6 @@ def ask_ai():
         return jsonify(final_response), 200
 
     except requests.exceptions.RequestException as e:
-        print("\n" + "!" * 100)
-        print("💥 CONTENT API REQUEST ERROR")
-        print("!" * 100)
-        print(f"Error type: {type(e).__name__}")
-        print(f"Error message: {str(e)}")
-        print("!" * 100 + "\n")
-
-        return jsonify({
-            "error": "Failed to fetch content API data",
-            "details": str(e)
-        }), 502
-
+        return jsonify({"error": "Failed to fetch content API data", "details": str(e)}), 502
     except Exception as e:
-        print("\n" + "!" * 100)
-        print("💥 /ai ERROR")
-        print("!" * 100)
-        print(f"Error type: {type(e).__name__}")
-        print(f"Error message: {str(e)}")
-        print("!" * 100 + "\n")
-
-        return jsonify({
-            "error": "Failed to generate AI response",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": "Failed to generate AI response", "details": str(e)}), 500
