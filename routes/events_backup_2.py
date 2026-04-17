@@ -20,6 +20,7 @@ from helper.location_map import LOCATION_MAP
 
 logger = logging.getLogger(__name__)
 
+
 # ─────────────────────────────────────────
 # Blueprint & constants
 # ─────────────────────────────────────────
@@ -37,7 +38,7 @@ FEED_URL = "https://events.ucmerced.edu/live/rss/events/header/All%20Events"
 PRESENCE_EVENTS_URL = "https://api.presence.io/ucmerced/v1/events"
 PRESENCE_CAMPUS_URL = "https://api.presence.io/ucmerced/v1/app/campus"
 
-# Warm-up URL
+# Warm-up URL (often helps obtain cookies / pass basic bot checks)
 PRESENCE_WARMUP_URL = "https://ucmerced.presence.io/"
 
 # Browser-like headers
@@ -61,6 +62,7 @@ PRESENCE_COOKIE_ENV = "PRESENCE_COOKIE"
 
 # ─── File Paths ───
 
+# Shared locations.json (used for both path resolving and ID lookup)
 LOCATIONS_JSON_PATH = os.path.join(
     os.path.dirname(__file__), "../helper/locations.json")
 
@@ -80,12 +82,6 @@ PRESENCE_IOS_CACHE_FILE = os.path.join(
 PRESENCE_IOS_CACHE: list[dict] | None = None
 PRESENCE_IOS_CACHE_EXPIRES_AT: datetime | None = None
 
-# 3. Content API (Pages) Cache
-PRESENCE_PAGES_CACHE_FILE = os.path.join(
-    os.path.dirname(__file__), "presence_pages_cache.json")
-PRESENCE_PAGES_CACHE: list[dict] | None = None
-PRESENCE_PAGES_CACHE_EXPIRES_AT: datetime | None = None
-
 
 # ─────────────────────────────────────────
 # Generic helpers
@@ -96,12 +92,16 @@ def allowed_file(filename: str) -> bool:
 
 
 def clean_html_to_text(html_text: str) -> str:
+    """Roughly convert Presence HTML descriptions into plain text."""
     text = unescape(html_text or "")
-    text = re.sub(r"<[^>]+>", "", text)
-    return " ".join(text.split())
+    text = re.sub(r"<[^>]+>", "", text)  # strip tags
+    return " ".join(text.split())        # collapse whitespace
 
 
 def _presence_session() -> requests.Session:
+    """
+    Create a session that mimics a browser more closely than vanilla requests.
+    """
     s = requests.Session()
     s.headers.update(PRESENCE_HEADERS)
 
@@ -136,10 +136,10 @@ def _get_json_or_raise(session: requests.Session, url: str, timeout: int = 15) -
             f"Presence returned non-JSON for url={url}: {e}; body_snip={body_snip!r}"
         )
 
+
 # ─────────────────────────────────────────
 # Location Mapping & Normalization
 # ─────────────────────────────────────────
-
 
 def extract_slug_from_guid(guid_url: str) -> str | None:
     parsed = urlparse(guid_url)
@@ -155,9 +155,11 @@ def extract_slug_from_guid(guid_url: str) -> str | None:
 
 
 def load_locations_data() -> list[dict]:
+    """Load the locations.json for mapping names to IDs."""
     if not os.path.exists(LOCATIONS_JSON_PATH):
         logger.warning(f"Locations file not found at {LOCATIONS_JSON_PATH}")
         return []
+
     try:
         with open(LOCATIONS_JSON_PATH, "r", encoding="utf-8") as f:
             return json.load(f)
@@ -167,24 +169,35 @@ def load_locations_data() -> list[dict]:
 
 
 def find_location_id(normalized_name: str, locations_data: list[dict]) -> int | None:
+    """
+    Match the normalized location name against the 'name' arrays in locations_data.
+    Returns the 'id' if found, else None.
+    """
     if not normalized_name:
         return None
+
+    # Case-insensitive comparison
     target = normalized_name.lower().strip()
+
     for item in locations_data:
         names = item.get("name", [])
+        # 'name' can be a list of strings
         if isinstance(names, list):
             for n in names:
                 if isinstance(n, str) and n.lower().strip() == target:
                     return item.get("id")
+
     return None
+
 
 # ─────────────────────────────────────────
 # Presence events builder (WEB)
 # ─────────────────────────────────────────
 
-
 def build_presence_events() -> list[dict]:
     s = _presence_session()
+
+    # 1) Campus info
     cdn_base = None
     campus_api_id = None
     try:
@@ -195,6 +208,7 @@ def build_presence_events() -> list[dict]:
     except Exception as e:
         logger.warning("Failed to fetch Presence campus info: %s", e)
 
+    # 2) Events
     data = _get_json_or_raise(s, PRESENCE_EVENTS_URL, timeout=20)
     if not isinstance(data, list):
         raise RuntimeError("Presence API did not return a list")
@@ -256,14 +270,22 @@ def build_presence_events() -> list[dict]:
 
     return normalized_events
 
+
 # ─────────────────────────────────────────
 # Presence events builder (IOS)
 # ─────────────────────────────────────────
 
-
 def build_presence_events_ios() -> list[dict]:
+    """
+    Fetch Presence events and normalize to the specific iOS/JSON structure
+    requested, resolving location_id via locations.json.
+    """
     s = _presence_session()
+
+    # Load Metadata for Location ID lookup
     locations_data = load_locations_data()
+
+    # 1) Campus info (for poster URLs)
     cdn_base = None
     campus_api_id = None
     try:
@@ -274,6 +296,7 @@ def build_presence_events_ios() -> list[dict]:
     except Exception as e:
         logger.warning("Failed to fetch Presence campus info: %s", e)
 
+    # 2) Events
     data = _get_json_or_raise(s, PRESENCE_EVENTS_URL, timeout=20)
     if not isinstance(data, list):
         raise RuntimeError("Presence API did not return a list")
@@ -292,10 +315,13 @@ def build_presence_events_ios() -> list[dict]:
             continue
 
         try:
+            # Check dates strictly to filter out past events
             start_utc = datetime.fromisoformat(
                 start_utc_str.replace("Z", "+00:00"))
             end_utc = datetime.fromisoformat(
                 end_utc_str.replace("Z", "+00:00"))
+
+            # We convert to pacific just for the logic check "is event over?"
             end_local = end_utc.astimezone(PACIFIC)
         except ValueError:
             continue
@@ -303,36 +329,49 @@ def build_presence_events_ios() -> list[dict]:
         if has_ended or end_local <= now_pacific:
             continue
 
+        # Prepare Strings
         description_text = clean_html_to_text(ev.get("description") or "")
         raw_loc = ev.get("location") or ""
         cleaned_loc = normalize_event_location(raw_loc)
 
+        # # Lookup Location ID
+        # loc_id = find_location_id(cleaned_loc, locations_data)
+        # Lookup Location ID and Coordinates directly from our new LOCATION_MAP
         loc_id = None
-        lat, lon = 37.3655, -120.4245
+        lat, lon = 37.3655, -120.4245  # Default fallback coordinates
 
         if cleaned_loc:
+            # normalize_event_location returns the canonical name, which is guaranteed
+            # to be in LOCATION_MAP (since we mapped aliases to themselves too)
             loc_data = LOCATION_MAP.get(cleaned_loc.lower())
             if loc_data:
                 loc_id = loc_data.get("id")
                 coords = loc_data.get("coordinates")
                 if coords and len(coords) == 2:
-                    lon, lat = coords
+                    lon, lat = coords  # GeoJSON is [longitude, latitude]
 
+        # Prepare Image URLs
         poster_url = "https://via.placeholder.com/600x800.png?text=Event+Poster"
         if cdn_base and campus_api_id and ev.get("hasCoverImage") and ev.get("photoUri"):
             poster_url = f"{cdn_base}/event-photos/{campus_api_id}/{ev['photoUri']}"
 
         image_urls = [poster_url]
+
+        # Pin URL (Generic default)
         pin_url = "/event-pin.png"
+
+        # Unique ID for iOS
+        # Using eventNoSqlId is usually safe, or fall back to uri
         evt_id = str(ev.get('eventNoSqlId') or ev.get('uri') or uuid.uuid4())
 
+        # Construct the iOS Element
         ios_event = {
             "id": evt_id,
-            "location_id": loc_id,
+            "location_id": loc_id,  # integer or None
             "attributes": {
                 "title": ev.get("eventName"),
                 "description": description_text,
-                "start": start_utc_str,
+                "start": start_utc_str,  # Keep original UTC ISO string "2026-02-08T10:00:00Z"
                 "end": end_utc_str,
                 "location_at": raw_loc,
                 "location": cleaned_loc,
@@ -351,103 +390,10 @@ def build_presence_events_ios() -> list[dict]:
 
     return ios_events
 
-# ─────────────────────────────────────────
-# Presence events builder (CONTENT API)
-# ─────────────────────────────────────────
-
-
-def build_content_pages_events() -> list[dict]:
-    s = _presence_session()
-    locations_data = load_locations_data()
-    cdn_base = None
-    campus_api_id = None
-
-    try:
-        campus_info = _get_json_or_raise(s, PRESENCE_CAMPUS_URL, timeout=15)
-        if isinstance(campus_info, dict):
-            cdn_base = campus_info.get("cdn")
-            campus_api_id = campus_info.get("apiId")
-    except Exception as e:
-        logger.warning("Failed to fetch Presence campus info: %s", e)
-
-    data = _get_json_or_raise(s, PRESENCE_EVENTS_URL, timeout=20)
-    if not isinstance(data, list):
-        raise RuntimeError("Presence API did not return a list")
-
-    now_pacific = datetime.now(PACIFIC)
-    page_events: list[dict] = []
-
-    for ev in data:
-        if not isinstance(ev, dict):
-            continue
-
-        has_ended = ev.get("hasEventEnded", False)
-        start_utc_str = ev.get("startDateTimeUtc")
-        end_utc_str = ev.get("endDateTimeUtc")
-
-        if not start_utc_str or not end_utc_str:
-            continue
-
-        try:
-            start_utc = datetime.fromisoformat(
-                start_utc_str.replace("Z", "+00:00"))
-            end_utc = datetime.fromisoformat(
-                end_utc_str.replace("Z", "+00:00"))
-            end_local = end_utc.astimezone(PACIFIC)
-        except ValueError:
-            continue
-
-        if has_ended or end_local <= now_pacific:
-            continue
-
-        description_text = clean_html_to_text(ev.get("description") or "")
-        raw_loc = ev.get("location") or ""
-        cleaned_loc = normalize_event_location(raw_loc)
-
-        loc_id = None
-        lat, lon = 37.3655, -120.4245
-
-        if cleaned_loc:
-            loc_data = LOCATION_MAP.get(cleaned_loc.lower())
-            if loc_data:
-                loc_id = loc_data.get("id")
-                coords = loc_data.get("coordinates")
-                if coords and len(coords) == 2:
-                    lon, lat = coords
-
-        poster_url = "https://via.placeholder.com/600x800.png?text=Event+Poster"
-        if cdn_base and campus_api_id and ev.get("hasCoverImage") and ev.get("photoUri"):
-            poster_url = f"{cdn_base}/event-photos/{campus_api_id}/{ev['photoUri']}"
-
-        page_event = {
-            "id": str(ev.get('eventNoSqlId') or ev.get('uri') or uuid.uuid4()),
-            "type": "event",
-            "tags": ["events"],
-            "location_id": loc_id,
-            "title": ev.get("eventName"),
-            "subtitle": raw_loc,
-            "description": description_text,
-            "image_urls": [poster_url],
-            "start": start_utc_str,
-            "end": end_utc_str,
-            "host": ev.get("organizationName") or ev.get("campusName"),
-            "source_url": f"https://ucmerced.presence.io/event/{ev.get('urlName')}" if ev.get('urlName') else "https://ucmerced.presence.io",
-            "pin_url": "/event-pin.png",
-            "geometry": {
-                "type": "point",
-                "latitude": lat,
-                "longitude": lon
-            }
-        }
-
-        page_events.append(page_event)
-
-    return page_events
 
 # ─────────────────────────────────────────
 # Cache Management (WEB)
 # ─────────────────────────────────────────
-
 
 def _save_presence_cache_to_file(events: list[dict]) -> None:
     payload = {
@@ -467,6 +413,7 @@ def _load_presence_cache_from_file() -> tuple[list[dict] | None, datetime | None
 
     events = payload.get("events")
     gen_str = payload.get("generated_at")
+
     if not isinstance(events, list):
         return None, None
 
@@ -476,6 +423,7 @@ def _load_presence_cache_from_file() -> tuple[list[dict] | None, datetime | None
             gen_at = datetime.fromisoformat(gen_str.replace("Z", "+00:00"))
         except ValueError:
             gen_at = None
+
     return events, gen_at
 
 
@@ -494,10 +442,12 @@ def get_presence_events_cached() -> list[dict]:
     global PRESENCE_CACHE, PRESENCE_CACHE_EXPIRES_AT
     now_utc = datetime.now(timezone.utc)
 
+    # 1) in-memory
     if PRESENCE_CACHE is not None and PRESENCE_CACHE_EXPIRES_AT is not None:
         if now_utc < PRESENCE_CACHE_EXPIRES_AT:
             return PRESENCE_CACHE
 
+    # 2) disk
     events_file, gen_at = _load_presence_cache_from_file()
     if events_file is not None and gen_at is not None:
         if now_utc - gen_at < PRESENCE_CACHE_TTL:
@@ -505,6 +455,7 @@ def get_presence_events_cached() -> list[dict]:
             PRESENCE_CACHE_EXPIRES_AT = gen_at + PRESENCE_CACHE_TTL
             return events_file
 
+    # 3) rebuild
     try:
         return refresh_presence_cache()
     except Exception as e:
@@ -515,10 +466,10 @@ def get_presence_events_cached() -> list[dict]:
             return PRESENCE_CACHE
         raise
 
+
 # ─────────────────────────────────────────
 # Cache Management (IOS)
 # ─────────────────────────────────────────
-
 
 def _save_presence_ios_cache_to_file(events: list[dict]) -> None:
     payload = {
@@ -538,6 +489,7 @@ def _load_presence_ios_cache_from_file() -> tuple[list[dict] | None, datetime | 
 
     events = payload.get("events")
     gen_str = payload.get("generated_at")
+
     if not isinstance(events, list):
         return None, None
 
@@ -547,6 +499,7 @@ def _load_presence_ios_cache_from_file() -> tuple[list[dict] | None, datetime | 
             gen_at = datetime.fromisoformat(gen_str.replace("Z", "+00:00"))
         except ValueError:
             gen_at = None
+
     return events, gen_at
 
 
@@ -565,10 +518,12 @@ def get_presence_events_ios_cached() -> list[dict]:
     global PRESENCE_IOS_CACHE, PRESENCE_IOS_CACHE_EXPIRES_AT
     now_utc = datetime.now(timezone.utc)
 
+    # 1) in-memory
     if PRESENCE_IOS_CACHE is not None and PRESENCE_IOS_CACHE_EXPIRES_AT is not None:
         if now_utc < PRESENCE_IOS_CACHE_EXPIRES_AT:
             return PRESENCE_IOS_CACHE
 
+    # 2) disk
     events_file, gen_at = _load_presence_ios_cache_from_file()
     if events_file is not None and gen_at is not None:
         if now_utc - gen_at < PRESENCE_CACHE_TTL:
@@ -576,6 +531,7 @@ def get_presence_events_ios_cached() -> list[dict]:
             PRESENCE_IOS_CACHE_EXPIRES_AT = gen_at + PRESENCE_CACHE_TTL
             return events_file
 
+    # 3) rebuild
     try:
         return refresh_presence_ios_cache()
     except Exception as e:
@@ -586,122 +542,14 @@ def get_presence_events_ios_cached() -> list[dict]:
             return PRESENCE_IOS_CACHE
         raise
 
-# ─────────────────────────────────────────
-# Cache Management (CONTENT PAGES)
-# ─────────────────────────────────────────
-
-
-def _save_presence_pages_cache_to_file(events: list[dict]) -> None:
-    payload = {
-        "generated_at": datetime.now(timezone.utc).isoformat(),
-        "events": events,
-    }
-    with open(PRESENCE_PAGES_CACHE_FILE, "w", encoding="utf-8") as f:
-        json.dump(payload, f, ensure_ascii=False)
-
-
-def _load_presence_pages_cache_from_file() -> tuple[list[dict] | None, datetime | None]:
-    try:
-        with open(PRESENCE_PAGES_CACHE_FILE, "r", encoding="utf-8") as f:
-            payload = json.load(f)
-    except (OSError, json.JSONDecodeError):
-        return None, None
-
-    events = payload.get("events")
-    gen_str = payload.get("generated_at")
-    if not isinstance(events, list):
-        return None, None
-
-    gen_at = None
-    if isinstance(gen_str, str):
-        try:
-            gen_at = datetime.fromisoformat(gen_str.replace("Z", "+00:00"))
-        except ValueError:
-            gen_at = None
-    return events, gen_at
-
-
-def refresh_presence_pages_cache() -> list[dict]:
-    global PRESENCE_PAGES_CACHE, PRESENCE_PAGES_CACHE_EXPIRES_AT
-    events = build_content_pages_events()
-    PRESENCE_PAGES_CACHE = events
-    PRESENCE_PAGES_CACHE_EXPIRES_AT = datetime.now(
-        timezone.utc) + PRESENCE_CACHE_TTL
-    _save_presence_pages_cache_to_file(events)
-    logger.info("[presence_pages_cache] refreshed %d events", len(events))
-    return events
-
-
-def get_presence_pages_cached() -> list[dict]:
-    global PRESENCE_PAGES_CACHE, PRESENCE_PAGES_CACHE_EXPIRES_AT
-    now_utc = datetime.now(timezone.utc)
-
-    if PRESENCE_PAGES_CACHE is not None and PRESENCE_PAGES_CACHE_EXPIRES_AT is not None:
-        if now_utc < PRESENCE_PAGES_CACHE_EXPIRES_AT:
-            return PRESENCE_PAGES_CACHE
-
-    events_file, gen_at = _load_presence_pages_cache_from_file()
-    if events_file is not None and gen_at is not None:
-        if now_utc - gen_at < PRESENCE_CACHE_TTL:
-            PRESENCE_PAGES_CACHE = events_file
-            PRESENCE_PAGES_CACHE_EXPIRES_AT = gen_at + PRESENCE_CACHE_TTL
-            return events_file
-
-    try:
-        return refresh_presence_pages_cache()
-    except Exception as e:
-        logger.error("Failed to refresh Presence pages cache: %s", e)
-        if events_file is not None:
-            return events_file
-        if PRESENCE_PAGES_CACHE is not None:
-            return PRESENCE_PAGES_CACHE
-        raise
 
 # ─────────────────────────────────────────
 # Routes
 # ─────────────────────────────────────────
 
-
-@events_bp.route("/contentAPIURL", methods=["GET"])
-def content_api_url():
-    """
-    Unified endpoint that aggregates multiple data sources into a single JSON payload.
-    Structured as a pipeline so future data sources can be appended easily to the 'pages' array.
-    """
-    aggregated_response = {
-        "pages": []
-    }
-
-    # ─── STEP A: Add Event Pages ───
-    try:
-        events = get_presence_pages_cached()
-        aggregated_response["pages"].extend(events)
-    except Exception as e:
-        logger.error("ContentAPI Pipeline Error (Events): %s", e)
-
-    # ─── STEP B: Add Migrated Polygons ───
-    try:
-        # Assuming polygons.json is saved in the same directory as events.py
-        polygons_file_path = os.path.join(
-            os.path.dirname(__file__), "polygons.json")
-
-        if os.path.exists(polygons_file_path):
-            with open(polygons_file_path, "r", encoding="utf-8") as f:
-                polygons_data = json.load(f)
-
-                if isinstance(polygons_data, list):
-                    aggregated_response["pages"].extend(polygons_data)
-                elif isinstance(polygons_data, dict) and "polygons" in polygons_data:
-                    aggregated_response["pages"].extend(
-                        polygons_data["polygons"])
-    except Exception as e:
-        logger.error("ContentAPI Pipeline Error (Polygons): %s", e)
-
-    return jsonify(aggregated_response)
-
-
 @events_bp.route("/presence_events", methods=["GET"])
 def presence_events():
+    """Web version: Normalized for /get/events shape."""
     try:
         events = get_presence_events_cached()
         return jsonify(events)
@@ -711,6 +559,7 @@ def presence_events():
 
 @events_bp.route("/presence_events_ios", methods=["GET"])
 def presence_events_ios():
+    """iOS version: Modified format + locations.json location matching."""
     try:
         events = get_presence_events_ios_cached()
         return jsonify({"events": events})
