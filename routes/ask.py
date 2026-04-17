@@ -354,7 +354,7 @@ if os.path.exists(PRESENCE_CACHE_PATH):
 # ask_bp = Blueprint("ask", __name__)
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-CONTENT_API_URL = "http://10.34.48.10:8080/contentAPIURL"
+CONTENT_API_URL = "https://uc-merced-campus-event-api-backend.onrender.com/contentAPIURL"
 
 # ------------------------------------------------------------------------------
 # CONFIG
