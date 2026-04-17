@@ -350,6 +350,8 @@ if os.path.exists(PRESENCE_CACHE_PATH):
 # ─────────────────────────────
 
 
+# from openai import OpenAI
+
 # Make sure these exist in your app:
 # ask_bp = Blueprint("ask", __name__)
 # client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -1325,18 +1327,10 @@ def ask_ai():
             if not matched_item:
                 continue
 
-            desc = compact_description(
-                matched_item.get("description", "") or "", 120)
-
-            nested_segments = extract_nested_segments(
-                matched_item.get("nested_content", []))
-            nested_compact = build_query_aware_nested_excerpt(
-                nested_segments,
-                query_hints,
-                max_chars=160
-            )
-
-            snippet = desc or nested_compact or "Relevant item."
+            # Return the location name of the building.
+            # Falls back to "host" if the specific "location" field is absent or empty.
+            snippet = matched_item.get("location", matched_item.get(
+                "host", "Location not specified"))
 
             citations.append({
                 "page_id": pid,
