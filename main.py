@@ -28,6 +28,19 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 app = Flask(__name__)
 CORS(app)
 
+
+@app.route('/health', methods=['GET'])
+def health_check():
+    """
+    Basic health check endpoint.
+    Returns a 200 OK status and a JSON payload confirming the service is up.
+    """
+    return jsonify({
+        "status": "healthy",
+        "message": "Service is up and running"
+    }), 200
+
+
 app.register_blueprint(ask_bp, url_prefix="/")
 app.register_blueprint(events_bp, url_prefix="/")
 
@@ -62,5 +75,5 @@ app.config["EVENTS_COL"] = events_col
 # Entrypoint
 # ─────────────────────────────
 if __name__ == "__main__":
-    port = int(os.getenv("PORT", "5050"))
+    port = int(os.getenv("PORT", "8080"))
     app.run(host="0.0.0.0", port=port)
