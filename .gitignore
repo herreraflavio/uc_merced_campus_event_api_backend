@@ -3,3 +3,4 @@ myvenv
 .DS_Store
 __pycache__/
 old
+ai_debug_log.txt
