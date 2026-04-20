@@ -1,5 +1,7 @@
+from flask import Flask, request, jsonify, Blueprint
 from flask import Blueprint, request, jsonify
 from flask import Blueprint, jsonify, request
+import logging
 import json
 import os
 import re
@@ -20,6 +22,18 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ask_bp = Blueprint('ask', __name__)
+
+# ------------------------------------------------------------------------------
+# LOGGING CONFIGURATION
+# ------------------------------------------------------------------------------
+# This will create or append to "ai_debug_log.txt" in your app's working directory.
+logging.basicConfig(
+    filename="ai_debug_log.txt",
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    filemode="a"
+)
+logger = logging.getLogger(__name__)
 
 
 def extract_json(raw: str) -> dict:
@@ -351,33 +365,36 @@ if os.path.exists(PRESENCE_CACHE_PATH):
 # New AI Smart Search Route
 # ─────────────────────────────
 
-# Make sure these exist in your app:
-# ask_bp = Blueprint("ask", __name__)
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+# Ensure you have your Flask blueprint and client setup
+# ask_bp = Blueprint('ask_bp', __name__)
+# client = ... (OpenAI client)
+
+# ------------------------------------------------------------------------------
+# LOGGING CONFIGURATION
+# ------------------------------------------------------------------------------
+logging.basicConfig(
+    filename="ai_debug_log.txt",
+    level=logging.DEBUG,
+    format="%(asctime)s | %(levelname)s | %(message)s",
+    filemode="a"
+)
+logger = logging.getLogger(__name__)
 
 CONTENT_API_URL = "https://uc-merced-campus-event-api-backend.onrender.com/contentAPIURL"
 
 # ------------------------------------------------------------------------------
 # CONFIG
 # ------------------------------------------------------------------------------
-# Bumped up to the latest flagship model (swap to "gpt-5" when available in your org)
 MODEL_NAME = "gpt-4o"
-# MODEL_NAME = "gpt-5"
 
 MAX_DESC_CHARS = 220
 
-# Increased max context items for a larger LLM context window
-MAX_CONTEXT_ITEMS = 15
-# Added a minimum floor to ensure the LLM has choices
+# Increased max context items to give the LLM enough options to actually return 10+
+MAX_CONTEXT_ITEMS = 25
 MIN_CONTEXT_ITEMS = 4
 
-# Keep full-ish structured nested content for local search only
 MAX_NESTED_SEARCH_CHARS = 16000
-
-# Small query-aware compact nested text for the LLM
 MAX_NESTED_CONTEXT_CHARS = 1200
-
-# Truncate fuzzy comparisons so they stay fast
 MAX_BLOB_FOR_FUZZY = 1800
 MAX_SEGMENT_FOR_FUZZY = 500
 
@@ -398,7 +415,6 @@ STOP_WORDS = {
     "where", "how", "who", "which", "be", "has", "have", "had", "do", "does", "did"
 }
 
-# This will be populated dynamically per request
 DYNAMIC_EXPANSIONS = {}
 
 # ------------------------------------------------------------------------------
@@ -426,24 +442,14 @@ LOCATION_ALIASES = {
 }
 
 TOKEN_WORD_BANK = {
-    "pav": {"pavilion"},
-    "pavilion": {"pav"},
-    "fri": {"friday"},
-    "friday": {"fri"},
-    "thu": {"thursday"},
-    "thurs": {"thursday"},
-    "thursday": {"thu", "thurs"},
-    "wed": {"wednesday"},
-    "wednesday": {"wed"},
-    "tue": {"tuesday"},
-    "tues": {"tuesday"},
-    "tuesday": {"tue", "tues"},
-    "mon": {"monday"},
-    "monday": {"mon"},
-    "sat": {"saturday"},
-    "saturday": {"sat"},
-    "sun": {"sunday"},
-    "sunday": {"sun"},
+    "pav": {"pavilion"}, "pavilion": {"pav"},
+    "fri": {"friday"}, "friday": {"fri"},
+    "thu": {"thursday"}, "thurs": {"thursday"}, "thursday": {"thu", "thurs"},
+    "wed": {"wednesday"}, "wednesday": {"wed"},
+    "tue": {"tuesday"}, "tues": {"tuesday"}, "tuesday": {"tue", "tues"},
+    "mon": {"monday"}, "monday": {"mon"},
+    "sat": {"saturday"}, "saturday": {"sat"},
+    "sun": {"sunday"}, "sunday": {"sun"},
     "veggie": {"vegetarian", "vegan", "plant", "plantbased"},
     "veg": {"vegetarian", "vegan", "plant", "plantbased"},
     "vegan": {"vegetarian", "plant", "plantbased"},
@@ -475,7 +481,6 @@ PHRASE_WORD_BANK = {
 # TEXT HELPERS
 # ------------------------------------------------------------------------------
 def make_singular(word: str) -> str:
-    """Basic plural to singular conversion to make matching less strict."""
     if len(word) <= 3:
         return word
     if word.endswith('ies'):
@@ -488,7 +493,6 @@ def make_singular(word: str) -> str:
 
 
 def normalize_text(value: str) -> str:
-    """Lowercase, ASCII-normalize, remove noise, collapse whitespace."""
     if value is None:
         return ""
     text = str(value)
@@ -501,7 +505,6 @@ def normalize_text(value: str) -> str:
 
 
 def tokenize(text: str):
-    """Tokenize and automatically include singular versions of words."""
     tokens = set()
     for tok in normalize_text(text).split():
         if len(tok) > 1 and tok not in STOP_WORDS:
@@ -529,19 +532,15 @@ def compact_nested_value(value: str) -> str:
     text = strip_urls(value)
     if not text:
         return ""
-
     m = re.match(r"^\s*station\s*:\s*(.+)$", text, re.IGNORECASE)
     if m:
         return f"station={m.group(1).strip()}"
-
     m = re.match(r"^\s*description\s*:\s*(.+)$", text, re.IGNORECASE)
     if m:
         return f"desc={m.group(1).strip()}"
-
     m = re.match(r"^\s*calories\s*:\s*([0-9]+)", text, re.IGNORECASE)
     if m:
         return f"cal={m.group(1).strip()}"
-
     text = text.strip(" |;,-")
     return text
 
@@ -564,10 +563,6 @@ def join_with_limit(parts, max_chars):
 # DYNAMIC GENERATION HELPERS
 # ------------------------------------------------------------------------------
 def generate_dynamic_word_bank(pages: list):
-    """
-    Builds a dynamic word bank by analyzing the text payload using a 
-    Gaussian distribution approach to isolate meaningful keywords.
-    """
     global DYNAMIC_EXPANSIONS
     DYNAMIC_EXPANSIONS.clear()
 
@@ -589,7 +584,6 @@ def generate_dynamic_word_bank(pages: list):
     variance = sum((f - mean_freq) ** 2 for f in freqs) / len(freqs)
     std_dev = math.sqrt(variance) if variance > 0 else 1
 
-    # Keep words that fall within 1 standard deviation of the mean (removes extreme outliers/corpus stopwords)
     valid_words = [w for w, f in counts.items() if (
         mean_freq - std_dev) <= f <= (mean_freq + std_dev)]
 
@@ -624,7 +618,6 @@ def detect_canonical_matches(text: str, alias_map: dict) -> set:
                     found.add(canonical)
                     break
             else:
-                # Check normal or singular forms
                 if alias_norm in tokens or make_singular(alias_norm) in tokens:
                     found.add(canonical)
                     break
@@ -636,17 +629,14 @@ def build_query_hints(query: str) -> dict:
     raw_tokens = set(query_norm.split())
     expanded_tokens = set(raw_tokens)
 
-    # Singularize raw tokens
     for tok in list(raw_tokens):
         expanded_tokens.add(make_singular(tok))
 
-    # Phrase expansion
     for phrase, expansions in PHRASE_WORD_BANK.items():
         phrase_norm = normalize_text(phrase)
         if phrase_norm in query_norm:
             expanded_tokens.update(expansions)
 
-    # Token expansion (Static + Dynamic)
     for tok in list(expanded_tokens):
         expanded_tokens.update(TOKEN_WORD_BANK.get(tok, set()))
         expanded_tokens.update(DYNAMIC_EXPANSIONS.get(tok, set()))
@@ -883,7 +873,6 @@ def score_segment(query_hints: dict, segment: dict) -> float:
     if header_norm:
         header_hits = sum(1 for tok in expanded_tokens if tok in header_norm)
 
-    # Less strict: Bumped sequence weight, slightly lowered rigid overlap threshold
     score = (
         (overlap_ratio * 0.35) +
         (seq_ratio * 0.25) +
@@ -953,7 +942,8 @@ def encode_item(item: dict) -> dict:
     title = item.get("title", "") or ""
     subtitle = item.get("subtitle", "") or ""
     host = item.get("host", "") or ""
-    description = compact_description(item.get("description", "") or "")
+    # description = compact_description(item.get("description", "") or "")
+    description = item.get("description", "") or ""
     tags = item.get("tags", []) or []
     item_type = item.get("type", "") or ""
     start = item.get("start", "") or ""
@@ -1033,10 +1023,8 @@ def score_encoded_item(query_hints: dict, encoded: dict) -> float:
                      for seg in encoded["nested_segments"]]
     best_nested_score = max(nested_scores) if nested_scores else 0.0
 
-    # Less strict: lowered nested match count threshold from 0.60 to 0.40
     nested_match_count = sum(1 for s in nested_scores if s >= 0.40)
 
-    # Increased seq_ratio weight, slightly reduced overlap_ratio dependency
     score = (
         (overlap_ratio * 0.30) +
         (seq_ratio * 0.20) +
@@ -1054,26 +1042,34 @@ def score_encoded_item(query_hints: dict, encoded: dict) -> float:
 # ------------------------------------------------------------------------------
 @ask_bp.route("/ai", methods=["POST"])
 def ask_ai():
-    print("\n" + "=" * 100)
-    print("📥 /ai REQUEST START")
-    print("=" * 100)
+    logger.info("=" * 80)
+    logger.info("📥 /ai REQUEST START")
+    logger.info("=" * 80)
 
     try:
-        print(f"Method: {request.method}")
-        print(f"Path: {request.path}")
-        print(f"Content-Type: {request.content_type}")
+        logger.debug(
+            f"Request Method: {request.method} | Path: {request.path} | Content-Type: {request.content_type}")
 
         raw_body = request.get_data(cache=True, as_text=True)
         data = request.get_json(silent=True) or {}
 
+        logger.debug(f"Raw Request Body: {raw_body}")
+        logger.debug(f"Parsed JSON Data: {data}")
+
         query = str(data.get("query", "")).strip()
         item_ids = data.get("item_ids", [])
 
+        logger.info(f"Extracted Query: '{query}'")
+        logger.info(f"Extracted Item IDs: {item_ids}")
+
         if not query:
+            logger.warning("Aborting: No query provided")
             return jsonify({"error": "No query provided"}), 400
         if not isinstance(item_ids, list):
+            logger.warning("Aborting: item_ids is not a list")
             return jsonify({"error": "item_ids must be an array"}), 400
         if not item_ids:
+            logger.warning("Aborting: Empty item_ids list provided")
             return jsonify({
                 "ai_overview": "No item_ids were provided in the request.",
                 "citations": [],
@@ -1083,28 +1079,38 @@ def ask_ai():
         # ------------------------------------------------------------------
         # 1) FETCH LIVE CONTENT & GENERATE DYNAMIC WORD BANK
         # ------------------------------------------------------------------
+        logger.debug(f"Fetching content from: {CONTENT_API_URL}")
         content_resp = requests.get(CONTENT_API_URL, timeout=15)
         content_resp.raise_for_status()
         content_json = content_resp.json()
 
         pages = content_json.get("pages", [])
+        logger.debug(
+            f"Successfully fetched {len(pages)} pages from Content API.")
+
         if not isinstance(pages, list):
+            logger.error("Invalid content API response: 'pages' is not a list")
             return jsonify({"error": "Invalid content API response"}), 500
 
         # Build the dynamic Gaussian word bank on the fly
         generate_dynamic_word_bank(pages)
+        logger.debug(f"Dynamic Word Bank Generated: {DYNAMIC_EXPANSIONS}")
 
         # ------------------------------------------------------------------
         # 2) QUERY HINTS / WORD BANK EXPANSION
         # ------------------------------------------------------------------
         query_hints = build_query_hints(query)
+        logger.debug(f"Query Hints: {query_hints}")
 
         # ------------------------------------------------------------------
         # 3) FILTER TO USER item_ids
         # ------------------------------------------------------------------
         valid_items = [p for p in pages if p.get("id") in item_ids]
+        logger.info(
+            f"Found {len(valid_items)} valid items matching provided item_ids.")
 
         if not valid_items:
+            logger.warning("No matching items found for provided item_ids.")
             return jsonify({
                 "ai_overview": "I could not find any matching items for the item_ids you sent.",
                 "citations": [],
@@ -1115,6 +1121,7 @@ def ask_ai():
         # 4) ENCODE ITEMS
         # ------------------------------------------------------------------
         encoded_items = [encode_item(item) for item in valid_items]
+        logger.debug(f"Encoded {len(encoded_items)} items successfully.")
 
         # ------------------------------------------------------------------
         # 5) LOCAL PRE-RANK
@@ -1128,6 +1135,11 @@ def ask_ai():
             })
 
         scored.sort(key=lambda x: x["score"], reverse=True)
+
+        # Log the local rankings to see what matched best before the LLM
+        debug_scores = [{"id": r["encoded"]["compact"]
+                         ["id"], "score": r["score"]} for r in scored]
+        logger.debug(f"Local Pre-Rank Scores: {debug_scores}")
 
         # ------------------------------------------------------------------
         # 6) BUILD LLM CANDIDATES (Enforce Max and Min Rankings)
@@ -1156,19 +1168,29 @@ def ask_ai():
 
             llm_candidates.append(compact)
 
+        logger.info(
+            f"Selected {len(llm_candidates)} candidates for LLM processing.")
+
         # ------------------------------------------------------------------
         # 7) BUILD PROMPT
         # ------------------------------------------------------------------
         system_prompt = (
-            "You are an intelligent campus content assistant. "
-            "Answer the user's query using ONLY the provided campus items. "
-            "Some items include nested_content_compact, which is a structured compact collapse "
-            "of deeper nested content such as menus or schedules using delimiters like "
-            "'day=Friday || tab=Lunch || item=Blackened Salmon || desc=...'. "
-            "Use that compact field when it is relevant to the query. "
-            "Be concise and helpful in 2-3 sentences.\n\n"
-            "At the end, output the relevant item IDs ranked best to worst in this exact format:\n"
-            "[IDS: id1, id2, id3]\n"
+            # "You are an intelligent campus content assistant. "
+            # "Answer the user's query using the provided campus items. "
+            # "Be less strict and highly inclusive in your matching—if an event is even loosely or tangentially related to the user's query, include it. "
+            # "Provide a comprehensive, engaging overview (at least 3-5 sentences) summarizing the relevant events. "
+            # "Aim to return at least 10 relevant events in your ranking, if available in the context. "
+            # "Some items include nested_content_compact, which is a structured compact collapse "
+            # "of deeper nested content such as menus or schedules using delimiters like "
+            # "'day=Friday || tab=Lunch || item=Blackened Salmon || desc=...'. "
+            # "Use that compact field when it is relevant to the query.\n\n"
+            # "At the end, output the relevant item IDs ranked best to worst in this exact format:\n"
+
+            "You are a campus informant. "
+            "Answer the user's query using the provided campus items. "
+            "Provide a comprohensive overview (at least 1-3 sentences) summarizing the relevant items. "
+            "Inlclude up to 10 relevent item IDs in your ranking at the end, ranked best to worst in this exact format:\n"
+            "[IDS: id1, id2, id3, id4, ...]\n"
             "Do not output JSON."
         )
 
@@ -1177,9 +1199,15 @@ def ask_ai():
             "available_items": llm_candidates
         }, indent=2, ensure_ascii=False)
 
+        logger.debug(
+            f"=== SYSTEM PROMPT ===\n{system_prompt}\n=====================")
+        logger.debug(
+            f"=== USER CONTENT (LLM CANDIDATES) ===\n{user_content}\n=====================================")
+
         # ------------------------------------------------------------------
         # 8) CALL MODEL
         # ------------------------------------------------------------------
+        logger.info(f"Calling OpenAI model: {MODEL_NAME}")
         resp = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
@@ -1191,6 +1219,8 @@ def ask_ai():
         )
 
         raw = (resp.choices[0].message.content or "").strip()
+        logger.debug(
+            f"=== RAW LLM RESPONSE ===\n{raw}\n========================")
 
         # ------------------------------------------------------------------
         # 9) EXTRACT RANKED IDS
@@ -1209,8 +1239,12 @@ def ask_ai():
                                for x in found_ids if x.strip() in item_ids]
 
         if not ranked_item_ids:
+            logger.warning(
+                "Regex extraction failed or empty. Falling back to local top_scored order.")
             ranked_item_ids = [row["encoded"]["compact"]["id"]
                                for row in top_scored]
+
+        logger.info(f"Final Ranked Item IDs: {ranked_item_ids}")
 
         ai_overview = re.sub(r"\[IDS:.*?\]", "", raw,
                              flags=re.IGNORECASE).strip()
@@ -1218,6 +1252,8 @@ def ask_ai():
 
         if not ai_overview:
             ai_overview = "Here are the top matches based on your search."
+
+        logger.debug(f"Cleaned AI Overview: '{ai_overview}'")
 
         # ------------------------------------------------------------------
         # 10) BUILD CITATIONS
@@ -1252,13 +1288,19 @@ def ask_ai():
             "ranked_item_ids": ranked_item_ids
         }
 
-        print("=" * 100)
-        print("📤 /ai REQUEST END")
-        print("=" * 100 + "\n")
+        logger.debug(
+            f"=== FINAL JSON RESPONSE ===\n{json.dumps(final_response, indent=2)}\n===========================")
+
+        logger.info("📤 /ai REQUEST END - SUCCESS")
+        logger.info("=" * 80 + "\n")
 
         return jsonify(final_response), 200
 
     except requests.exceptions.RequestException as e:
+        logger.error(
+            f"Failed to fetch content API data: {str(e)}", exc_info=True)
         return jsonify({"error": "Failed to fetch content API data", "details": str(e)}), 502
     except Exception as e:
+        logger.error(
+            f"Failed to generate AI response: {str(e)}", exc_info=True)
         return jsonify({"error": "Failed to generate AI response", "details": str(e)}), 500
