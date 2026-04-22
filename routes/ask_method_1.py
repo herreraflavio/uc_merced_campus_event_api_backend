@@ -14,6 +14,11 @@ from flask import Blueprint, request, jsonify
 from openai import OpenAI
 from dotenv import load_dotenv
 
+try:
+    import tiktoken
+except ImportError:
+    tiktoken = None
+
 # --- NLP AND SCHEDULING ---
 from apscheduler.schedulers.background import BackgroundScheduler
 import nltk
@@ -45,20 +50,80 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Filter out verbose HTTP request logs from external libraries if desired
-logging.getLogger("werkzeug").setLevel(logging.WARNING)
-logging.getLogger("urllib3").setLevel(logging.WARNING)
-
 CONTENT_API_URL = "https://uc-merced-campus-event-api-backend.onrender.com/contentAPIURL"
 
 # ------------------------------------------------------------------------------
 # CONFIG & STATE
 # ------------------------------------------------------------------------------
-ASK_MODEL_NAME = "gpt-5.4"
-ASK_REASONING_EFFORT = "medium"
-
-AI_MODEL_NAME = "gpt-5.4-mini"
-AI_REASONING_EFFORT = "high"
+AI_MODEL_NAME = os.getenv("AI_MODEL_NAME", "gpt-5.4")
+AI_REASONING_EFFORT = os.getenv("AI_REASONING_EFFORT", "low")
+AI_MAX_TOTAL_COST_USD = float(os.getenv("AI_MAX_TOTAL_COST_USD", "0.04"))
+AI_TARGET_TOTAL_COST_USD = float(
+    os.getenv("AI_TARGET_TOTAL_COST_USD", "0.032"))
+AI_INPUT_COST_PER_1M = 2.50
+AI_OUTPUT_COST_PER_1M = 15.00
+AI_MAX_RANKED_IDS = 10
+AI_DEFAULT_MAX_COMPLETION_TOKENS = 450
+AI_MIN_COMPLETION_TOKENS = 180
+AI_MAX_ITEMS_PER_REQUEST = 250
+AI_COMPRESSION_STEPS = [
+    {
+        "name": "balanced",
+        "title": 96,
+        "subtitle": 72,
+        "location": 60,
+        "host": 48,
+        "desc": 120,
+        "nested": 120,
+        "tags": 6,
+        "include_subtitle": True,
+        "include_host": True,
+        "include_desc": True,
+        "include_nested": True,
+    },
+    {
+        "name": "tight",
+        "title": 90,
+        "subtitle": 56,
+        "location": 56,
+        "host": 0,
+        "desc": 80,
+        "nested": 70,
+        "tags": 5,
+        "include_subtitle": True,
+        "include_host": False,
+        "include_desc": True,
+        "include_nested": True,
+    },
+    {
+        "name": "lean",
+        "title": 84,
+        "subtitle": 0,
+        "location": 52,
+        "host": 0,
+        "desc": 55,
+        "nested": 0,
+        "tags": 4,
+        "include_subtitle": False,
+        "include_host": False,
+        "include_desc": True,
+        "include_nested": False,
+    },
+    {
+        "name": "bare",
+        "title": 78,
+        "subtitle": 0,
+        "location": 46,
+        "host": 0,
+        "desc": 0,
+        "nested": 0,
+        "tags": 3,
+        "include_subtitle": False,
+        "include_host": False,
+        "include_desc": False,
+        "include_nested": False,
+    },
+]
 
 MAX_DESC_CHARS = 220
 MAX_CONTEXT_ITEMS = 25
@@ -74,34 +139,6 @@ MAX_COMPLETION_TOKENS = 800
 URL_RE = re.compile(r"https?://\S+|www\.\S+", re.IGNORECASE)
 SKIP_NESTED_KEYS = {"image_urls", "pin_url",
                     "source_url", "url", "urls", "href", "link", "links"}
-
-EVENT_EXTRACTION_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "date": {"type": "string"},
-        "time": {"type": "string"},
-        "location": {"type": "string"},
-        "names": {"type": "array", "items": {"type": "string"}},
-        "event_name": {"type": "string"},
-        "description": {"type": "string"},
-    },
-    "required": ["date", "time", "location", "names", "event_name", "description"],
-    "additionalProperties": False,
-}
-
-AI_RESPONSE_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "summary": {"type": "string"},
-        "ranked_ids": {
-            "type": "array",
-            "items": {"type": "string"},
-            "maxItems": 10,
-        },
-    },
-    "required": ["summary", "ranked_ids"],
-    "additionalProperties": False,
-}
 
 # In-memory stores
 GLOBAL_CONTENT_CACHE = []
@@ -187,6 +224,7 @@ PHRASE_WORD_BANK = {
 # HELPERS (Vision & Chat)
 # ------------------------------------------------------------------------------
 def extract_json(raw: str) -> dict:
+    """Clean up model output and return the first {...} JSON object inside."""
     if raw.startswith("```") and raw.endswith("```"):
         raw = raw.strip("`").strip()
 
@@ -213,8 +251,7 @@ def extract_json(raw: str) -> dict:
 
     if not isinstance(event_json, dict):
         raise ValueError(
-            f"Expected JSON object but got {type(event_json).__name__}"
-        )
+            f"Expected JSON object but got {type(event_json).__name__}")
 
     loc = event_json.get("location")
     event_json["location_at"] = loc
@@ -345,12 +382,14 @@ def generate_dynamic_word_bank(pages: list):
 def fetch_and_cache_content():
     global GLOBAL_CONTENT_CACHE
     try:
+        logger.info("Fetching fresh content from API in background...")
         resp = requests.get(CONTENT_API_URL, timeout=15)
         resp.raise_for_status()
         pages = resp.json().get("pages", [])
         if pages:
             generate_dynamic_word_bank(pages)
             GLOBAL_CONTENT_CACHE = pages
+            logger.info(f"Successfully cached {len(pages)} pages.")
     except Exception as e:
         logger.error(f"Background fetch failed: {e}")
 
@@ -580,12 +619,8 @@ def score_segment(query_hints: dict, segment: dict) -> float:
 def build_query_aware_nested_excerpt(segments, query_hints, max_chars=MAX_NESTED_CONTEXT_CHARS) -> str:
     if not segments:
         return ""
-    scored = sorted(
-        [(score_segment(query_hints, seg), seg["idx"], seg)
-         for seg in segments],
-        key=lambda x: (x[0], -x[1]),
-        reverse=True
-    )
+    scored = sorted([(score_segment(query_hints, seg), seg["idx"], seg)
+                    for seg in segments], key=lambda x: (x[0], -x[1]), reverse=True)
 
     selected, selected_chars, group_counts = [], 0, {}
     for seg_score, _, seg in scored:
@@ -636,22 +671,9 @@ def encode_item(item: dict) -> dict:
 
     return {
         "raw": item,
-        "compact": {
-            "id": item.get("id"),
-            "title": title,
-            "subtitle": subtitle,
-            "host": host,
-            "description": description,
-            "tags": tags,
-            "type": item_type,
-            "start": start,
-            "end": end
-        },
-        "search_blob": search_blob,
-        "normalized_blob": normalize_text(search_blob),
-        "token_set": tokenize(search_blob),
-        "nested_segments": nested_segments,
-        "nested_structured_text": nested_structured_text,
+        "compact": {"id": item.get("id"), "title": title, "subtitle": subtitle, "host": host, "description": description, "tags": tags, "type": item_type, "start": start, "end": end},
+        "search_blob": search_blob, "normalized_blob": normalize_text(search_blob), "token_set": tokenize(search_blob),
+        "nested_segments": nested_segments, "nested_structured_text": nested_structured_text,
     }
 
 
@@ -686,17 +708,298 @@ def score_encoded_item(query_hints: dict, encoded: dict) -> float:
 
 
 # ------------------------------------------------------------------------------
+# LIGHTWEIGHT /ai HELPERS
+# ------------------------------------------------------------------------------
+def extract_first_json_object(raw: str) -> dict:
+    raw = (raw or "").strip()
+    if not raw:
+        raise ValueError("Empty model response")
+
+    if raw.startswith("```") and raw.endswith("```"):
+        raw = raw.strip("`").strip()
+        if raw.lower().startswith("json"):
+            raw = raw[4:].strip()
+
+    start = raw.find("{")
+    if start == -1:
+        raise ValueError("No JSON object found in model output")
+
+    depth = 0
+    end = None
+    for i, ch in enumerate(raw[start:], start):
+        if ch == "{":
+            depth += 1
+        elif ch == "}":
+            depth -= 1
+            if depth == 0:
+                end = i
+                break
+
+    if end is None:
+        raise ValueError("Unbalanced braces in model output")
+
+    parsed = json.loads(raw[start:end + 1])
+    if not isinstance(parsed, dict):
+        raise ValueError("Expected a JSON object")
+    return parsed
+
+
+_TOKENIZER_CACHE = {}
+
+
+def count_text_tokens(text: str, model: str = AI_MODEL_NAME) -> int:
+    if not text:
+        return 0
+
+    if tiktoken is not None:
+        try:
+            enc = _TOKENIZER_CACHE.get(model)
+            if enc is None:
+                try:
+                    enc = tiktoken.encoding_for_model(model)
+                except Exception:
+                    enc = tiktoken.get_encoding("cl100k_base")
+                _TOKENIZER_CACHE[model] = enc
+            return len(enc.encode(text))
+        except Exception:
+            pass
+
+    return max(1, len(text) // 4)
+
+
+def estimate_chat_prompt_tokens(messages, model: str = AI_MODEL_NAME) -> int:
+    total = 3
+    for msg in messages:
+        content = msg.get("content", "")
+        if not isinstance(content, str):
+            try:
+                content = json.dumps(
+                    content, ensure_ascii=False, separators=(",", ":"))
+            except Exception:
+                content = str(content)
+        total += count_text_tokens(content, model=model) + 6
+    return total
+
+
+def usd_for_input_tokens(token_count: int) -> float:
+    return (token_count / 1_000_000) * AI_INPUT_COST_PER_1M
+
+
+def usd_for_output_tokens(token_count: int) -> float:
+    return (token_count / 1_000_000) * AI_OUTPUT_COST_PER_1M
+
+
+def estimate_total_cost_usd(prompt_tokens: int, max_completion_tokens: int) -> float:
+    return usd_for_input_tokens(prompt_tokens) + usd_for_output_tokens(max_completion_tokens)
+
+
+def compact_text(value: str, max_chars: int) -> str:
+    if max_chars <= 0:
+        return ""
+    text = strip_urls(value or "")
+    if not text:
+        return ""
+    if len(text) <= max_chars:
+        return text
+    return text[: max_chars - 1].rstrip(" ,;:-") + "…"
+
+
+def get_item_location_text(item: dict) -> str:
+    if isinstance(item.get("label"), dict) and item["label"].get("name"):
+        return str(item["label"].get("name") or "").strip()
+    if item.get("location"):
+        return str(item.get("location") or "").strip()
+    if item.get("subtitle"):
+        return str(item.get("subtitle") or "").strip()
+    return ""
+
+
+def get_item_time_text(item: dict) -> str:
+    start = str(item.get("start") or "").strip()
+    end = str(item.get("end") or "").strip()
+    if start and end:
+        return f"{start} | {end}"
+    return start or end
+
+
+def build_nested_preview(item: dict, max_chars: int) -> str:
+    if max_chars <= 0:
+        return ""
+
+    segments = extract_nested_segments(item.get("nested_content", []))
+    if segments:
+        preview = " ### ".join(seg.get("text", "")
+                               for seg in segments[:3] if seg.get("text"))
+        return compact_text(preview, max_chars)
+
+    fragments = []
+    gather_generic_strings(item.get("nested_content", []), fragments)
+    preview = " | ".join(fragments[:8])
+    return compact_text(preview, max_chars)
+
+
+def build_compact_ai_item(item: dict, tier: dict) -> dict:
+    compact = {
+        "id": item.get("id"),
+        "title": compact_text(item.get("title", ""), tier["title"]),
+        "type": compact_text(item.get("type", ""), 24),
+        "location": compact_text(get_item_location_text(item), tier["location"]),
+        "time": compact_text(get_item_time_text(item), 72),
+    }
+
+    if tier.get("include_subtitle"):
+        compact["subtitle"] = compact_text(
+            item.get("subtitle", ""), tier["subtitle"])
+
+    if tier.get("include_host"):
+        compact["host"] = compact_text(item.get("host", ""), tier["host"])
+
+    raw_tags = item.get("tags") or []
+    tags = []
+    for tag in raw_tags[: tier["tags"]]:
+        t = compact_text(str(tag), 24)
+        if t:
+            tags.append(t)
+    if tags:
+        compact["tags"] = tags
+
+    if tier.get("include_desc"):
+        compact["description"] = compact_text(
+            item.get("description", ""), tier["desc"])
+
+    if tier.get("include_nested"):
+        nested_preview = build_nested_preview(item, tier["nested"])
+        if nested_preview:
+            compact["nested"] = nested_preview
+
+    return {k: v for k, v in compact.items() if v not in (None, "", [], {})}
+
+
+def build_ai_messages(query: str, valid_items: list):
+    system_prompt = (
+        "You are a campus informant. Use only the provided compact campus items. "
+        "Answer the user's query with a short helpful summary and rank the best matching item IDs. "
+        "Return valid JSON only with this schema: "
+        '{"summary":"string","ranked_ids":["id1","id2"]}. '
+        "summary must be 1-3 short sentences. ranked_ids must contain at most 10 IDs, ordered best to worst. "
+        "Do not invent IDs. Ignore irrelevant items."
+    )
+
+    def make_messages(items_for_prompt):
+        user_content = json.dumps(
+            {"query": query, "items": items_for_prompt},
+            ensure_ascii=False,
+            separators=(",", ":"),
+        )
+        return [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ]
+
+    def try_budget(max_budget_usd: float):
+        for tier in AI_COMPRESSION_STEPS:
+            compact_items = [
+                build_compact_ai_item(item, tier)
+                for item in valid_items[:AI_MAX_ITEMS_PER_REQUEST]
+            ]
+            messages = make_messages(compact_items)
+            prompt_tokens = estimate_chat_prompt_tokens(
+                messages, model=AI_MODEL_NAME)
+
+            remaining_usd = max_budget_usd - \
+                usd_for_input_tokens(prompt_tokens)
+            if remaining_usd <= 0:
+                continue
+
+            max_completion_tokens = min(
+                AI_DEFAULT_MAX_COMPLETION_TOKENS,
+                int((remaining_usd / AI_OUTPUT_COST_PER_1M) * 1_000_000),
+            )
+            if max_completion_tokens < AI_MIN_COMPLETION_TOKENS:
+                continue
+
+            return {
+                "messages": messages,
+                "compact_items": compact_items,
+                "tier": tier["name"],
+                "prompt_tokens": prompt_tokens,
+                "max_completion_tokens": max_completion_tokens,
+                "estimated_cost_usd": estimate_total_cost_usd(prompt_tokens, max_completion_tokens),
+            }
+        return None
+
+    plan = try_budget(AI_TARGET_TOTAL_COST_USD)
+    if plan is not None:
+        return plan
+
+    plan = try_budget(AI_MAX_TOTAL_COST_USD)
+    if plan is not None:
+        return plan
+
+    return None
+
+
+def fallback_rank_ids(query: str, compact_items: list, allowed_ids: list) -> list:
+    query_tokens = tokenize(query)
+    scored = []
+    for item in compact_items:
+        blob = json.dumps(item, ensure_ascii=False, separators=(",", ":"))
+        score = len(query_tokens & tokenize(blob))
+        scored.append((score, item.get("id")))
+
+    scored.sort(key=lambda x: x[0], reverse=True)
+    ranked = [item_id for score, item_id in scored if item_id in allowed_ids]
+    if not ranked:
+        ranked = [item.get("id")
+                  for item in compact_items if item.get("id") in allowed_ids]
+    return ranked[:AI_MAX_RANKED_IDS]
+
+
+def build_citations(ranked_item_ids: list, valid_items: list) -> list:
+    citations = []
+    for pid in ranked_item_ids:
+        matched_item = next(
+            (item for item in valid_items if item.get("id") == pid), None)
+        if not matched_item:
+            continue
+
+        snippet = ""
+        if isinstance(matched_item.get("label"), dict) and matched_item["label"].get("name"):
+            snippet = str(matched_item["label"].get("name") or "").strip()
+        elif matched_item.get("subtitle"):
+            snippet = str(matched_item.get("subtitle") or "").strip()
+        elif matched_item.get("location"):
+            snippet = str(matched_item.get("location") or "").strip()
+        elif matched_item.get("host"):
+            snippet = str(matched_item.get("host") or "").strip()
+
+        if not snippet:
+            snippet = "Location not specified"
+
+        citations.append({
+            "page_id": pid,
+            "title": matched_item.get("title", ""),
+            "snippet": snippet,
+        })
+
+    return citations
+
+
+# ------------------------------------------------------------------------------
 # ROUTES
 # ------------------------------------------------------------------------------
 
 @ask_bp.route("/endpoints", methods=["GET"])
 def root():
-    return jsonify({"ok": True, "endpoints": ["/ask (POST)", "/ask/events (POST)", "/ai (POST)"]})
+    return jsonify({"ok": True, "endpoints": ["/ask/vision (POST)", "/ask/events (POST)", "/ai (POST)"]})
 
 
 @ask_bp.route("/ask", methods=["POST"])
 def ask_vision():
-    logger.info("\n--- [START /ask PIPELINE] ---")
+    """
+    Multipart form-data with a file field named 'file'.
+    Returns strict JSON extracted from the image.
+    """
     if "file" not in request.files:
         return jsonify({"error": "No image file provided (field name should be 'file')"}), 400
 
@@ -709,55 +1012,42 @@ def ask_vision():
     b64 = base64.b64encode(img_bytes).decode("utf-8")
     data_url = f"data:{mime};base64,{b64}"
 
-    # [1] User Request / Input Data
-    logger.info(
-        f"[1] USER POST REQUEST: Received file '{uploaded.filename}' ({len(img_bytes)} bytes)")
+    system_message = {
+        "role": "system",
+        "content": (
+            "You are a vision-enabled assistant. "
+            "Extract from the image: date, time, location, names, event name, and a short description of the event. "
+            "Respond *only* with valid JSON matching this schema:\n\n"
+            "{\n"
+            "  \"date\": \"\",\n"
+            "  \"time\": \"\",\n"
+            "  \"location\": \"\",\n"
+            "  \"names\": [],\n"
+            "  \"event_name\": \"\",\n"
+            "  \"description\": \"\"\n"
+            "}\n"
+            "Rules:\n"
+            "- If a field is unknown, use an empty string (or empty array for names).\n"
+            "- Do not add extra keys. Do not include explanations."
+        ),
+    }
 
-    system_prompt = (
-        "You are a vision-enabled assistant. "
-        "Extract from the image: date, time, location, names, event name, and a short description of the event. "
-        "Use empty strings for unknown string fields and an empty array for names. "
-        "Do not add extra keys."
-    )
-    user_prompt = "Extract the event details from this image."
-
-    # [3] LLM Prompt
-    logger.info(
-        f"[3] LLM PROMPT:\nSystem: {system_prompt}\nUser: {user_prompt}")
+    user_message = {
+        "role": "user",
+        "content": [
+            {"type": "image_url", "image_url": {"url": data_url}},
+        ],
+    }
 
     try:
-        response = client.responses.create(
-            model=ASK_MODEL_NAME,
-            reasoning={"effort": ASK_REASONING_EFFORT},
-            input=[
-                {"role": "system", "content": system_prompt},
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "input_text", "text": user_prompt},
-                        {"type": "input_image",
-                            "image_url": data_url, "detail": "high"},
-                    ],
-                },
-            ],
-            text={
-                "format": {
-                    "type": "json_schema",
-                    "name": "event_extraction",
-                    "description": "Structured event extraction from an uploaded image",
-                    "schema": EVENT_EXTRACTION_SCHEMA,
-                    "strict": True,
-                }
-            },
+        resp = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[system_message, user_message],
             temperature=0.0,
-            max_output_tokens=400,
+            max_tokens=400,
         )
 
-        raw = (response.output_text or "").strip()
-
-        # [4] LLM Response
-        logger.info(f"[4] LLM RESPONSE: {raw}")
-
+        raw = (resp.choices[0].message.content or "").strip()
         if not raw:
             return jsonify({"error": "Empty model response"}), 502
 
@@ -766,26 +1056,23 @@ def ask_vision():
         except ValueError:
             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
 
-        logger.info("--- [END /ask PIPELINE] ---\n")
         return jsonify(result)
 
     except json.JSONDecodeError:
         return jsonify({"error": "Model did not return valid JSON"}), 500
     except Exception as e:
-        logger.error(f"Error in /ask: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @ask_bp.route("/ask/events", methods=["POST"])
 def ask_events():
-    logger.info("\n--- [START /ask/events PIPELINE] ---")
+    """
+    Chatbot endpoint for events with memory.
+    """
     data = request.get_json(silent=True) or {}
     user_id = data.get("user_id", "default")
     question = data.get("question", "")
     tags = data.get("tags", [])
-
-    # [1] User Request
-    logger.info(f"[1] USER POST REQUEST: {json.dumps(data)}")
 
     if not isinstance(question, str) or not question.strip():
         return jsonify({"error": "No question provided"}), 400
@@ -794,10 +1081,6 @@ def ask_events():
         event for event in EVENTS
         if not tags or any(tag in event.get("tags", []) for tag in tags)
     ]
-
-    # [2] Pipeline / Encodings
-    logger.info(
-        f"[2] ENCODINGS/PIPELINE: Filtered to {len(filtered_events)} events based on tags: {tags}")
 
     system_message = {
         "role": "system",
@@ -824,13 +1107,6 @@ def ask_events():
         messages = [system_message] + \
             list(history) + [{"role": "user", "content": context_prompt}]
 
-    # [3] LLM Prompt
-    logger.info(
-        f"[3] LLM PROMPT: Sent {len(messages)} messages total (approx {approximate_token_count(messages)} tokens).")
-    logger.info(f"System Message: {system_message['content']}")
-    logger.info(
-        f"Final User Context Prompt length: {len(context_prompt)} chars.")
-
     try:
         response = client.chat.completions.create(
             model="gpt-4o",
@@ -840,35 +1116,31 @@ def ask_events():
         )
 
         reply = (response.choices[0].message.content or "").strip()
-
-        # [4] LLM Response
-        logger.info(f"[4] LLM RESPONSE: {reply}")
-
         history.append({"role": "assistant", "content": reply})
 
         event_ids = re.findall(r"event\d{3}", reply)
         matched_events = [
             event for event in EVENTS if event.get("id") in set(event_ids)]
 
-        logger.info("--- [END /ask/events PIPELINE] ---\n")
         return jsonify({"response": reply, "matched_events": matched_events})
 
     except Exception as e:
-        logger.error(f"Error in /ask/events: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
 
 
 @ask_bp.route("/ai", methods=["POST"])
 def ask_ai():
-    logger.info("\n--- [START /ai PIPELINE] ---")
+    """
+    Cost-capped /ai route that sends compact campus items directly to GPT-5.4.
+    """
+    logger.info("=" * 80)
+    logger.info("📥 /ai REQUEST START")
+    logger.info("=" * 80)
 
     try:
-        # [1] USER POST REQUEST
         data = request.get_json(silent=True) or {}
         query = str(data.get("query", "")).strip()
         item_ids = data.get("item_ids", [])
-
-        logger.info(f"[1] USER POST REQUEST: {json.dumps(data)}")
 
         if not query:
             return jsonify({"error": "No query provided"}), 400
@@ -878,7 +1150,7 @@ def ask_ai():
             return jsonify({
                 "ai_overview": "No item_ids were provided in the request.",
                 "citations": [],
-                "ranked_item_ids": []
+                "ranked_item_ids": [],
             }), 200
 
         pages = GLOBAL_CONTENT_CACHE
@@ -888,149 +1160,93 @@ def ask_ai():
             fetch_and_cache_content()
             pages = GLOBAL_CONTENT_CACHE
 
-        # [2] ENCODINGS AND PIPELINE
-        query_hints = build_query_hints(query)
-        # Convert sets to lists for clean logging
-        loggable_hints = {k: list(v) if isinstance(
-            v, set) else v for k, v in query_hints.items()}
-
         valid_items = [p for p in pages if p.get("id") in item_ids]
-        encoded_items = [encode_item(item) for item in valid_items]
+        if not valid_items:
+            return jsonify({
+                "ai_overview": "I could not find any matching items for the item_ids you sent.",
+                "citations": [],
+                "ranked_item_ids": [],
+            }), 200
 
-        scored = [{"score": score_encoded_item(
-            query_hints, enc), "encoded": enc} for enc in encoded_items]
-        scored.sort(key=lambda x: x["score"], reverse=True)
+        ai_plan = build_ai_messages(query, valid_items)
+        if ai_plan is None:
+            logger.warning(
+                "Unable to compress request enough to stay under the configured /ai budget.")
+            return jsonify({
+                "ai_overview": "This request is too large to process under the configured cost cap without dropping item detail.",
+                "citations": [],
+                "ranked_item_ids": [],
+            }), 413
 
-        top_scored = scored[:MAX_CONTEXT_ITEMS]
-        if len(top_scored) < MIN_CONTEXT_ITEMS and len(scored) >= MIN_CONTEXT_ITEMS:
-            top_scored = scored[:MIN_CONTEXT_ITEMS]
-        elif len(top_scored) == 0 and scored:
-            top_scored = scored
-
-        top_candidate_ids = [row["encoded"]["compact"]["id"]
-                             for row in top_scored]
-
-        logger.info(f"[2] ENCODINGS/PIPELINE:")
-        logger.info(f"    - Query Hints: {json.dumps(loggable_hints)}")
         logger.info(
-            f"    - Encoded {len(encoded_items)} valid items out of {len(item_ids)} requested.")
-        logger.info(
-            f"    - Top Candidate IDs Sent to LLM: {top_candidate_ids}")
-
-        llm_candidates = []
-        for row in top_scored:
-            enc = row["encoded"]
-            compact = dict(enc["compact"])
-            nested_compact = build_query_aware_nested_excerpt(
-                enc["nested_segments"],
-                query_hints,
-                max_chars=MAX_NESTED_CONTEXT_CHARS
-            )
-            if nested_compact:
-                compact["nested_content_compact"] = nested_compact
-            llm_candidates.append(compact)
-
-        system_prompt = (
-            "You are a campus informant. Answer the user's query using the provided campus items. "
-            "Provide a comprehensive overview (at least 1-3 sentences) summarizing the relevant items. "
-            "Rank up to 10 of the most relevant item IDs based on the query. "
-            "You MUST respond in valid JSON matching this exact schema: "
-            "{ \"summary\": \"string\", \"ranked_ids\": [\"id1\", \"id2\"] }"
+            "AI plan | items=%s | tier=%s | prompt_tokens_est=%s | max_completion_tokens=%s | est_cost_usd=%.6f",
+            len(valid_items),
+            ai_plan["tier"],
+            ai_plan["prompt_tokens"],
+            ai_plan["max_completion_tokens"],
+            ai_plan["estimated_cost_usd"],
         )
 
-        user_content = json.dumps(
-            {"query": query, "available_items": llm_candidates},
-            indent=2,
-            ensure_ascii=False
-        )
-
-        # [3] LLM PROMPT
-        logger.info(f"[3] LLM PROMPT:")
-        logger.info(f"    - System: {system_prompt}")
-        logger.info(f"    - User: {user_content}")
-
-        response = client.responses.create(
+        resp = client.chat.completions.create(
             model=AI_MODEL_NAME,
-            reasoning={"effort": AI_REASONING_EFFORT},
-            input=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_content},
-            ],
-            text={
-                "format": {
-                    "type": "json_schema",
-                    "name": "campus_item_ranking",
-                    "description": "Structured ranking response for campus search results",
-                    "schema": AI_RESPONSE_SCHEMA,
-                    "strict": True,
-                }
-            },
-            max_output_tokens=800
+            messages=ai_plan["messages"],
+            response_format={"type": "json_object"},
+            reasoning_effort=AI_REASONING_EFFORT,
+            max_completion_tokens=ai_plan["max_completion_tokens"],
         )
 
-        raw_output = (response.output_text or "").strip()
-
-        # [4] LLM RESPONSE
-        logger.info(f"[4] LLM RESPONSE:\n{raw_output}")
+        raw_content = (resp.choices[0].message.content or "").strip()
+        ranked_item_ids = []
+        ai_overview = "Here are the top matches based on your search."
 
         try:
-            llm_output = json.loads(raw_output) if raw_output else {}
-            ai_overview = llm_output.get(
-                "summary", "Here are the top matches based on your search."
-            )
+            llm_output = extract_first_json_object(raw_content)
+            ai_overview = str(llm_output.get("summary") or ai_overview).strip()
             ranked_item_ids = [
-                x for x in llm_output.get("ranked_ids", [])
-                if x in item_ids
-            ]
-        except json.JSONDecodeError:
+                item_id
+                for item_id in llm_output.get("ranked_ids", [])
+                if item_id in item_ids
+            ][:AI_MAX_RANKED_IDS]
+        except Exception:
             logger.warning(
-                "Failed to decode JSON from model. Falling back to local top_scored order.")
-            ai_overview = "Here are the top matches based on your search."
-            ranked_item_ids = []
+                "Failed to parse model JSON cleanly. Falling back to lexical ranking.")
 
         if not ranked_item_ids:
-            ranked_item_ids = [row["encoded"]["compact"]["id"]
-                               for row in top_scored]
+            ranked_item_ids = fallback_rank_ids(
+                query, ai_plan["compact_items"], item_ids)
 
-        citations = []
-        for pid in ranked_item_ids:
-            matched_item = next(
-                (item for item in valid_items if item.get("id") == pid), None)
-            if not matched_item:
-                continue
+        citations = build_citations(ranked_item_ids, valid_items)
 
-            snippet = ""
-            if isinstance(matched_item.get("label"), dict) and matched_item["label"].get("name"):
-                snippet = str(matched_item["label"].get("name")).strip()
-            elif matched_item.get("subtitle"):
-                snippet = str(matched_item.get("subtitle")).strip()
-            elif matched_item.get("location"):
-                snippet = str(matched_item.get("location")).strip()
-            elif matched_item.get("host"):
-                snippet = str(matched_item.get("host")).strip()
-
-            if not snippet:
-                snippet = "Location not specified"
-
-            citations.append({
-                "page_id": pid,
-                "title": matched_item.get("title", ""),
-                "snippet": snippet
-            })
+        usage = getattr(resp, "usage", None)
+        if usage is not None:
+            prompt_tokens_used = int(getattr(usage, "prompt_tokens", 0) or 0)
+            completion_tokens_used = int(
+                getattr(usage, "completion_tokens", 0) or 0)
+            actual_cost_usd = estimate_total_cost_usd(
+                prompt_tokens_used, completion_tokens_used)
+            logger.info(
+                "AI usage | prompt_tokens=%s | completion_tokens=%s | actual_cost_usd=%.6f",
+                prompt_tokens_used,
+                completion_tokens_used,
+                actual_cost_usd,
+            )
+            if actual_cost_usd > AI_MAX_TOTAL_COST_USD:
+                logger.warning(
+                    "AI request exceeded configured budget | actual_cost_usd=%.6f | cap_usd=%.6f",
+                    actual_cost_usd,
+                    AI_MAX_TOTAL_COST_USD,
+                )
 
         final_response = {
             "ai_overview": ai_overview,
             "citations": citations,
-            "ranked_item_ids": ranked_item_ids
+            "ranked_item_ids": ranked_item_ids,
         }
 
-        logger.info("--- [END /ai PIPELINE] ---\n")
+        logger.info("📤 /ai REQUEST END - SUCCESS")
         return jsonify(final_response), 200
 
     except Exception as e:
         logger.error(
             f"Failed to generate AI response: {str(e)}", exc_info=True)
-        return jsonify({
-            "error": "Failed to generate AI response",
-            "details": str(e)
-        }), 500
+        return jsonify({"error": "Failed to generate AI response", "details": str(e)}), 500
