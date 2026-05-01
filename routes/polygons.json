@@ -7,6 +7,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "North Bowl Lot 1",
     "subtitle": "North Bowl Lot Slate Zone",
     "description": "Parking availability and regulations for the North Bowl Lot Slate Zone.",
@@ -32,7 +33,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Faculty", "Staff", "TAPS", "ADA Parking"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -63,6 +64,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "North Bowl Lot 2",
     "subtitle": "North Bowl Lot Slate Zone",
     "description": "Parking Availability: Faculty, Staff. Marked spaces include: ADA Parking. Specially marked spaces enforced 24 hours. Paid parking required Monday\u2013Friday from 7am\u20138pm. For more information please contact TAPS at (209) 228-8277 or visit https://taps.ucmerced.edu/.",
@@ -88,7 +90,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Faculty", "Staff", "TAPS", "ADA Parking"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -115,6 +117,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "P3 Lot-Blue Zone",
     "subtitle": "Parking availability and enforcement",
     "description": "Parking availability: Faculty, Staff, Vendors. Specially marked spaces are enforced 24 hours. Paid parking required Monday\u2013Friday from 7am\u20136pm. For more information contact TAPS at (209) 228-8277 or visit the TAPS website.",
@@ -136,7 +139,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Faculty", "Staff","Vendors", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -195,7 +198,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["research", "services", "infrastructure", "computing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -229,7 +232,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building","Facilities","services"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -282,7 +285,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "services", "Facilities"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -357,7 +360,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["UCPD", "building", "services", "police"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -406,7 +409,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "science", "engineering", "arts", "humanity"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -452,6 +455,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Le Grand Lot",
     "subtitle": "Gold Zone",
     "description": "<div>\n                <img src=\"https://campusmap.ucmercedhub.com/files/images/goldzonelegrand.png\" width=\"200\" height=\"300\">\n                <h1>Le Grand Lot Gold Zone</h1>\n                <p>Parking Availability:</p>\n                <li>Faculty</li>\n                <li>Staff</li>\n                <li>Vendors</li>\n                <p></p>\n                <p>Marked spaces include:</p>\n                <li>ADA Parking</li>\n                <li>EV Charging</li>\n                <p></p>\n                <p>\n                  Specially marked spaces enforced 24 hours. Paid parking required on Monday -\n                  Friday from 7am - 8pm. For more information please contact TAPS at (209)\n                  228-8277 or visit our website\n                  <a href=\"https://taps.ucmerced.edu\" target=\"_blank\">here</a>.\n                </p>\n              </div>",
@@ -479,7 +483,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking","Faculty", "Staff", "Vendors", "ADA Parking", "EV Charging"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -555,7 +559,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "services"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -590,7 +594,7 @@
     },
     "title": "Academic Office Annex (AOA)",
     "subtitle": "Academic support services",
-    "description": "Services located in AOA 114 include the Office of Undergraduate Education (academic support) and the STEM Resource Center (tutoring and STEM support). Hours vary by tutor availability\u2014see the linked sources for current schedules.",
+    "description": "(soon to be COB3 currently under contruction to replace AOA) Services located in AOA 114 include the Office of Undergraduate Education (academic support) and the STEM Resource Center (tutoring and STEM support). Hours vary by tutor availability\u2014see the linked sources for current schedules.",
     "image_urls": [
       "https://campusmap.ucmercedhub.com/files/images/uc-merced-2-story-modular-perspective-9-28-12.jpg"
     ],
@@ -618,7 +622,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["services", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -691,7 +695,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "classrooms", "offices", "research"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -772,7 +776,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["science", "engineering", "building", "laboratories", "research"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -860,7 +864,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["science", "engineering", "building", "laboratories", "research"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -930,7 +934,7 @@
     ],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1035,7 +1039,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "library", "pubic space"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1135,7 +1139,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1211,7 +1215,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1284,7 +1288,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["housing", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1372,7 +1376,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1438,7 +1442,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1501,7 +1505,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "research", "science", "laboratories"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -1544,6 +1548,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+    "pin_url": "/dining-pin.png",
     "title": "The Pavilion",
     "subtitle": "Multipurpose Dining Facility",
     "description": "A highly visible, 600-seat dining facility inspired by the Central Valley\u2019s agricultural heritage, offering a variety of indoor/outdoor seating and supporting a healthy, sustainable food and community experience.",
@@ -4484,7 +4489,7 @@
     ],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["arts", "science", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -4556,7 +4561,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -4628,7 +4633,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -4700,7 +4705,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -4776,7 +4781,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -4852,7 +4857,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -4880,6 +4885,7 @@
   {
     "id": "polygon1761862422686169",
     "location_id": 1130,
+    "pin_url": "/dining-pin.png",
     "label": {
       "name": "DC",
       "hideBefore": 14,
@@ -6475,7 +6481,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -6544,7 +6550,7 @@
     ],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["admin", "services", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -6624,7 +6630,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "events", "Facilities"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -6700,7 +6706,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -6776,7 +6782,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -6851,7 +6857,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -6940,7 +6946,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["activities", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7005,7 +7011,7 @@
     ],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["activities", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7070,7 +7076,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["services", "activities", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7103,7 +7109,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["services", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7123,6 +7129,7 @@
   {
     "id": "polygon1761863882489923",
     "location_id": 100,
+    "pin_url": "/bus-stop-pin.png",
     "label": {
       "name": "UTC",
       "hideBefore": 14,
@@ -7155,7 +7162,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["TAPS", "building", "services", "transit", "transportation", "Faculty", "Staff"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7245,7 +7252,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["activities", "pubic space", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7288,7 +7295,7 @@
     ],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["activities", "pubic space", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7341,7 +7348,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["education", "building", "Facilities", "services", "classrooms"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7409,7 +7416,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["research", "science", "building", "Facilities"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7453,7 +7460,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["services", "Faculty", "Staff", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7485,7 +7492,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "events", "activities"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7517,7 +7524,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["activities", "events", "pubic space"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7576,7 +7583,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["classrooms", "building", "research", "offices"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7618,7 +7625,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "events", "activities"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7650,7 +7657,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7682,7 +7689,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7714,7 +7721,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7746,7 +7753,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7778,7 +7785,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7810,7 +7817,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7842,7 +7849,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7874,7 +7881,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7906,7 +7913,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -7971,7 +7978,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "science", "research"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8096,7 +8103,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": [ "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8149,7 +8156,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": [ "places", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8215,7 +8222,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "housing"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8310,6 +8317,7 @@
       "hideBefore": 17,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "University Lot Restricted",
     "subtitle": "Restricted parking area",
     "description": "Parking availability is reserved for specially marked spaces and enforced 24 hours. For more information or reservation questions, please contact TAPS at (209) 228-8277.",
@@ -8331,7 +8339,7 @@
     ],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8426,6 +8434,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Library Lot 1",
     "subtitle": "Gold Zone parking",
     "description": "Parking availability: Faculty, Staff, Vendors. Marked spaces: ADA Parking, EV Charging Stations. Specially marked spaces enforced 24 hours. Paid parking required Monday\u2013Friday from 7am\u20138pm. For more information contact TAPS at (209) 228-8277 or visit https://taps.ucmerced.edu/.",
@@ -8453,7 +8462,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking","Faculty", "Staff", "Vendors", "ADA Parking", "EV Charging Stations"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8522,7 +8531,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["housing", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8605,7 +8614,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["housing", "building"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8662,6 +8671,7 @@
       "hideBefore": 17,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Bellevue Lot Gold Zone",
     "subtitle": "",
     "description": "Gold zone parking in Bellevue Lot.",
@@ -8689,7 +8699,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking","Faculty", "Staff", "Vendors", "ADA Parking", "Campus Tour Vehicles", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8714,6 +8724,7 @@
       "hideBefore": 17,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "ECEC Lot Blue Zone",
     "subtitle": "Parking (Blue Zone)",
     "description": "Blue Zone parking at the ECEC lot. Paid parking required Monday\u2013Friday from 7am\u20136pm. Specially marked spaces are enforced 24 hours. For more information contact TAPS at (209) 228-8277 or visit https://taps.ucmerced.edu/.",
@@ -8737,7 +8748,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Faculty", "Staff", "Vendors", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8763,6 +8774,7 @@
       "hideBefore": 17,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Library Lot 2 Gold Zone",
     "subtitle": "Parking availability and enforcement",
     "description": "Specially marked spaces enforced 24 hours. Paid parking required Monday\u2013Friday from 7am\u20138pm. For more information contact TAPS at (209) 228-8277 or visit https://taps.ucmerced.edu/.",
@@ -8786,7 +8798,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Faculty", "Staff", "Vendors", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8818,6 +8830,7 @@
       "hideBefore": 14,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Bellevue Lot",
     "subtitle": "Bellevue Lot Green Zone",
     "description": "<div>\n                                <img src=\"https://campusmap.ucmercedhub.com/files/images/greenzonesign.png\" width=\"200\" height=\"300\">\n                                <h1>Bellevue Lot Green Zone</h1>\n                                <p>Parking avaibility for:</p>\n                                <li>Student Commuter</li>\n                                <li>Staff</li>\n                                <li>Faculty</li>\n                                <li>Visitor Parking</li>\n                                <li>Vendors</li>\n                                <p></p>\n                                <strong><p>Marked spaces include:</p>\n                                  <li>ADA Parking</li>\n                                  <li>Compact Vehicles</li>\n                                  <p></p>\n                                  <p>\n                                    Dont have a permit? Download the WayToPark Mobile App for hourly parking.\n                                    Click\n                                    <a href=\"https://taps.ucmerced.edu/permits\" target=\"_blank\">here</a> for\n                                    more information.\n                                  </p></strong>\n                                <p>\n                                  Paid Parking required Monday - Friday from 7am - 6pm and free after 6 pm till 11:59 pm. For more information\n                                  please visit the TAPS website or click\n                                  <a href=\"https://taps.ucmerced.edu/\" target=\"_blank\">here</a>.\n                                </p>\n                              </div>",
@@ -8827,7 +8840,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8860,6 +8873,7 @@
       "hideBefore": 17,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Bellevue Lot H Zone",
     "subtitle": null,
     "description": "<div>\n                <img src=\"https://campusmap.ucmercedhub.com/files/images/hzonesign.png\" width=\"200\" height=\"300\">\n                <h1>Bellevue Lot H Zone</h1>\n                <p>Parkring availability:</p>\n                <li>Student Residents Only</li>\n                <p></p>\n                <p>Marked spaces include:</p>\n                <li>ADA Parking</li>\n                <p></p>\n                <p>\n                  Paid Parking required and enforced 24 hours a day. For more information\n                  please contact TAPS at (209) 228-8277 or visit our website\n                  <a href=\"https://taps.ucmerced.edu/\" target=\"_blank\">here</a>.\n                </p>\n              </div>",
@@ -8887,7 +8901,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "ADA Parking", "Restricted", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8915,6 +8929,7 @@
       "hideBefore": 15,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Scholar's Lot H Zone",
     "subtitle": "Student Residents Only",
     "description": "Paid parking required and enforced 24 hours a day. For more information please contact TAPS at (209) 228-8277 or visit https://taps.ucmerced.edu/.",
@@ -8938,7 +8953,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Restricted", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -8988,12 +9003,13 @@
   {
     "id": "polygon176255236834235",
     "location_id": 535,
-    "pin_url": "/parking_pin.png",
+    
     "label": {
       "name": "Scholar's Lot Blue Zone",
       "hideBefore": 15,
       "hideAfter": null
     },
+      "pin_url": "/parking_pin.png",
     "title": "Scholar's Lot Blue Zone",
     "subtitle": "Parking availability and enforcement information",
     "description": "Blue Zone parking information for Scholar's Lot, including eligible parking types and enforcement/payment hours.",
@@ -9017,7 +9033,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Faculty", "Staff", "Vendors", "TAPS", "event parking", "TAPS"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -9056,7 +9072,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "Restricted"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -9098,7 +9114,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["building", "Facilities", "services"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -9180,7 +9196,7 @@
       }
     ],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["parking", "TAPS", "building", "Facilities", "services"],
     "geometry": {
       "type": "polygon",
       "rings": [
@@ -9212,7 +9228,7 @@
     "sections": [],
     "sources": [],
     "type": "polygon",
-    "tags": ["parking", "places", "transit"],
+    "tags": ["pubic space", "activities", "events"],
     "geometry": {
       "type": "polygon",
       "rings": [

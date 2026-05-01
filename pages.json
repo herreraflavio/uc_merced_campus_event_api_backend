@@ -48,5 +48,237 @@
         "id": "CBA13787-EFCC-4256-8608-B0DEB1E8EE1F",
         "title": "Cute bunny",
         "source_url": "https://campusmap.ucmercedhub.com/"
+    },
+    {
+        "end": "2026-04-29T01:17:44.950Z",
+        "subtitle": "Near library",
+        "description": "Retail store outside library",
+        "geometry": {
+            "longitude": -120.424737,
+            "latitude": 37.3659,
+            "type": "point"
+        },
+        "tags": [
+            "retail",
+            "store"
+        ],
+        "type": "retail_store",
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777421919484-a1b9da61-4746-4295-9a6b-cebe8d381426-campus-post-1-79F6B9D5-BDD8-4ACE-9330-C9768A211550.jpg"
+        ],
+        "id": "244EF615-CFEC-43AD-8FFF-D7BA8A2EC167",
+        "title": "Retail store",
+        "host": "Campus Explorer",
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "start": "2026-04-29T00:17:44.950Z",
+        "pin_url": "/retail_store_pin.png",
+        "location_id": 1612,
+        "image_alt_text": "Retail store outside library"
+    },
+    {
+        "title": "Snack shop 2",
+        "subtitle": "Between cathedral and tenaya",
+        "end": "2026-04-29T01:45:39.950Z",
+        "description": "Snack shop 2",
+        "geometry": {
+            "type": "point",
+            "latitude": 37.363695,
+            "longitude": -120.429951
+        },
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777423614955-61ecbe27-a3a0-423e-bd4a-92a27cd1f37f-campus-post-1-D9C06F6C-4CF2-49C6-9354-FB2FD3CCC8C9.jpg"
+        ],
+        "pin_url": "/dining-pin.png",
+        "host": "Campus Explorer",
+        "image_alt_text": "Snack shot 2",
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "tags": [
+            "dining",
+            "food"
+        ],
+        "id": "A013455F-58BC-46F5-A418-308AE55563F0",
+        "location_id": 618,
+        "type": "dining",
+        "start": "2026-04-29T00:45:39.950Z"
+    },
+    {
+        "subtitle": "First floor library east wing",
+        "pin_url": "/dining-pin.png",
+        "start": "2026-04-29T00:47:28.881Z",
+        "host": "Campus Explorer",
+        "image_alt_text": "Snack shop 1",
+        "geometry": {
+            "latitude": 37.366256,
+            "type": "point",
+            "longitude": -120.424379
+        },
+        "id": "B6F4A730-8158-415B-AF6F-EA9954C30281",
+        "end": "2026-04-29T01:47:28.881Z",
+        "title": "Snack shop 1",
+        "location_id": 1882,
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777423762070-772bc6fa-456f-49c0-83a1-f0cad14f5ccb-campus-post-1-B3709E6F-BE0A-47DA-AFAA-5452D8DBC7E3.jpg"
+        ],
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "type": "dining",
+        "tags": [
+            "dining",
+            "food"
+        ],
+        "description": "Snack shop 1"
+    },
+    {
+        "description": "Food place Between sentinel and el portal",
+        "start": "2026-04-29T00:50:39.299Z",
+        "pin_url": "/dining-pin.png",
+        "title": "Food place",
+        "image_alt_text": "Food place Between sentinel and el portal",
+        "type": "dining",
+        "end": "2026-04-29T01:50:39.299Z",
+        "geometry": {
+            "longitude": -120.426297,
+            "type": "point",
+            "latitude": 37.361956
+        },
+        "host": "Campus Explorer",
+        "tags": [
+            "dining",
+            "food"
+        ],
+        "location_id": 1882,
+        "subtitle": "Between sentinel and el portal",
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777423949949-d32f134f-a60b-4740-bff5-70a7bde38ebd-campus-post-1-77DEECD6-4AB3-4716-B00A-322A726E03E8.jpg"
+        ],
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "id": "37C51B1A-0BB9-4B0C-8091-1BBD992AAC86"
+    },
+    {
+        "start": "2026-04-29T00:52:57.032Z",
+        "description": "University Store 1 west corner of admin",
+        "host": "Campus Explorer",
+        "subtitle": "West corner of Ruiz admin",
+        "geometry": {
+            "latitude": 37.362165,
+            "longitude": -120.427628,
+            "type": "point"
+        },
+        "location_id": 361,
+        "tags": [
+            "retail",
+            "store"
+        ],
+        "end": "2026-04-29T01:52:57.032Z",
+        "type": "retail_store",
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777424049771-71b4838b-a031-491a-8855-fdf5b21c73d1-campus-post-1-4964B9A1-EF02-4EFC-BE85-828E0FC4ABC9.jpg"
+        ],
+        "image_alt_text": "University Store 1 west corner of admin",
+        "id": "ED62AB55-49F3-4E26-A85E-AD5764B2BAC3",
+        "title": "University Store 1",
+        "pin_url": "/retail_store_pin.png",
+        "source_url": "https://campusmap.ucmercedhub.com/"
+    },
+    {
+        "pin_url": "/retail_store_pin.png",
+        "geometry": {
+            "longitude": -120.426886,
+            "latitude": 37.362436,
+            "type": "point"
+        },
+        "location_id": 361,
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777424109518-aa54f170-9ead-47d3-8089-b10cfb21d0e2-campus-post-1-EFF06808-DD96-4DA6-855E-EF5967671E23.jpg"
+        ],
+        "id": "DBA5DEEA-45F8-48EA-A28D-2518EC5345D3",
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "type": "retail_store",
+        "tags": [
+            "retail",
+            "store"
+        ],
+        "title": "University Store 2",
+        "description": "University Store 2 east corner of admin",
+        "subtitle": "east corner of admin",
+        "end": "2026-04-29T01:54:14.766Z",
+        "host": "Campus Explorer",
+        "image_alt_text": "University Store 2 east corner of admin",
+        "start": "2026-04-29T00:54:14.766Z"
+    },
+    {
+        "host": "Campus Explorer",
+        "id": "A23C491A-D14F-495E-894B-D3219E4D7752",
+        "subtitle": "Near gallo entrance",
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777424217566-cbdbd8d0-5c74-42b9-af84-588e3df3055b-campus-post-1-D940EDF6-05DC-4585-8E85-F299DDD866EC.jpg"
+        ],
+        "description": "Store inside gallo ",
+        "end": "2026-04-29T01:55:44.150Z",
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "start": "2026-04-29T00:55:44.150Z",
+        "tags": [
+            "retail",
+            "store"
+        ],
+        "geometry": {
+            "longitude": -120.425816,
+            "type": "point",
+            "latitude": 37.365303
+        },
+        "type": "retail_store",
+        "image_alt_text": "Store inside gallo",
+        "pin_url": "/retail_store_pin.png",
+        "location_id": 1320,
+        "title": "Gallo store"
+    },
+    {
+        "title": "Public restroom",
+        "type": "restrooms",
+        "pin_url": "/restroom_pin.png",
+        "end": "2026-04-29T02:11:27.390Z",
+        "host": "Campus Explorer",
+        "geometry": {
+            "latitude": 37.366245,
+            "longitude": -120.424662,
+            "type": "point"
+        },
+        "start": "2026-04-29T01:11:27.390Z",
+        "location_id": 1612,
+        "subtitle": "First floor library east side",
+        "image_alt_text": "Public restroom opened 24/7 first floor library next to snack shop east side",
+        "tags": [
+            "restrooms"
+        ],
+        "description": "Public restroom opened 24/7 first floor library next to snack shop east side",
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777425164123-f1476f57-a70e-41bf-9b35-9713dbc8643e-campus-post-1-ED540037-21D7-4ECB-BBD8-B5A6B4738DCF.jpg"
+        ],
+        "id": "2E1E4CC7-FCCC-47B0-9D6C-138CA003C306",
+        "source_url": "https://campusmap.ucmercedhub.com/"
+    },
+    {
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777491847661-cf7b42fd-5807-4843-994b-bb5cce59cbcb-Screenshot-2026-04-29-at-12.43.17-PM.png"
+        ],
+        "start": "2026-04-29T02:07:02.242Z",
+        "geometry": {
+            "latitude": 37.363752,
+            "type": "point",
+            "longitude": -120.426988
+        },
+        "host": "Campus Explorer",
+        "pin_url": "/wildlife_pin.png",
+        "title": "Family of ducks",
+        "image_alt_text": "Saw a family of ducks, like 10 baby ducks, really cute",
+        "location_id": 816,
+        "type": "wildlife",
+        "tags": [
+            "wildlife"
+        ],
+        "end": "2026-04-29T03:07:02.242Z",
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "description": "Saw a family of ducks, like 10 baby ducks, really cute",
+        "id": "55C99F32-F81F-483C-8F9B-383F971BBBF6",
+        "subtitle": "Near little lake"
     }
 ]

@@ -11,6 +11,8 @@ from dotenv import load_dotenv
 from routes import (
     ask_bp,
     ask_test_bp,
+    ask_enhanced_bp,
+    ask_baseline_reasoning_bp,
     events_bp,
     ios_bp
 )
@@ -45,6 +47,9 @@ def health_check():
 
 app.register_blueprint(ask_bp, url_prefix="/")
 app.register_blueprint(ask_test_bp, url_prefix="/")
+app.register_blueprint(ask_enhanced_bp, url_prefix="/")
+app.register_blueprint(ask_baseline_reasoning_bp, url_prefix="/")
+
 app.register_blueprint(events_bp, url_prefix="/")
 app.register_blueprint(ios_bp, url_prefix="/")
 

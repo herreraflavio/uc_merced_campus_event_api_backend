@@ -1,3 +1,5 @@
+# ask_baseline.py
+
 import os
 import json
 import re
@@ -11,53 +13,140 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 ask_test_bp = Blueprint("ask_test", __name__)
 
+# ------------------------------------------------------------------------------
 # CONFIG
-CONTENT_API_URL = os.getenv("CONTENT_API_URL", "http://10.34.89.192:8080/contentAPIURL")
-MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "o3-mini") 
-LLM_PIPELINE_FILE = "llm_pipeline_test.txt"
+# ------------------------------------------------------------------------------
+
+CONTENT_API_URL = os.getenv("CONTENT_API_URL", "http://10.56.184.54:8080/contentAPIURL")
+MODEL_NAME = os.getenv("BASELINE_OPENAI_MODEL_NAME", os.getenv("OPENAI_MODEL_NAME", "gpt-4o"))
+
+CONTENT_API_TIMEOUT_SECONDS = int(os.getenv("CONTENT_API_TIMEOUT_SECONDS", "15"))
+
+# GPT-4o default text pricing per 1M tokens.
+# Override these in .env if you change model/pricing.
+INPUT_COST_PER_1M = float(
+    os.getenv("BASELINE_INPUT_COST_PER_1M", os.getenv("OPENAI_INPUT_COST_PER_1M", "2.50"))
+)
+OUTPUT_COST_PER_1M = float(
+    os.getenv("BASELINE_OUTPUT_COST_PER_1M", os.getenv("OPENAI_OUTPUT_COST_PER_1M", "10.00"))
+)
 
 
-def save_llm_pipeline(text):
-    """Helper to log text to our pipeline testing file."""
-    with open(LLM_PIPELINE_FILE, "a", encoding="utf-8") as f:
-        f.write(str(text))
-        f.write("\n")
+# ------------------------------------------------------------------------------
+# USAGE / COST HELPERS
+# ------------------------------------------------------------------------------
 
-
-def condense_item(item: dict) -> dict:
-    """
-    Strip down the item payload to the absolute bare minimum 
-    to prevent blowing up the LLM context window.
-    """
-    condensed = {
-        "id": item.get("id"),
-        "title": item.get("title", ""),
-        "type": item.get("type", ""),
-        "host": item.get("host", ""),
-        "tags": item.get("tags", []),
+def empty_usage():
+    return {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "context_tokens": 0,
+        "total_tokens": 0,
     }
-    
-    desc = item.get("description", "") or ""
-    condensed["description"] = desc[:300].strip()
-    
-    nested = item.get("nested_content")
-    if nested:
-        nested_str = json.dumps(nested, separators=(',', ':'))
-        nested_str = re.sub(r"https?://\S+", "", nested_str)
-        condensed["nested_content"] = nested_str[:600] 
-        
-    return condensed
 
 
-@ask_test_bp.route("/ai_test", methods=["POST"])
+def get_openai_usage(resp):
+    usage = getattr(resp, "usage", None)
+
+    if not usage:
+        return empty_usage()
+
+    input_tokens = getattr(usage, "prompt_tokens", 0) or 0
+    output_tokens = getattr(usage, "completion_tokens", 0) or 0
+    total_tokens = getattr(usage, "total_tokens", None)
+
+    if total_tokens is None:
+        total_tokens = input_tokens + output_tokens
+
+    return {
+        "input_tokens": input_tokens,
+        "output_tokens": output_tokens,
+        # Actual context sent to the model.
+        "context_tokens": input_tokens,
+        "total_tokens": total_tokens,
+    }
+
+
+def calculate_cost(usage):
+    input_tokens = usage.get("input_tokens", 0) or 0
+    output_tokens = usage.get("output_tokens", 0) or 0
+
+    input_cost = (input_tokens / 1_000_000) * INPUT_COST_PER_1M
+    output_cost = (output_tokens / 1_000_000) * OUTPUT_COST_PER_1M
+    total_cost = input_cost + output_cost
+
+    return {
+        "input_cost_usd": round(input_cost, 8),
+        "output_cost_usd": round(output_cost, 8),
+        "total_cost_usd": round(total_cost, 8),
+        "input_cost_per_1m_tokens": INPUT_COST_PER_1M,
+        "output_cost_per_1m_tokens": OUTPUT_COST_PER_1M,
+        "currency": "USD",
+    }
+
+
+def build_empty_response(message, status_code=200):
+    usage = empty_usage()
+    cost = calculate_cost(usage)
+
+    return jsonify({
+        "ai_overview": message,
+        "citations": [],
+        "ranked_item_ids": [],
+        "usage": usage,
+        "cost": cost,
+        "estimated_cost_usd": cost["total_cost_usd"],
+        "model": MODEL_NAME,
+    }), status_code
+
+
+# ------------------------------------------------------------------------------
+# RESPONSE HELPERS
+# ------------------------------------------------------------------------------
+
+def get_citation_snippet(item):
+    snippet = "Location not specified"
+
+    if isinstance(item.get("label"), dict) and item["label"].get("name"):
+        snippet = str(item["label"].get("name")).strip()
+    elif item.get("location"):
+        snippet = str(item.get("location")).strip()
+    elif item.get("host"):
+        snippet = str(item.get("host")).strip()
+
+    return snippet
+
+
+def parse_ranked_ids(raw_output, valid_item_ids):
+    tag_match = re.search(
+        r"\[IDS:\s*(.*?)\]",
+        raw_output,
+        re.IGNORECASE | re.DOTALL,
+    )
+
+    if not tag_match:
+        return []
+
+    found_ids = [
+        x.strip()
+        for x in tag_match.group(1).split(",")
+        if x.strip()
+    ]
+
+    return [
+        x for x in found_ids
+        if x in valid_item_ids
+    ]
+
+
+# ------------------------------------------------------------------------------
+# BASELINE LLM ROUTE
+# ------------------------------------------------------------------------------
+
+@ask_test_bp.route("/ai_baseline", methods=["POST"])
 def ask_ai():
-    # 1) LOG INCOMING REQUEST
-    raw_body = request.get_data(cache=True, as_text=True)
-    save_llm_pipeline("\n" + "="*50)
-    save_llm_pipeline("=== NEW REQUEST ===")
-    save_llm_pipeline(f"RAW BODY:\n{raw_body}")
-
     data = request.get_json(silent=True) or {}
+
     query = str(data.get("query", "")).strip()
     item_ids = data.get("item_ids", [])
 
@@ -68,115 +157,127 @@ def ask_ai():
         return jsonify({"error": "item_ids must be an array"}), 400
 
     if not item_ids:
-        return jsonify({
-            "ai_overview": "No item_ids were provided in the request.",
-            "citations": [],
-            "ranked_item_ids": []
-        }), 200
+        return build_empty_response("No item_ids were provided in the request.")
 
     try:
-        # 2) FETCH LIVE CONTENT
-        content_resp = requests.get(CONTENT_API_URL, timeout=15)
+        content_resp = requests.get(
+            CONTENT_API_URL,
+            timeout=CONTENT_API_TIMEOUT_SECONDS
+        )
         content_resp.raise_for_status()
-        pages = content_resp.json().get("pages", [])
 
-        # 3) CONDENSE CONTEXT
-        valid_items = [p for p in pages if p.get("id") in item_ids]
+        content_json = content_resp.json()
+        pages = content_json.get("pages", [])
+
+        if not isinstance(pages, list):
+            return jsonify({"error": "Invalid content API response"}), 500
+
+        item_id_set = set(item_ids)
+
+        # Baseline intentionally does NOT condense or truncate.
+        # This feeds the full matching knowledge base items into GPT-4o.
+        valid_items = [
+            p for p in pages
+            if p.get("id") in item_id_set
+        ]
+
         if not valid_items:
-            return jsonify({
-                "ai_overview": "I could not find any matching items for the item_ids you sent.",
-                "citations": [],
-                "ranked_item_ids": []
-            }), 200
+            return build_empty_response(
+                "I could not find any matching items for the item_ids you sent."
+            )
 
-        condensed_items = [condense_item(item) for item in valid_items]
-        
-        # LOG CONDENSED ITEMS
-        save_llm_pipeline("\n--- CONDENSED ITEMS ---")
-        save_llm_pipeline(json.dumps(condensed_items, indent=2))
+        valid_item_ids = {
+            item.get("id")
+            for item in valid_items
+            if item.get("id")
+        }
 
-        # 4) BUILD PROMPT
         prompt_content = f"""
 You are an expert campus informant reasoning model.
-Your task is to analyze the user's query against the provided JSON array of campus items.
+Your task is to analyze the user's query against the provided full JSON array of campus items.
 
-USER QUERY: "{query}"
+USER QUERY:
+{query}
 
 AVAILABLE ITEMS:
-{json.dumps(condensed_items, indent=2)}
+{json.dumps(valid_items, indent=2, ensure_ascii=False, default=str)}
 
 INSTRUCTIONS:
-1. Think step-by-step to find the items that best match the user's query.
-2. Provide a comprehensive overview (1-3 sentences) summarizing the most relevant items found.
+1. Analyze the campus items carefully.
+2. Provide a comprehensive overview in 1-3 sentences summarizing the most relevant items found.
 3. Rank up to 10 relevant item IDs from best to worst match.
-4. Output your ranked IDs EXACTLY in this format at the very end of your response:
+4. Only rank item IDs that appear in AVAILABLE ITEMS.
+5. Output your ranked IDs EXACTLY in this format at the very end of your response:
 [IDS: id1, id2, id3]
-"""
-        # LOG PROMPT
-        save_llm_pipeline("\n--- LLM PROMPT ---")
-        save_llm_pipeline(prompt_content)
+""".strip()
 
-        # 5) CALL REASONING MODEL
         resp = client.chat.completions.create(
             model=MODEL_NAME,
             messages=[
                 {"role": "user", "content": prompt_content}
             ],
-            max_completion_tokens=800 
+            temperature=0.3,
         )
 
         raw_output = (resp.choices[0].message.content or "").strip()
 
-        # LOG RAW OUTPUT
-        save_llm_pipeline("\n--- LLM RAW OUTPUT ---")
-        save_llm_pipeline(raw_output)
+        usage = get_openai_usage(resp)
+        cost = calculate_cost(usage)
 
-        # 6) EXTRACT RANKED IDS & OVERVIEW
-        ranked_item_ids = []
-        tag_match = re.search(r"\[IDS:\s*(.*?)\]", raw_output, re.IGNORECASE | re.DOTALL)
-        
-        if tag_match:
-            found_ids = [x.strip() for x in tag_match.group(1).split(",") if x.strip()]
-            ranked_item_ids = [x for x in found_ids if x in item_ids]
+        ranked_item_ids = parse_ranked_ids(raw_output, valid_item_ids)
 
         if not ranked_item_ids:
-            ranked_item_ids = [item["id"] for item in condensed_items[:10]]
+            ranked_item_ids = [
+                item.get("id")
+                for item in valid_items[:10]
+                if item.get("id")
+            ]
 
-        ai_overview = re.sub(r"\[IDS:.*?\]", "", raw_output, flags=re.IGNORECASE | re.DOTALL).strip()
+        ai_overview = re.sub(
+            r"\[IDS:.*?\]",
+            "",
+            raw_output,
+            flags=re.IGNORECASE | re.DOTALL,
+        ).strip()
+
         if not ai_overview:
             ai_overview = "Here are the top matches based on your search."
 
-        # 7) BUILD CITATIONS
         citations = []
+
         for pid in ranked_item_ids:
-            matched_item = next((item for item in valid_items if item.get("id") == pid), None)
+            matched_item = next(
+                (item for item in valid_items if item.get("id") == pid),
+                None,
+            )
+
             if not matched_item:
                 continue
-
-            snippet = "Location not specified"
-            if isinstance(matched_item.get("label"), dict) and matched_item["label"].get("name"):
-                snippet = str(matched_item["label"].get("name")).strip()
-            elif matched_item.get("location"):
-                snippet = str(matched_item.get("location")).strip()
-            elif matched_item.get("host"):
-                snippet = str(matched_item.get("host")).strip()
 
             citations.append({
                 "page_id": pid,
                 "title": matched_item.get("title", ""),
-                "snippet": snippet,
+                "snippet": get_citation_snippet(matched_item),
             })
 
         return jsonify({
             "ai_overview": ai_overview,
             "citations": citations,
             "ranked_item_ids": ranked_item_ids,
+            "usage": usage,
+            "cost": cost,
+            "estimated_cost_usd": cost["total_cost_usd"],
+            "model": MODEL_NAME,
         }), 200
 
     except requests.exceptions.RequestException as e:
-        save_llm_pipeline(f"\n--- ERROR: CONTENT API ---\n{str(e)}")
-        return jsonify({"error": "Failed to fetch content API data", "details": str(e)}), 502
+        return jsonify({
+            "error": "Failed to fetch content API data",
+            "details": str(e),
+        }), 502
 
     except Exception as e:
-        save_llm_pipeline(f"\n--- ERROR: LLM/GENERAL ---\n{str(e)}")
-        return jsonify({"error": "Failed to generate AI response", "details": str(e)}), 500
+        return jsonify({
+            "error": "Failed to generate AI response",
+            "details": str(e),
+        }), 500
