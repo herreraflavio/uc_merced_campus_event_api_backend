@@ -1,0 +1,52 @@
+[
+    {
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777325815312-c35099a9-b9e3-4477-9869-5f63d12bcdf5-campus-post-1-853155E1-CD26-4C52-83A5-B8C28064B905.jpg"
+        ],
+        "type": "restrooms",
+        "description": "Public restrooms",
+        "location_id": 526,
+        "title": "Restroom",
+        "source_url": "https://campusmap.ucmercedhub.com/",
+        "host": "Campus Explorer",
+        "tags": [
+            "restrooms"
+        ],
+        "pin_url": "/restroom_pin.png",
+        "subtitle": "Center of granite pass",
+        "geometry": {
+            "longitude": -120.425914,
+            "latitude": 37.362964,
+            "type": "point"
+        },
+        "start": "2026-04-27T21:35:59.347Z",
+        "id": "21E8F99C-9DC8-4088-8203-58CA3E640156",
+        "end": "2026-04-27T22:35:59.347Z",
+        "image_alt_text": "Public restrooms"
+    },
+    {
+        "description": "Saw a cute bunny ",
+        "geometry": {
+            "type": "point",
+            "longitude": -120.425641,
+            "latitude": 37.364754
+        },
+        "start": "2026-04-27T22:47:03.541Z",
+        "image_urls": [
+            "https://tiles.flavioherrera.com/images/1777330148162-a432cb0d-b805-44eb-93ab-7f30606fdff2-campus-post-1-B370FCAD-2046-4FE5-A45E-297E9AE38561.jpg"
+        ],
+        "subtitle": "New pavilion lawn",
+        "image_alt_text": "Bunny",
+        "type": "wildlife",
+        "pin_url": "/wildlife_pin.png",
+        "location_id": 1882,
+        "end": "2026-04-27T23:47:03.541Z",
+        "tags": [
+            "wildlife"
+        ],
+        "host": "Campus Explorer",
+        "id": "CBA13787-EFCC-4256-8608-B0DEB1E8EE1F",
+        "title": "Cute bunny",
+        "source_url": "https://campusmap.ucmercedhub.com/"
+    }
+]

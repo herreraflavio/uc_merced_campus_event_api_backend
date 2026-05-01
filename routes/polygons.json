@@ -8988,6 +8988,7 @@
   {
     "id": "polygon176255236834235",
     "location_id": 535,
+    "pin_url": "/parking_pin.png",
     "label": {
       "name": "Scholar's Lot Blue Zone",
       "hideBefore": 15,

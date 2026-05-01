@@ -51,3 +51,7 @@ http://127.0.0.1:8080/health
 
 should return :
 {"message":"Service is up and running","status":"healthy"}
+
+extra:
+command to get ipv4 address on mac:
+ipconfig getifaddr en0 

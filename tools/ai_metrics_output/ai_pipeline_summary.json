@@ -1,0 +1,214 @@
+{
+  "generated_at": "2026-04-30T19:39:40.884807",
+  "total_cases": 10,
+  "total_pipeline_requests": 30,
+  "pipelines": {
+    "baseline": {
+      "label": "Baseline GPT-4o Full Context",
+      "endpoint": "http://10.56.184.54:8080/ai_baseline",
+      "success_count": 10,
+      "error_count": 0,
+      "top_1_accuracy": 0.5,
+      "top_3_accuracy": 0.9,
+      "average_relevance_score": 0.61599,
+      "average_latency_seconds": 5.91631,
+      "median_latency_seconds": 4.712350000000001,
+      "average_cost_usd": 0.29850825,
+      "average_estimated_cost_usd": 0.29850825,
+      "total_cost_usd": 2.9850825,
+      "total_estimated_cost_usd": 2.9850825,
+      "average_context_tokens": 118746.1,
+      "average_input_tokens": 118746.1,
+      "average_output_tokens": 164.3,
+      "average_reasoning_tokens": 0.0,
+      "average_total_tokens": 118910.4
+    },
+    "enhanced": {
+      "label": "Enhanced Ranked Full Context + GPT-4o",
+      "endpoint": "http://10.56.184.54:8080/ai_enhanced",
+      "success_count": 10,
+      "error_count": 0,
+      "top_1_accuracy": 0.6,
+      "top_3_accuracy": 0.8,
+      "average_relevance_score": 0.62318,
+      "average_latency_seconds": 2.25967,
+      "median_latency_seconds": 2.1694500000000003,
+      "average_cost_usd": 0.0162395,
+      "average_estimated_cost_usd": 0.0162395,
+      "total_cost_usd": 0.162395,
+      "total_estimated_cost_usd": 0.162395,
+      "average_context_tokens": 5913.4,
+      "average_input_tokens": 5913.4,
+      "average_output_tokens": 145.6,
+      "average_reasoning_tokens": 0.0,
+      "average_total_tokens": 6059.0
+    },
+    "baseline_reasoning": {
+      "label": "Baseline GPT-5 Reasoning Full Context",
+      "endpoint": "http://10.56.184.54:8080/ask_baseline_reasoning",
+      "success_count": 10,
+      "error_count": 0,
+      "top_1_accuracy": 0.8,
+      "top_3_accuracy": 1.0,
+      "average_relevance_score": 0.81648,
+      "average_latency_seconds": 21.04385,
+      "median_latency_seconds": 14.85385,
+      "average_cost_usd": 0.6280344999999999,
+      "average_estimated_cost_usd": 0.6280344999999999,
+      "total_cost_usd": 6.280345,
+      "total_estimated_cost_usd": 6.280345,
+      "average_context_tokens": 118753.1,
+      "average_input_tokens": 118753.1,
+      "average_output_tokens": 1142.3,
+      "average_reasoning_tokens": 963.4,
+      "average_total_tokens": 119895.4
+    }
+  },
+  "by_category": {
+    "buildings / locations": {
+      "baseline": {
+        "label": "Baseline GPT-4o Full Context",
+        "endpoint": "http://10.56.184.54:8080/ai_baseline",
+        "average_relevance_score": 0.66585,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 3.0027999999999997,
+        "average_cost_usd": 0.2979375
+      },
+      "enhanced": {
+        "label": "Enhanced Ranked Full Context + GPT-4o",
+        "endpoint": "http://10.56.184.54:8080/ai_enhanced",
+        "average_relevance_score": 0.66585,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 1.921,
+        "average_cost_usd": 0.01729
+      },
+      "baseline_reasoning": {
+        "label": "Baseline GPT-5 Reasoning Full Context",
+        "endpoint": "http://10.56.184.54:8080/ask_baseline_reasoning",
+        "average_relevance_score": 0.75125,
+        "top_1_accuracy": 1.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 12.5562,
+        "average_cost_usd": 0.614295
+      }
+    },
+    "dining": {
+      "baseline": {
+        "label": "Baseline GPT-4o Full Context",
+        "endpoint": "http://10.56.184.54:8080/ai_baseline",
+        "average_relevance_score": 0.2982,
+        "top_1_accuracy": 0.0,
+        "top_3_accuracy": 0.5,
+        "average_latency_seconds": 4.0474,
+        "average_cost_usd": 0.2997225
+      },
+      "enhanced": {
+        "label": "Enhanced Ranked Full Context + GPT-4o",
+        "endpoint": "http://10.56.184.54:8080/ai_enhanced",
+        "average_relevance_score": 1.0,
+        "top_1_accuracy": 1.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 3.02735,
+        "average_cost_usd": 0.01930125
+      },
+      "baseline_reasoning": {
+        "label": "Baseline GPT-5 Reasoning Full Context",
+        "endpoint": "http://10.56.184.54:8080/ask_baseline_reasoning",
+        "average_relevance_score": 0.7982,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 36.62995,
+        "average_cost_usd": 0.65692
+      }
+    },
+    "events": {
+      "baseline": {
+        "label": "Baseline GPT-4o Full Context",
+        "endpoint": "http://10.56.184.54:8080/ai_baseline",
+        "average_relevance_score": 0.75125,
+        "top_1_accuracy": 1.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 6.4322,
+        "average_cost_usd": 0.29850125
+      },
+      "enhanced": {
+        "label": "Enhanced Ranked Full Context + GPT-4o",
+        "endpoint": "http://10.56.184.54:8080/ai_enhanced",
+        "average_relevance_score": 0.25125,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 0.5,
+        "average_latency_seconds": 2.08135,
+        "average_cost_usd": 0.01102375
+      },
+      "baseline_reasoning": {
+        "label": "Baseline GPT-5 Reasoning Full Context",
+        "endpoint": "http://10.56.184.54:8080/ask_baseline_reasoning",
+        "average_relevance_score": 0.83415,
+        "top_1_accuracy": 1.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 20.5444,
+        "average_cost_usd": 0.6206925
+      }
+    },
+    "services": {
+      "baseline": {
+        "label": "Baseline GPT-4o Full Context",
+        "endpoint": "http://10.56.184.54:8080/ai_baseline",
+        "average_relevance_score": 0.36465000000000003,
+        "top_1_accuracy": 0.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 7.37105,
+        "average_cost_usd": 0.29834125
+      },
+      "enhanced": {
+        "label": "Enhanced Ranked Full Context + GPT-4o",
+        "endpoint": "http://10.56.184.54:8080/ai_enhanced",
+        "average_relevance_score": 0.6988,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 2.09775,
+        "average_cost_usd": 0.01865125
+      },
+      "baseline_reasoning": {
+        "label": "Baseline GPT-5 Reasoning Full Context",
+        "endpoint": "http://10.56.184.54:8080/ask_baseline_reasoning",
+        "average_relevance_score": 0.6988,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 23.3001,
+        "average_cost_usd": 0.6374774999999999
+      }
+    },
+    "user-generated data": {
+      "baseline": {
+        "label": "Baseline GPT-4o Full Context",
+        "endpoint": "http://10.56.184.54:8080/ai_baseline",
+        "average_relevance_score": 1.0,
+        "top_1_accuracy": 1.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 8.7281,
+        "average_cost_usd": 0.29803875
+      },
+      "enhanced": {
+        "label": "Enhanced Ranked Full Context + GPT-4o",
+        "endpoint": "http://10.56.184.54:8080/ai_enhanced",
+        "average_relevance_score": 0.5,
+        "top_1_accuracy": 0.5,
+        "top_3_accuracy": 0.5,
+        "average_latency_seconds": 2.1709,
+        "average_cost_usd": 0.01493125
+      },
+      "baseline_reasoning": {
+        "label": "Baseline GPT-5 Reasoning Full Context",
+        "endpoint": "http://10.56.184.54:8080/ask_baseline_reasoning",
+        "average_relevance_score": 1.0,
+        "top_1_accuracy": 1.0,
+        "top_3_accuracy": 1.0,
+        "average_latency_seconds": 12.1886,
+        "average_cost_usd": 0.6107875
+      }
+    }
+  }
+}

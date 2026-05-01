@@ -10,7 +10,9 @@ from dotenv import load_dotenv
 
 from routes import (
     ask_bp,
-    events_bp
+    ask_test_bp,
+    events_bp,
+    ios_bp
 )
 
 # ─────────────────────────────
@@ -42,7 +44,9 @@ def health_check():
 
 
 app.register_blueprint(ask_bp, url_prefix="/")
+app.register_blueprint(ask_test_bp, url_prefix="/")
 app.register_blueprint(events_bp, url_prefix="/")
+app.register_blueprint(ios_bp, url_prefix="/")
 
 MONGODB_URI = os.getenv("MONGODB_URI")
 if not MONGODB_URI:

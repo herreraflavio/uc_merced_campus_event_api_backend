@@ -1,0 +1,248 @@
+[
+  {
+    "pipeline": "baseline",
+    "url": "http://10.34.89.192:8080/ai_baseline",
+    "started_at": "2026-04-29T21:57:02.309792+00:00",
+    "ended_at": "2026-04-29T21:57:02.315893+00:00",
+    "latency_seconds": 0.006094,
+    "status_code": 200,
+    "request_payload": {
+      "query": "restroom near me",
+      "item_ids": [],
+      "max_tokens": 4000
+    },
+    "response_json": {
+      "ai_overview": "No item_ids were provided in the request.",
+      "citations": [],
+      "ranked_item_ids": [],
+      "usage": {
+        "context_tokens": 4000,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "response_text": "{\"ai_overview\":\"No item_ids were provided in the request.\",\"citations\":[],\"ranked_item_ids\":[],\"usage\":{\"context_tokens\":4000,\"input_tokens\":0,\"output_tokens\":0}}\n",
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "context_tokens": 4000
+    },
+    "cost_usd": 0.0,
+    "error": null,
+    "test_case_id": "restroom_near_me",
+    "query": "restroom near me",
+    "model_name": "gpt-4o",
+    "accuracy_metrics": {
+      "accuracy": 0.0,
+      "keyword_accuracy": 0.0,
+      "ranked_accuracy": 0.0,
+      "keyword_hits": [],
+      "ranked_hits": []
+    }
+  },
+  {
+    "pipeline": "enhanced",
+    "url": "http://10.34.89.192:8080/ai_enhanced",
+    "started_at": "2026-04-29T21:57:02.315925+00:00",
+    "ended_at": "2026-04-29T21:57:02.317476+00:00",
+    "latency_seconds": 0.001549,
+    "status_code": 200,
+    "request_payload": {
+      "query": "restroom near me",
+      "item_ids": [],
+      "max_tokens": 4000
+    },
+    "response_json": {
+      "ai_overview": "No item_ids were provided in the request.",
+      "citations": [],
+      "ranked_item_ids": [],
+      "usage": {
+        "context_tokens": 4000,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "response_text": "{\"ai_overview\":\"No item_ids were provided in the request.\",\"citations\":[],\"ranked_item_ids\":[],\"usage\":{\"context_tokens\":4000,\"input_tokens\":0,\"output_tokens\":0}}\n",
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "context_tokens": 4000
+    },
+    "cost_usd": 0.0,
+    "error": null,
+    "test_case_id": "restroom_near_me",
+    "query": "restroom near me",
+    "model_name": "gpt-4o",
+    "accuracy_metrics": {
+      "accuracy": 0.0,
+      "keyword_accuracy": 0.0,
+      "ranked_accuracy": 0.0,
+      "keyword_hits": [],
+      "ranked_hits": []
+    }
+  },
+  {
+    "pipeline": "baseline",
+    "url": "http://10.34.89.192:8080/ai_baseline",
+    "started_at": "2026-04-29T21:57:02.317509+00:00",
+    "ended_at": "2026-04-29T21:57:02.318651+00:00",
+    "latency_seconds": 0.00114,
+    "status_code": 200,
+    "request_payload": {
+      "query": "where is the nearest water fountain",
+      "item_ids": [],
+      "max_tokens": 4000
+    },
+    "response_json": {
+      "ai_overview": "No item_ids were provided in the request.",
+      "citations": [],
+      "ranked_item_ids": [],
+      "usage": {
+        "context_tokens": 4000,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "response_text": "{\"ai_overview\":\"No item_ids were provided in the request.\",\"citations\":[],\"ranked_item_ids\":[],\"usage\":{\"context_tokens\":4000,\"input_tokens\":0,\"output_tokens\":0}}\n",
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "context_tokens": 4000
+    },
+    "cost_usd": 0.0,
+    "error": null,
+    "test_case_id": "water_fountain",
+    "query": "where is the nearest water fountain",
+    "model_name": "gpt-4o",
+    "accuracy_metrics": {
+      "accuracy": 0.0,
+      "keyword_accuracy": 0.0,
+      "ranked_accuracy": 0.0,
+      "keyword_hits": [],
+      "ranked_hits": []
+    }
+  },
+  {
+    "pipeline": "enhanced",
+    "url": "http://10.34.89.192:8080/ai_enhanced",
+    "started_at": "2026-04-29T21:57:02.318675+00:00",
+    "ended_at": "2026-04-29T21:57:02.319835+00:00",
+    "latency_seconds": 0.001159,
+    "status_code": 200,
+    "request_payload": {
+      "query": "where is the nearest water fountain",
+      "item_ids": [],
+      "max_tokens": 4000
+    },
+    "response_json": {
+      "ai_overview": "No item_ids were provided in the request.",
+      "citations": [],
+      "ranked_item_ids": [],
+      "usage": {
+        "context_tokens": 4000,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "response_text": "{\"ai_overview\":\"No item_ids were provided in the request.\",\"citations\":[],\"ranked_item_ids\":[],\"usage\":{\"context_tokens\":4000,\"input_tokens\":0,\"output_tokens\":0}}\n",
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "context_tokens": 4000
+    },
+    "cost_usd": 0.0,
+    "error": null,
+    "test_case_id": "water_fountain",
+    "query": "where is the nearest water fountain",
+    "model_name": "gpt-4o",
+    "accuracy_metrics": {
+      "accuracy": 0.0,
+      "keyword_accuracy": 0.0,
+      "ranked_accuracy": 0.0,
+      "keyword_hits": [],
+      "ranked_hits": []
+    }
+  },
+  {
+    "pipeline": "baseline",
+    "url": "http://10.34.89.192:8080/ai_baseline",
+    "started_at": "2026-04-29T21:57:02.319857+00:00",
+    "ended_at": "2026-04-29T21:57:02.320782+00:00",
+    "latency_seconds": 0.000924,
+    "status_code": 200,
+    "request_payload": {
+      "query": "what services does the university offer",
+      "item_ids": [],
+      "max_tokens": 4000
+    },
+    "response_json": {
+      "ai_overview": "No item_ids were provided in the request.",
+      "citations": [],
+      "ranked_item_ids": [],
+      "usage": {
+        "context_tokens": 4000,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "response_text": "{\"ai_overview\":\"No item_ids were provided in the request.\",\"citations\":[],\"ranked_item_ids\":[],\"usage\":{\"context_tokens\":4000,\"input_tokens\":0,\"output_tokens\":0}}\n",
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "context_tokens": 4000
+    },
+    "cost_usd": 0.0,
+    "error": null,
+    "test_case_id": "campus_services",
+    "query": "what services does the university offer",
+    "model_name": "gpt-4o",
+    "accuracy_metrics": {
+      "accuracy": 0.0,
+      "keyword_accuracy": 0.0,
+      "ranked_accuracy": 0.0,
+      "keyword_hits": [],
+      "ranked_hits": []
+    }
+  },
+  {
+    "pipeline": "enhanced",
+    "url": "http://10.34.89.192:8080/ai_enhanced",
+    "started_at": "2026-04-29T21:57:02.320803+00:00",
+    "ended_at": "2026-04-29T21:57:02.321751+00:00",
+    "latency_seconds": 0.000947,
+    "status_code": 200,
+    "request_payload": {
+      "query": "what services does the university offer",
+      "item_ids": [],
+      "max_tokens": 4000
+    },
+    "response_json": {
+      "ai_overview": "No item_ids were provided in the request.",
+      "citations": [],
+      "ranked_item_ids": [],
+      "usage": {
+        "context_tokens": 4000,
+        "input_tokens": 0,
+        "output_tokens": 0
+      }
+    },
+    "response_text": "{\"ai_overview\":\"No item_ids were provided in the request.\",\"citations\":[],\"ranked_item_ids\":[],\"usage\":{\"context_tokens\":4000,\"input_tokens\":0,\"output_tokens\":0}}\n",
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "context_tokens": 4000
+    },
+    "cost_usd": 0.0,
+    "error": null,
+    "test_case_id": "campus_services",
+    "query": "what services does the university offer",
+    "model_name": "gpt-4o",
+    "accuracy_metrics": {
+      "accuracy": 0.0,
+      "keyword_accuracy": 0.0,
+      "ranked_accuracy": 0.0,
+      "keyword_hits": [],
+      "ranked_hits": []
+    }
+  }
+]

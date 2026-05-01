@@ -1,17 +1,13 @@
-from flask import Flask, request, jsonify, Blueprint
-from flask import Blueprint, request, jsonify
-from flask import Blueprint, jsonify, request
-import logging
+from flask import request, jsonify, Blueprint
 import json
 import os
 import re
 import base64
 import requests
 import math
-from collections import Counter
+from collections import Counter, defaultdict, deque
 import unicodedata
 from difflib import SequenceMatcher
-from collections import defaultdict, deque
 
 from openai import OpenAI
 from dotenv import load_dotenv
@@ -21,36 +17,36 @@ from helper.normalize_location import normalize_event_location
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-ask_bp = Blueprint('ask', __name__)
+ask_bp = Blueprint("ask", __name__)
+
+LLM_PIPELINE_FILE = "llm_pipeline.txt"
+
+
+def save_llm_pipeline(text):
+    with open(LLM_PIPELINE_FILE, "a", encoding="utf-8") as f:
+        f.write(str(text))
+        f.write("\n")
+
 
 # ------------------------------------------------------------------------------
-# LOGGING CONFIGURATION
+# Generic JSON extraction helper for /ask vision route
 # ------------------------------------------------------------------------------
-# This will create or append to "ai_debug_log.txt" in your app's working directory.
-logging.basicConfig(
-    filename="ai_debug_log.txt",
-    level=logging.DEBUG,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    filemode="a"
-)
-logger = logging.getLogger(__name__)
-
-
 def extract_json(raw: str) -> dict:
     """
     Clean up model output and return the first {...} JSON object inside.
     Raises ValueError if no valid JSON is found.
     """
-    # Strip fenced code blocks if present
+    raw = (raw or "").strip()
+
     if raw.startswith("```") and raw.endswith("```"):
         raw = raw.strip("`").strip()
+        if raw.lower().startswith("json"):
+            raw = raw[4:].strip()
 
-    # Find first '{'
     start = raw.find("{")
     if start == -1:
         raise ValueError("No JSON object found in model output")
 
-    # Match braces to find the end of the first JSON object
     depth = 0
     end = None
     for i, ch in enumerate(raw[start:], start):
@@ -66,27 +62,17 @@ def extract_json(raw: str) -> dict:
         raise ValueError("Unbalanced braces in model output")
 
     json_str = raw[start: end + 1]
-
     event_json = json.loads(json_str)
-    # add new field location_at = event_json["location"] will keep original raw location
-    print(event_json)  # This prints successfully because it is a valid dict
 
-    # Make sure we got a dict
     if not isinstance(event_json, dict):
-        raise ValueError(
-            f"Expected JSON object but got {type(event_json).__name__}")
+        raise ValueError(f"Expected JSON object but got {type(event_json).__name__}")
 
-    # Normalize the location field if present
-    # CORRECT: Using .get() and bracket notation
     loc = event_json.get("location")
     event_json["location_at"] = loc
-    print(loc)
+
     if loc is not None:
         normalized = normalize_event_location(loc)
-        # if normalize_event_location returns None, fall back to the original string
         event_json["location"] = normalized if normalized is not None else loc
-
-    # DELETED: The line causing the crash (event_json.location) was here.
 
     return event_json
 
@@ -94,20 +80,16 @@ def extract_json(raw: str) -> dict:
 # ─────────────────────────────
 # Events memory / config
 # ─────────────────────────────
-# In-memory store for user message history (for /ask/events)
 message_history = defaultdict(lambda: deque(maxlen=10))
 
-# Constants to prevent abuse
-MAX_CONTEXT_TOKENS = 3000  # rough input limit
-MAX_COMPLETION_TOKENS = 800  # output limit
+MAX_CONTEXT_TOKENS = 3000
+MAX_COMPLETION_TOKENS = 800
 
 
 def approximate_token_count(messages):
-    # Very rough estimate: ~1 token ≈ 4 characters
     total = 0
     for msg in messages:
         content = msg.get("content", "")
-        # If content isn't a string, coerce to string conservatively
         if not isinstance(content, str):
             try:
                 content = json.dumps(content)
@@ -117,7 +99,6 @@ def approximate_token_count(messages):
     return total
 
 
-# Load events.json (safe fallback to empty list if missing)
 EVENTS = []
 EVENTS_PATH = os.path.join(os.getcwd(), "events.json")
 if os.path.exists(EVENTS_PATH):
@@ -133,7 +114,7 @@ if os.path.exists(EVENTS_PATH):
 # ─────────────────────────────
 @ask_bp.route("/endpoints", methods=["GET"])
 def root():
-    return jsonify({"ok": True, "endpoints": ["/ask/vision (POST)", "/ask/events (POST)"]})
+    return jsonify({"ok": True, "endpoints": ["/ask (POST)", "/ask/events (POST)", "/ai (POST)"]})
 
 
 @ask_bp.route("/ask", methods=["POST"])
@@ -167,7 +148,7 @@ def ask_vision():
         "content": (
             "You are a vision-enabled assistant. "
             "Extract from the image: date, time, location, names, event name, and a short description of the event. "
-            "Respond *only* with valid JSON matching this schema:\n\n"
+            "Respond only with valid JSON matching this schema:\n\n"
             "{\n"
             "  \"date\": \"\",\n"
             "  \"time\": \"\",\n"
@@ -177,7 +158,7 @@ def ask_vision():
             "  \"description\": \"\"\n"
             "}\n"
             "Rules:\n"
-            "- If a field is unknown, use an empty string (or empty array for names).\n"
+            "- If a field is unknown, use an empty string, or an empty array for names.\n"
             "- Do not add extra keys. Do not include explanations."
         ),
     }
@@ -204,10 +185,8 @@ def ask_vision():
         try:
             result = extract_json(raw)
         except ValueError:
-            # Return the raw text to help debugging the prompt/formatting
             return jsonify({"error": "Failed to extract JSON", "raw_response": raw}), 500
 
-        # Success
         return jsonify(result)
 
     except json.JSONDecodeError:
@@ -221,9 +200,9 @@ def ask_events():
     """
     JSON body:
       {
-        "user_id": "abc123",       # optional, for per-user short memory
+        "user_id": "abc123",
         "question": "What should I attend?",
-        "tags": ["freshmen","engineering"]  # optional tag filtering
+        "tags": ["freshmen", "engineering"]
       }
     Returns:
       {
@@ -239,7 +218,6 @@ def ask_events():
     if not isinstance(question, str) or not question.strip():
         return jsonify({"error": "No question provided"}), 400
 
-    # Filter events by tags (if provided)
     filtered_events = [
         event for event in EVENTS
         if not tags or any(tag in event.get("tags", []) for tag in tags)
@@ -250,28 +228,24 @@ def ask_events():
         "content": (
             "You are a helpful assistant for UC Merced's Bobcat Day. "
             "You help students find relevant events based on their interests. "
-            "When recommending events, include their IDs at the end in a JSON array like [\"event002\", \"event004\"]."
+            "When recommending events, include their IDs at the end in a JSON array like "
+            "[\"event002\", \"event004\"]."
         ),
     }
 
-    # Maintain short per-user history
     history = message_history[user_id]
     history.append({"role": "user", "content": question})
 
-    # Create a compact context to keep token usage sane
     context_prompt = (
         f"User asked: \"{question}\"\n\n"
         f"Here is a list of events:\n{json.dumps(filtered_events, ensure_ascii=False)}"
     )
 
-    messages = [system_message] + \
-        list(history) + [{"role": "user", "content": context_prompt}]
+    messages = [system_message] + list(history) + [{"role": "user", "content": context_prompt}]
 
-    # Truncate if too long
     while approximate_token_count(messages) > MAX_CONTEXT_TOKENS and len(history) > 0:
         history.popleft()
-        messages = [system_message] + \
-            list(history) + [{"role": "user", "content": context_prompt}]
+        messages = [system_message] + list(history) + [{"role": "user", "content": context_prompt}]
 
     try:
         response = client.chat.completions.create(
@@ -282,14 +256,10 @@ def ask_events():
         )
 
         reply = (response.choices[0].message.content or "").strip()
-
-        # Save assistant reply to history
         history.append({"role": "assistant", "content": reply})
 
-        # Extract event IDs like event001, event123, etc.
         event_ids = re.findall(r"event\d{3}", reply)
-        matched_events = [
-            event for event in EVENTS if event.get("id") in set(event_ids)]
+        matched_events = [event for event in EVENTS if event.get("id") in set(event_ids)]
 
         return jsonify({"response": reply, "matched_events": matched_events})
 
@@ -307,89 +277,24 @@ if os.path.exists(PRESENCE_CACHE_PATH):
     try:
         with open(PRESENCE_CACHE_PATH, "r", encoding="utf-8") as f:
             cache_data = json.load(f)
-            if isinstance(cache_data, dict) and "pages" in cache_data:
-                PRESENCE_PAGES = cache_data["pages"]
-            elif isinstance(cache_data, list):
-                PRESENCE_PAGES = cache_data
-    except Exception as e:
-        print(f"Failed to load presence_pages_cache.json: {e}")
-
-# ─────────────────────────────
-# New AI Smart Search Route
-# ─────────────────────────────
-
-# ─────────────────────────────
-# Presence Pages Cache / Config
-# ─────────────────────────────
-PRESENCE_PAGES = []
-PRESENCE_CACHE_PATH = os.path.join(os.getcwd(), "presence_pages_cache.json")
-
-if os.path.exists(PRESENCE_CACHE_PATH):
-    try:
-        with open(PRESENCE_CACHE_PATH, "r", encoding="utf-8") as f:
-            cache_data = json.load(f)
-            if isinstance(cache_data, dict) and "pages" in cache_data:
-                PRESENCE_PAGES = cache_data["pages"]
-            elif isinstance(cache_data, list):
-                PRESENCE_PAGES = cache_data
-    except Exception as e:
-        print(f"Failed to load presence_pages_cache.json: {e}")
-
-# Make sure you have your blueprint and client defined above this like:
-# from openai import OpenAI
-# client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-# ask_bp = Blueprint('ask', __name__)
-
-# ─────────────────────────────
-# Presence Pages Cache / Config
-# ─────────────────────────────
-PRESENCE_PAGES = []
-PRESENCE_CACHE_PATH = os.path.join(os.getcwd(), "presence_pages_cache.json")
-
-if os.path.exists(PRESENCE_CACHE_PATH):
-    try:
-        with open(PRESENCE_CACHE_PATH, "r", encoding="utf-8") as f:
-            cache_data = json.load(f)
             if isinstance(cache_data, dict):
-                # We check for "events" first, as that matches your JSON schema
                 if "events" in cache_data:
                     PRESENCE_PAGES = cache_data["events"]
                 elif "pages" in cache_data:
                     PRESENCE_PAGES = cache_data["pages"]
             elif isinstance(cache_data, list):
                 PRESENCE_PAGES = cache_data
-    except Exception as e:
-        print(f"Failed to load presence_pages_cache.json: {e}")
+    except Exception:
+        PRESENCE_PAGES = []
 
-# ─────────────────────────────
-# New AI Smart Search Route
-# ─────────────────────────────
-
-# Ensure you have your Flask blueprint and client setup
-# ask_bp = Blueprint('ask_bp', __name__)
-# client = ... (OpenAI client)
-
-# ------------------------------------------------------------------------------
-# LOGGING CONFIGURATION
-# ------------------------------------------------------------------------------
-logging.basicConfig(
-    filename="ai_debug_log.txt",
-    level=logging.DEBUG,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    filemode="a"
-)
-logger = logging.getLogger(__name__)
-
-CONTENT_API_URL = "https://uc-merced-campus-event-api-backend.onrender.com/contentAPIURL"
 
 # ------------------------------------------------------------------------------
 # CONFIG
 # ------------------------------------------------------------------------------
-MODEL_NAME = "gpt-4o"
+CONTENT_API_URL = os.getenv("CONTENT_API_URL", "http://10.34.89.192:8080/contentAPIURL")
+MODEL_NAME = os.getenv("OPENAI_MODEL_NAME", "gpt-4o")
 
 MAX_DESC_CHARS = 220
-
-# Increased max context items to give the LLM enough options to actually return 10+
 MAX_CONTEXT_ITEMS = 25
 MIN_CONTEXT_ITEMS = 4
 
@@ -483,11 +388,11 @@ PHRASE_WORD_BANK = {
 def make_singular(word: str) -> str:
     if len(word) <= 3:
         return word
-    if word.endswith('ies'):
-        return word[:-3] + 'y'
-    elif word.endswith('es') and not word.endswith('ss'):
+    if word.endswith("ies"):
+        return word[:-3] + "y"
+    if word.endswith("es") and not word.endswith("ss"):
         return word[:-2]
-    elif word.endswith('s') and not word.endswith('ss'):
+    if word.endswith("s") and not word.endswith("ss"):
         return word[:-1]
     return word
 
@@ -532,17 +437,20 @@ def compact_nested_value(value: str) -> str:
     text = strip_urls(value)
     if not text:
         return ""
+
     m = re.match(r"^\s*station\s*:\s*(.+)$", text, re.IGNORECASE)
     if m:
         return f"station={m.group(1).strip()}"
+
     m = re.match(r"^\s*description\s*:\s*(.+)$", text, re.IGNORECASE)
     if m:
         return f"desc={m.group(1).strip()}"
+
     m = re.match(r"^\s*calories\s*:\s*([0-9]+)", text, re.IGNORECASE)
     if m:
         return f"cal={m.group(1).strip()}"
-    text = text.strip(" |;,-")
-    return text
+
+    return text.strip(" |;,-")
 
 
 def join_with_limit(parts, max_chars):
@@ -570,8 +478,7 @@ def generate_dynamic_word_bank(pages: list):
     for p in pages:
         text_blob = f"{p.get('title', '')} {p.get('description', '')} {json.dumps(p.get('nested_content', ''))}"
         norm = normalize_text(text_blob)
-        words = [make_singular(w) for w in norm.split()
-                 if len(w) > 2 and w not in STOP_WORDS]
+        words = [make_singular(w) for w in norm.split() if len(w) > 2 and w not in STOP_WORDS]
         all_words.extend(words)
 
     if not all_words:
@@ -584,18 +491,13 @@ def generate_dynamic_word_bank(pages: list):
     variance = sum((f - mean_freq) ** 2 for f in freqs) / len(freqs)
     std_dev = math.sqrt(variance) if variance > 0 else 1
 
-    valid_words = [w for w, f in counts.items() if (
-        mean_freq - std_dev) <= f <= (mean_freq + std_dev)]
+    valid_words = [w for w, f in counts.items() if (mean_freq - std_dev) <= f <= (mean_freq + std_dev)]
 
     for w in valid_words:
         sing = make_singular(w)
-        if sing not in DYNAMIC_EXPANSIONS:
-            DYNAMIC_EXPANSIONS[sing] = set()
-        DYNAMIC_EXPANSIONS[sing].add(w)
+        DYNAMIC_EXPANSIONS.setdefault(sing, set()).add(w)
         if w != sing:
-            if w not in DYNAMIC_EXPANSIONS:
-                DYNAMIC_EXPANSIONS[w] = set()
-            DYNAMIC_EXPANSIONS[w].add(sing)
+            DYNAMIC_EXPANSIONS.setdefault(w, set()).add(sing)
 
 
 # ------------------------------------------------------------------------------
@@ -751,8 +653,7 @@ def extract_nested_segments(nested_content):
                             if not isinstance(section, dict):
                                 continue
 
-                            header = strip_urls(
-                                section.get("header", "") or "")
+                            header = strip_urls(section.get("header", "") or "")
                             extra_parts = []
 
                             bullets = section.get("bullets", [])
@@ -765,8 +666,7 @@ def extract_nested_segments(nested_content):
                                 if isinstance(value, str):
                                     extra_parts.append(f"{key}={value}")
 
-                            text = make_segment_text(
-                                day_title, tab_title, header, extra_parts)
+                            text = make_segment_text(day_title, tab_title, header, extra_parts)
                             if not text:
                                 continue
 
@@ -785,8 +685,7 @@ def extract_nested_segments(nested_content):
                     else:
                         fallback_parts = []
                         gather_generic_strings(tab_obj, fallback_parts)
-                        text = make_segment_text(
-                            day_title, tab_title, "", fallback_parts)
+                        text = make_segment_text(day_title, tab_title, "", fallback_parts)
                         if text:
                             segments.append({
                                 "idx": seq,
@@ -904,8 +803,7 @@ def build_query_aware_nested_excerpt(segments, query_hints, max_chars=MAX_NESTED
         if seg_score <= 0 and selected:
             continue
 
-        group_key = (seg.get("day_canonical", ""),
-                     seg.get("tab_canonical", ""))
+        group_key = (seg.get("day_canonical", ""), seg.get("tab_canonical", ""))
         if group_counts.get(group_key, 0) >= 4:
             continue
 
@@ -942,7 +840,6 @@ def encode_item(item: dict) -> dict:
     title = item.get("title", "") or ""
     subtitle = item.get("subtitle", "") or ""
     host = item.get("host", "") or ""
-    # description = compact_description(item.get("description", "") or "")
     description = item.get("description", "") or ""
     tags = item.get("tags", []) or []
     item_type = item.get("type", "") or ""
@@ -951,7 +848,9 @@ def encode_item(item: dict) -> dict:
 
     nested_segments = extract_nested_segments(item.get("nested_content", []))
     nested_structured_text = collapse_structured_segments(
-        nested_segments, max_chars=MAX_NESTED_SEARCH_CHARS)
+        nested_segments,
+        max_chars=MAX_NESTED_SEARCH_CHARS
+    )
 
     tags_text = " ".join(str(t) for t in tags)
 
@@ -1019,10 +918,8 @@ def score_encoded_item(query_hints: dict, encoded: dict) -> float:
         (tag_hits * 0.05)
     )
 
-    nested_scores = [score_segment(query_hints, seg)
-                     for seg in encoded["nested_segments"]]
+    nested_scores = [score_segment(query_hints, seg) for seg in encoded["nested_segments"]]
     best_nested_score = max(nested_scores) if nested_scores else 0.0
-
     nested_match_count = sum(1 for s in nested_scores if s >= 0.40)
 
     score = (
@@ -1038,38 +935,26 @@ def score_encoded_item(query_hints: dict, encoded: dict) -> float:
 
 
 # ------------------------------------------------------------------------------
-# ROUTE
+# AI SMART SEARCH ROUTE
 # ------------------------------------------------------------------------------
 @ask_bp.route("/ai", methods=["POST"])
 def ask_ai():
-    logger.info("=" * 80)
-    logger.info("📥 /ai REQUEST START")
-    logger.info("=" * 80)
+    raw_body = request.get_data(cache=True, as_text=True)
+    data = request.get_json(silent=True) or {}
+
+    save_llm_pipeline(raw_body)
+
+    query = str(data.get("query", "")).strip()
+    item_ids = data.get("item_ids", [])
 
     try:
-        logger.debug(
-            f"Request Method: {request.method} | Path: {request.path} | Content-Type: {request.content_type}")
-
-        raw_body = request.get_data(cache=True, as_text=True)
-        data = request.get_json(silent=True) or {}
-
-        logger.debug(f"Raw Request Body: {raw_body}")
-        logger.debug(f"Parsed JSON Data: {data}")
-
-        query = str(data.get("query", "")).strip()
-        item_ids = data.get("item_ids", [])
-
-        logger.info(f"Extracted Query: '{query}'")
-        logger.info(f"Extracted Item IDs: {item_ids}")
-
         if not query:
-            logger.warning("Aborting: No query provided")
             return jsonify({"error": "No query provided"}), 400
+
         if not isinstance(item_ids, list):
-            logger.warning("Aborting: item_ids is not a list")
             return jsonify({"error": "item_ids must be an array"}), 400
+
         if not item_ids:
-            logger.warning("Aborting: Empty item_ids list provided")
             return jsonify({
                 "ai_overview": "No item_ids were provided in the request.",
                 "citations": [],
@@ -1079,38 +964,27 @@ def ask_ai():
         # ------------------------------------------------------------------
         # 1) FETCH LIVE CONTENT & GENERATE DYNAMIC WORD BANK
         # ------------------------------------------------------------------
-        logger.debug(f"Fetching content from: {CONTENT_API_URL}")
         content_resp = requests.get(CONTENT_API_URL, timeout=15)
         content_resp.raise_for_status()
         content_json = content_resp.json()
 
         pages = content_json.get("pages", [])
-        logger.debug(
-            f"Successfully fetched {len(pages)} pages from Content API.")
-
         if not isinstance(pages, list):
-            logger.error("Invalid content API response: 'pages' is not a list")
             return jsonify({"error": "Invalid content API response"}), 500
 
-        # Build the dynamic Gaussian word bank on the fly
         generate_dynamic_word_bank(pages)
-        logger.debug(f"Dynamic Word Bank Generated: {DYNAMIC_EXPANSIONS}")
 
         # ------------------------------------------------------------------
         # 2) QUERY HINTS / WORD BANK EXPANSION
         # ------------------------------------------------------------------
         query_hints = build_query_hints(query)
-        logger.debug(f"Query Hints: {query_hints}")
 
         # ------------------------------------------------------------------
         # 3) FILTER TO USER item_ids
         # ------------------------------------------------------------------
         valid_items = [p for p in pages if p.get("id") in item_ids]
-        logger.info(
-            f"Found {len(valid_items)} valid items matching provided item_ids.")
 
         if not valid_items:
-            logger.warning("No matching items found for provided item_ids.")
             return jsonify({
                 "ai_overview": "I could not find any matching items for the item_ids you sent.",
                 "citations": [],
@@ -1121,7 +995,6 @@ def ask_ai():
         # 4) ENCODE ITEMS
         # ------------------------------------------------------------------
         encoded_items = [encode_item(item) for item in valid_items]
-        logger.debug(f"Encoded {len(encoded_items)} items successfully.")
 
         # ------------------------------------------------------------------
         # 5) LOCAL PRE-RANK
@@ -1131,22 +1004,18 @@ def ask_ai():
             local_score = score_encoded_item(query_hints, enc)
             scored.append({
                 "score": local_score,
-                "encoded": enc
+                "encoded": enc,
             })
 
         scored.sort(key=lambda x: x["score"], reverse=True)
 
-        # Log the local rankings to see what matched best before the LLM
-        debug_scores = [{"id": r["encoded"]["compact"]
-                         ["id"], "score": r["score"]} for r in scored]
-        logger.debug(f"Local Pre-Rank Scores: {debug_scores}")
+        save_llm_pipeline(str(scored))
 
         # ------------------------------------------------------------------
-        # 6) BUILD LLM CANDIDATES (Enforce Max and Min Rankings)
+        # 6) BUILD LLM CANDIDATES
         # ------------------------------------------------------------------
         top_scored = scored[:MAX_CONTEXT_ITEMS]
 
-        # Ensure we always provide at least MIN_CONTEXT_ITEMS if available
         if len(top_scored) < MIN_CONTEXT_ITEMS and len(scored) >= MIN_CONTEXT_ITEMS:
             top_scored = scored[:MIN_CONTEXT_ITEMS]
         elif len(top_scored) == 0 and scored:
@@ -1160,7 +1029,7 @@ def ask_ai():
             nested_compact = build_query_aware_nested_excerpt(
                 enc["nested_segments"],
                 query_hints,
-                max_chars=MAX_NESTED_CONTEXT_CHARS
+                max_chars=MAX_NESTED_CONTEXT_CHARS,
             )
 
             if nested_compact:
@@ -1168,100 +1037,74 @@ def ask_ai():
 
             llm_candidates.append(compact)
 
-        logger.info(
-            f"Selected {len(llm_candidates)} candidates for LLM processing.")
-
         # ------------------------------------------------------------------
         # 7) BUILD PROMPT
         # ------------------------------------------------------------------
         system_prompt = (
-            # "You are an intelligent campus content assistant. "
-            # "Answer the user's query using the provided campus items. "
-            # "Be less strict and highly inclusive in your matching—if an event is even loosely or tangentially related to the user's query, include it. "
-            # "Provide a comprehensive, engaging overview (at least 3-5 sentences) summarizing the relevant events. "
-            # "Aim to return at least 10 relevant events in your ranking, if available in the context. "
-            # "Some items include nested_content_compact, which is a structured compact collapse "
-            # "of deeper nested content such as menus or schedules using delimiters like "
-            # "'day=Friday || tab=Lunch || item=Blackened Salmon || desc=...'. "
-            # "Use that compact field when it is relevant to the query.\n\n"
-            # "At the end, output the relevant item IDs ranked best to worst in this exact format:\n"
-
             "You are a campus informant. "
             "Answer the user's query using the provided campus items. "
-            "Provide a comprohensive overview (at least 1-3 sentences) summarizing the relevant items. "
-            "Inlclude up to 10 relevent item IDs in your ranking at the end, ranked best to worst in this exact format:\n"
+            "Provide a comprehensive overview, at least 1-3 sentences, summarizing the relevant items. "
+            "Include up to 10 relevant item IDs in your ranking at the end, ranked best to worst in this exact format:\n"
             "[IDS: id1, id2, id3, id4, ...]\n"
             "Do not output JSON."
         )
 
         user_content = json.dumps({
             "query": query,
-            "available_items": llm_candidates
+            "available_items": llm_candidates,
         }, indent=2, ensure_ascii=False)
 
-        logger.debug(
-            f"=== SYSTEM PROMPT ===\n{system_prompt}\n=====================")
-        logger.debug(
-            f"=== USER CONTENT (LLM CANDIDATES) ===\n{user_content}\n=====================================")
+        llm_messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": user_content},
+        ]
+
+        save_llm_pipeline(str(llm_messages))
 
         # ------------------------------------------------------------------
         # 8) CALL MODEL
         # ------------------------------------------------------------------
-        logger.info(f"Calling OpenAI model: {MODEL_NAME}")
         resp = client.chat.completions.create(
             model=MODEL_NAME,
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_content}
-            ],
+            messages=llm_messages,
             temperature=0.3,
-            max_tokens=800
+            max_tokens=800,
         )
 
         raw = (resp.choices[0].message.content or "").strip()
-        logger.debug(
-            f"=== RAW LLM RESPONSE ===\n{raw}\n========================")
+
+        save_llm_pipeline(raw)
 
         # ------------------------------------------------------------------
         # 9) EXTRACT RANKED IDS
         # ------------------------------------------------------------------
         ranked_item_ids = []
 
-        tag_match = re.search(r"\[IDS:\s*(.*?)\]", raw, re.IGNORECASE)
+        tag_match = re.search(r"\[IDS:\s*(.*?)\]", raw, re.IGNORECASE | re.DOTALL)
         if tag_match:
-            found_ids = [x.strip()
-                         for x in tag_match.group(1).split(",") if x.strip()]
+            found_ids = [x.strip() for x in tag_match.group(1).split(",") if x.strip()]
             ranked_item_ids = [x for x in found_ids if x in item_ids]
-        elif re.search(r"IDs?:\s*(.*)", raw, re.IGNORECASE):
+        else:
             fallback_match = re.search(r"IDs?:\s*(.*)", raw, re.IGNORECASE)
-            found_ids = fallback_match.group(1).replace(",", " ").split()
-            ranked_item_ids = [x.strip()
-                               for x in found_ids if x.strip() in item_ids]
+            if fallback_match:
+                found_ids = fallback_match.group(1).replace(",", " ").split()
+                ranked_item_ids = [x.strip() for x in found_ids if x.strip() in item_ids]
 
         if not ranked_item_ids:
-            logger.warning(
-                "Regex extraction failed or empty. Falling back to local top_scored order.")
-            ranked_item_ids = [row["encoded"]["compact"]["id"]
-                               for row in top_scored]
+            ranked_item_ids = [row["encoded"]["compact"]["id"] for row in top_scored]
 
-        logger.info(f"Final Ranked Item IDs: {ranked_item_ids}")
-
-        ai_overview = re.sub(r"\[IDS:.*?\]", "", raw,
-                             flags=re.IGNORECASE).strip()
+        ai_overview = re.sub(r"\[IDS:.*?\]", "", raw, flags=re.IGNORECASE | re.DOTALL).strip()
         ai_overview = re.sub(r"(?i)IDs?:.*", "", ai_overview).strip()
 
         if not ai_overview:
             ai_overview = "Here are the top matches based on your search."
-
-        logger.debug(f"Cleaned AI Overview: '{ai_overview}'")
 
         # ------------------------------------------------------------------
         # 10) BUILD CITATIONS
         # ------------------------------------------------------------------
         citations = []
         for pid in ranked_item_ids:
-            matched_item = next(
-                (item for item in valid_items if item.get("id") == pid), None)
+            matched_item = next((item for item in valid_items if item.get("id") == pid), None)
             if not matched_item:
                 continue
 
@@ -1279,28 +1122,19 @@ def ask_ai():
             citations.append({
                 "page_id": pid,
                 "title": matched_item.get("title", ""),
-                "snippet": snippet
+                "snippet": snippet,
             })
 
         final_response = {
             "ai_overview": ai_overview,
             "citations": citations,
-            "ranked_item_ids": ranked_item_ids
+            "ranked_item_ids": ranked_item_ids,
         }
-
-        logger.debug(
-            f"=== FINAL JSON RESPONSE ===\n{json.dumps(final_response, indent=2)}\n===========================")
-
-        logger.info("📤 /ai REQUEST END - SUCCESS")
-        logger.info("=" * 80 + "\n")
 
         return jsonify(final_response), 200
 
     except requests.exceptions.RequestException as e:
-        logger.error(
-            f"Failed to fetch content API data: {str(e)}", exc_info=True)
         return jsonify({"error": "Failed to fetch content API data", "details": str(e)}), 502
+
     except Exception as e:
-        logger.error(
-            f"Failed to generate AI response: {str(e)}", exc_info=True)
         return jsonify({"error": "Failed to generate AI response", "details": str(e)}), 500
