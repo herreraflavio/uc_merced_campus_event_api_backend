@@ -675,6 +675,13 @@ def get_presence_pages_cached() -> list[dict]:
 BASE_DIR = Path(__file__).resolve().parent
 POLYGONS_JSON_PATH = BASE_DIR / "polygons.json"
 
+# User-generated pages. Defaults to the process working directory to preserve
+# compatibility with the existing ios.py/pages.json workflow. In production,
+# set PAGES_JSON_PATH to an absolute path if the service can start elsewhere.
+PAGES_JSON_PATH = Path(
+    os.getenv("PAGES_JSON_PATH", str(Path.cwd() / "pages.json"))
+).expanduser()
+
 MENU_API_URL = "https://widget.api.eagle.bigzpoon.com/menuitems"
 MENU_COMP_ID = "61bd7ecd8c760e0011ac0fac"
 MENU_DEVICE_ID = "d1f39079-6fac-4eac-bf37-29208df87571"
@@ -878,9 +885,11 @@ def generate_food_menu_payload() -> dict:
 
     session = requests.Session()
 
-    logger.info(
-        "[food_menu] starting %d menu requests",
-        len(fetch_queue),
+    print(
+        f"[food_menu] START fetching menus - "
+        f"{len(fetch_queue)} requests - "
+        f"{datetime.now(PACIFIC).strftime('%Y-%m-%d %H:%M:%S %Z')}",
+        flush=True,
     )
 
     for index, task in enumerate(fetch_queue, start=1):
@@ -897,6 +906,7 @@ def generate_food_menu_payload() -> dict:
             "menuGroupId": task["menu_group_id"],
             "userPreferences": user_preferences,
         }
+
         headers = {
             "accept": "application/json, text/plain, */*",
             "x-comp-id": MENU_COMP_ID,
@@ -905,6 +915,12 @@ def generate_food_menu_payload() -> dict:
         }
 
         try:
+            print(
+                f"[food_menu] fetching {index}/{len(fetch_queue)}: "
+                f"{source} {day} - {meal}",
+                flush=True,
+            )
+
             response = session.get(
                 MENU_API_URL,
                 params=params,
@@ -914,8 +930,9 @@ def generate_food_menu_payload() -> dict:
             response.raise_for_status()
             payload = response.json()
 
-            payload_data = payload.get("data") if isinstance(
-                payload, dict) else None
+            payload_data = (
+                payload.get("data") if isinstance(payload, dict) else None
+            )
             menu_items = (
                 payload_data.get("menuItems", [])
                 if isinstance(payload_data, dict)
@@ -931,6 +948,7 @@ def generate_food_menu_payload() -> dict:
                 if isinstance(section, dict)
             }
 
+            added_count = 0
             for item in menu_items:
                 if not isinstance(item, dict):
                     continue
@@ -941,29 +959,44 @@ def generate_food_menu_payload() -> dict:
 
                 parsed_data[source][day][meal].append(section)
                 existing_headers.add(section["header"])
+                added_count += 1
 
-            logger.info(
-                "[food_menu] fetched %d/%d: %s %s - %s",
-                index,
-                len(fetch_queue),
-                source,
-                day,
-                meal,
+            print(
+                f"[food_menu] fetched {index}/{len(fetch_queue)}: "
+                f"{source} {day} - {meal} ({added_count} item(s))",
+                flush=True,
             )
+
         except Exception as exc:
             failure = f"{source} {day} - {meal}: {exc}"
             failures.append(failure)
-            logger.error("[food_menu] %s", failure)
+            print(
+                f"[food_menu] ERROR {index}/{len(fetch_queue)}: {failure}",
+                flush=True,
+            )
+            logger.exception("[food_menu] %s", failure)
 
         if index < len(fetch_queue) and MENU_REQUEST_DELAY_SECONDS > 0:
             time.sleep(MENU_REQUEST_DELAY_SECONDS)
 
     if failures:
+        print(
+            f"[food_menu] FAILED - {len(failures)} endpoint(s) failed - "
+            f"{datetime.now(PACIFIC).strftime('%Y-%m-%d %H:%M:%S %Z')}",
+            flush=True,
+        )
         raise RuntimeError(
             "Food menu generation failed for "
             f"{len(failures)} endpoint(s): "
             + " | ".join(failures[:5])
         )
+
+    print(
+        f"[food_menu] DONE fetching menus - "
+        f"{len(fetch_queue)} requests completed - "
+        f"{datetime.now(PACIFIC).strftime('%Y-%m-%d %H:%M:%S %Z')}",
+        flush=True,
+    )
 
     return {
         "YWDC_nested_content": _build_nested_content(parsed_data["YWDC"]),
@@ -972,6 +1005,11 @@ def generate_food_menu_payload() -> dict:
 
 
 def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
+    print(
+        f"[food_menu] updating polygons.json: {POLYGONS_JSON_PATH}",
+        flush=True,
+    )
+
     if not POLYGONS_JSON_PATH.exists():
         raise FileNotFoundError(
             f"polygons.json not found: {POLYGONS_JSON_PATH}")
@@ -1023,8 +1061,9 @@ def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
         record["nested_content"] = replacement["nested_content"]
         matched[location_id] += 1
 
-    missing_ids = [location_id for location_id,
-                   count in matched.items() if count == 0]
+    missing_ids = [
+        location_id for location_id, count in matched.items() if count == 0
+    ]
     if missing_ids:
         raise ValueError(
             "Missing required location_id value(s) in polygons.json: "
@@ -1033,6 +1072,11 @@ def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
 
     _write_json_atomically(POLYGONS_JSON_PATH, polygons_payload)
 
+    print(
+        f"[food_menu] polygons.json updated successfully - "
+        f"Pavilion={matched['774']}, DC={matched['1130']}",
+        flush=True,
+    )
     logger.info(
         "[food_menu] updated polygons.json: Pavilion=%d, DC=%d",
         matched["774"],
@@ -1043,39 +1087,72 @@ def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
 
 def generate_food_menus_and_update_polygons() -> dict[str, int]:
     """Public/manual function for a complete weekly menu update."""
+    print("[content_jobs] food-menu update job started", flush=True)
     with CONTENT_PIPELINE_LOCK:
         menu_payload = generate_food_menu_payload()
-        return _replace_food_menu_nested_content(menu_payload)
+        matched = _replace_food_menu_nested_content(menu_payload)
+    print("[content_jobs] food-menu update job finished", flush=True)
+    return matched
 
 
 def refresh_content_api_presence_cache() -> int:
     """Force-refresh the Presence pages used by /contentAPIURL."""
+    print("[content_jobs] Presence pages cache refresh started", flush=True)
     with CONTENT_PIPELINE_LOCK:
         events = refresh_presence_pages_cache()
         logger.info(
             "[content_jobs] refreshed Presence pages cache with %d events",
             len(events),
         )
-        return len(events)
+    print(
+        f"[content_jobs] Presence pages cache refresh finished - {len(events)} event(s)",
+        flush=True,
+    )
+    return len(events)
 
 
 def run_startup_content_pipeline() -> None:
-    """Startup testing sequence: menus -> polygons -> Presence pages cache."""
+    """Run menus -> polygons -> Presence pages cache once at process startup."""
+    print(
+        f"[content_jobs] STARTUP pipeline started - "
+        f"{datetime.now(PACIFIC).strftime('%Y-%m-%d %H:%M:%S %Z')}",
+        flush=True,
+    )
+
     with CONTENT_PIPELINE_LOCK:
+        print("[content_jobs] startup step 1/3: fetching food menus", flush=True)
         menu_payload = generate_food_menu_payload()
+
+        print("[content_jobs] startup step 2/3: updating polygons.json", flush=True)
         _replace_food_menu_nested_content(menu_payload)
+
+        print("[content_jobs] startup step 3/3: refreshing Presence cache", flush=True)
         events = refresh_presence_pages_cache()
-        logger.info(
-            "[content_jobs] startup pipeline completed with %d Presence events",
-            len(events),
-        )
+
+    print(
+        f"[content_jobs] STARTUP pipeline finished - "
+        f"{len(events)} Presence event(s) - "
+        f"{datetime.now(PACIFIC).strftime('%Y-%m-%d %H:%M:%S %Z')}",
+        flush=True,
+    )
+    logger.info(
+        "[content_jobs] startup pipeline completed with %d Presence events",
+        len(events),
+    )
 
 
 def _safe_content_job(job_name: str, function) -> None:
+    print(f"[content_jobs] job started: {job_name}", flush=True)
     try:
         function()
-    except Exception:
+    except Exception as exc:
+        print(
+            f"[content_jobs] job FAILED: {job_name}: {exc}",
+            flush=True,
+        )
         logger.exception("[content_jobs] %s failed", job_name)
+    else:
+        print(f"[content_jobs] job finished: {job_name}", flush=True)
 
 
 def _shutdown_content_scheduler() -> None:
@@ -1085,25 +1162,93 @@ def _shutdown_content_scheduler() -> None:
 
 
 def init_content_jobs(app):
-    """Start the Pacific-time scheduler once for this Flask process."""
+    """
+    Run the content pipeline once when this Flask process starts, then
+    schedule the weekly food-menu refresh and daily Presence cache refresh.
+    """
     global CONTENT_SCHEDULER, STARTUP_PIPELINE_STARTED
 
+    print(
+        f"[content_jobs] initializing content jobs - "
+        f"{datetime.now(PACIFIC).strftime('%Y-%m-%d %H:%M:%S %Z')}",
+        flush=True,
+    )
+
+    # Flask's development reloader creates a parent process and then the
+    # actual serving process. Avoid running the startup pipeline twice.
+    debug_enabled = app.debug or _env_flag("FLASK_DEBUG", False)
+    if debug_enabled and os.getenv("WERKZEUG_RUN_MAIN") != "true":
+        print(
+            "[content_jobs] Flask reloader parent process detected; "
+            "skipping jobs in this process",
+            flush=True,
+        )
+        return None
+
+    # ---------------------------------------------------------
+    # Run once on every actual Flask process startup.
+    # This is intentionally independent of APScheduler.
+    # ---------------------------------------------------------
+    if (
+        _env_flag("RUN_STARTUP_CONTENT_PIPELINE", True)
+        and not STARTUP_PIPELINE_STARTED
+    ):
+        STARTUP_PIPELINE_STARTED = True
+
+        print(
+            "[content_jobs] startup refresh enabled; launching startup pipeline",
+            flush=True,
+        )
+
+        startup_thread = threading.Thread(
+            target=lambda: _safe_content_job(
+                "startup content pipeline",
+                run_startup_content_pipeline,
+            ),
+            name="startup-content-pipeline",
+            daemon=True,
+        )
+        startup_thread.start()
+    elif STARTUP_PIPELINE_STARTED:
+        print(
+            "[content_jobs] startup pipeline already started in this process",
+            flush=True,
+        )
+    else:
+        print(
+            "[content_jobs] startup pipeline disabled by RUN_STARTUP_CONTENT_PIPELINE",
+            flush=True,
+        )
+
+    # ---------------------------------------------------------
+    # Scheduled jobs. Startup fetching above still runs even if
+    # scheduled jobs are disabled or APScheduler is unavailable.
+    # ---------------------------------------------------------
     if not _env_flag("RUN_CONTENT_JOBS", True):
+        print(
+            "[content_jobs] scheduler disabled by RUN_CONTENT_JOBS",
+            flush=True,
+        )
         logger.info("[content_jobs] scheduler disabled by RUN_CONTENT_JOBS")
         return None
 
     if BackgroundScheduler is None:
+        print(
+            "[content_jobs] ERROR: APScheduler is not installed; "
+            "scheduled jobs will not run",
+            flush=True,
+        )
         logger.error(
             "[content_jobs] APScheduler is not installed; run: "
             "pip install 'APScheduler>=3.11,<4'"
         )
         return None
 
-    debug_enabled = app.debug or _env_flag("FLASK_DEBUG", False)
-    if debug_enabled and os.getenv("WERKZEUG_RUN_MAIN") != "true":
-        return None
-
     if CONTENT_SCHEDULER is not None:
+        print(
+            "[content_jobs] scheduler already initialized in this process",
+            flush=True,
+        )
         return CONTENT_SCHEDULER
 
     scheduler = BackgroundScheduler(
@@ -1116,6 +1261,7 @@ def init_content_jobs(app):
         },
     )
 
+    # Food menus: every Sunday at 7:00 AM Pacific.
     scheduler.add_job(
         lambda: _safe_content_job(
             "Sunday food-menu generation",
@@ -1129,6 +1275,7 @@ def init_content_jobs(app):
         replace_existing=True,
     )
 
+    # Presence pages cache: every day at 7:05 AM Pacific.
     scheduler.add_job(
         lambda: _safe_content_job(
             "daily Presence pages cache refresh",
@@ -1145,24 +1292,15 @@ def init_content_jobs(app):
     CONTENT_SCHEDULER = scheduler
     atexit.register(_shutdown_content_scheduler)
 
+    print(
+        "[content_jobs] scheduler started - "
+        "food menus: Sunday 07:00 Pacific; "
+        "Presence cache: daily 07:05 Pacific",
+        flush=True,
+    )
     logger.info(
         "[content_jobs] scheduler started: Sunday 07:00 menus; daily 07:05 cache"
     )
-
-    if (
-        _env_flag("RUN_STARTUP_CONTENT_PIPELINE", True)
-        and not STARTUP_PIPELINE_STARTED
-    ):
-        STARTUP_PIPELINE_STARTED = True
-        startup_thread = threading.Thread(
-            target=lambda: _safe_content_job(
-                "startup content pipeline",
-                run_startup_content_pipeline,
-            ),
-            name="startup-content-pipeline",
-            daemon=True,
-        )
-        startup_thread.start()
 
     return scheduler
 
@@ -1181,6 +1319,7 @@ def content_api_url():
     aggregated_response = {
         "pages": []
     }
+    print("api endpoint hit")
 
     # ─── STEP A: Add Event Pages ───
     try:
@@ -1206,6 +1345,39 @@ def content_api_url():
                         polygons_data["polygons"])
     except Exception as e:
         logger.error("ContentAPI Pipeline Error (Polygons): %s", e)
+
+    # ─── STEP C: Add User Generated Pages (pages.json) ───
+    try:
+        if PAGES_JSON_PATH.exists():
+            with PAGES_JSON_PATH.open("r", encoding="utf-8") as f:
+                user_pages_payload = json.load(f)
+
+            if isinstance(user_pages_payload, list):
+                user_pages = user_pages_payload
+            elif (
+                isinstance(user_pages_payload, dict)
+                and isinstance(user_pages_payload.get("pages"), list)
+            ):
+                user_pages = user_pages_payload["pages"]
+            else:
+                raise ValueError(
+                    "pages.json must be a JSON array or an object containing a 'pages' array"
+                )
+
+            invalid_count = sum(
+                1 for page in user_pages if not isinstance(page, dict)
+            )
+            if invalid_count:
+                logger.warning(
+                    "pages.json contains %d non-object record(s); skipping them",
+                    invalid_count,
+                )
+
+            aggregated_response["pages"].extend(
+                page for page in user_pages if isinstance(page, dict)
+            )
+    except Exception as e:
+        logger.error("ContentAPI Pipeline Error (User Pages): %s", e)
 
     return jsonify(aggregated_response)
 
@@ -1376,4 +1548,5 @@ def add_events():
 # Start the scheduler automatically when this blueprint is registered.
 @events_bp.record_once
 def _start_content_jobs_when_blueprint_registers(state) -> None:
+    print("[content_jobs] events blueprint registered; initializing jobs", flush=True)
     init_content_jobs(state.app)

@@ -2741,35 +2741,35 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Healthy Concepts",
+                "header": "Korean BBQ",
                 "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein Choice of Grilled Chicken Breast or Abbots Plant Based Chicken. with Sides of White Rice Mexican Pilaf (Peas, Carrots, Corn), Refried Pinto Beans, Corn Tortilla and Toppings.",
-                  "Calories: 690 Cal."
+                  "Station: LAKE WOK",
+                  "Description: Protein Choice of Korean Beef Bulgogi (4oz) or Korean Shiitake Bulgogi (4oz), with Sides of Steamed White Rice (4oz), Stir Fry Vegetables (4oz) and Toppings.",
+                  "Calories: 510 Cal."
                 ]
               },
               {
-                "header": "Korean Bibimbap Bowl",
+                "header": "Grilled Chicken Wings",
                 "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein Choice of Korean Gochujang Beef  (4oz) or Gochujang Crispy Tofu with Sides of Garlic Fried Rice, Scrambled Eggs, Sauteed Veggies and Toppings.",
-                  "Calories: 840 Cal."
+                  "Station: RUFUS",
+                  "Description: Protein Choice Buffalo Grilled Chicken Wings, Plain Grilled Chicken Wings or Crispy Plant Based Tenders , Served with Sides of Waffle Fries,  Lemon Herb Black Cod, Quinoa Pilaf, Steamed Broccoli and Toppings.",
+                  "Calories: 820 Cal."
                 ]
               },
               {
-                "header": "Street Style Grilled Hot Dog",
+                "header": "Crispy Shell Tacos",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Street Style All Beef Grilled Hot Dog or Plant Based Grilled Sausage Served in Max's Artisan Hot Dog Bun, Grilled Onion & Bell Peppers, Thunder Crunch Fries and Toppings.",
-                  "Calories: 870 Cal."
+                  "Station: CASCABEL",
+                  "Description: Protein Choice of Chipotle Lime Ground Beef or Chipotle Lime Plant Based Crumble on Crunchy Taco Shell with Sides of Steamed Cauliflower, Roasted Lime Corn and Toppings.",
+                  "Calories: 820 Cal."
                 ]
               },
               {
-                "header": "Pizza",
+                "header": "Creamy Shrimp Alfredo Pasta",
                 "bullets": [
-                  "Station: Ciao",
-                  "Description: Pizza Choice of Hawaiian Bacon, Ham, Pineapple Pizza, or Spinach & Artichoke Pizza, Four Cheese Pizza With Sides of Chili Flakes, Parmesan Cheese, Hot Honey, Chili Oil.",
-                  "Calories: 280 Cal."
+                  "Station: CIAO",
+                  "Description: Protein Choice of Creamy Shrimp Alfredo Pasta or Creamy Shiitake Alfredo Pasta with Sides of Garlic Green Beans, Parmesan Cheese, Chili Flakes and Max's Artisan Dinner Rolls.",
+                  "Calories: 510 Cal."
                 ]
               }
             ]
@@ -2778,35 +2778,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Healthy Concepts",
+                "header": "Filipino Plate",
                 "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein Choice of  Honey Ginger Glazed Chicken Breast, or Honey Ginger Glazed Fable Shiitake with Sides of Brown Rice Pilaf, Steamed Cauliflower. Seasoned red potatoes, Gochujang Cucumber Salad, and Edamame Salad",
-                  "Calories: 700 Cal."
+                  "Station: LAKE WOK",
+                  "Description: Protein Choice of Pork Adobo or Potato & Mushroom Adobo, with Sides of Jasmine Rice, Stir Fry Green Beans, Veggie Spring Rolls and Toppings.",
+                  "Calories: 390 Cal."
                 ]
               },
               {
-                "header": "Baked Potato Bar",
+                "header": "Loaded Taters",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein choice of Bacon Bits (4oz) or Plant Based Chorizo (4oz) . Comes with Baked Potatoes, Baked Broccoli , Cheese Sauce and toppings.",
+                  "Station: RUFUS",
+                  "Description: Protein choice of Seasoned Bacon Bits or ,Plant Based Chorizo Crumble with Tatter Tots, Nachos Cheese Sauce , Roasted Broccoli and Toppings.",
+                  "Calories: 950 Cal."
+                ]
+              },
+              {
+                "header": "Loaded Nachos",
+                "bullets": [
+                  "Station: CASCABEL",
+                  "Description: Protein choice of  Ground Beef Taco Meat or Plant-Base Abbot's Chick'n , Served with Tortilla Chips Nacho Cheese, Pinto Beans and Toppings.",
                   "Calories: 1070 Cal."
                 ]
               },
               {
-                "header": "Beef Picadillo",
+                "header": "Healthy Concepts",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Beef Picadillo or Impossible Picadillo, with sides of Jasmine Rice, Black Beans, Tostones, Corn Tortillas and Toppings",
-                  "Calories: 230 Cal."
-                ]
-              },
-              {
-                "header": "French Dip Sandwhich",
-                "bullets": [
-                  "Station: Ciao",
-                  "Description: Protein Choice of Roast Beef or Impossible Steak Bites on a Hoagie Roll, Served with Beef Au Jus, Shoestring Fries and Fried Onion",
-                  "Calories: 320 Cal."
+                  "Station: Cascabel",
+                  "Description: Protein Choice of  Lemon Herb Chicken , Lemon Herb Sablefish, or Lemon Dill Chickpeas w/Sauteeed Zucchini with Sides of Quinoa & Parsley Pilaf, Steamed Veggies Medley, and Barley & Cabbage \nComposed Salad \n*Contains Gluten\"",
+                  "Calories: 440 Cal."
                 ]
               }
             ]
@@ -2815,60 +2815,35 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "German Chocolate",
+                "header": "Strawberry Cake",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Slice of German Chocolate Cake",
-                  "Calories: 340 Cal."
+                  "Description: A Slice of Strawberry Cake",
+                  "Calories: 320 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/3588-screenshot-2026-02-09-at-112821aam.png"
-                ]
-              },
-              {
-                "header": "Vegan Chocolate Chip & Sugar/Snickerdoodle",
-                "bullets": [
-                  "Station: LUNCH",
-                  "Description: Vegan Chocolate Chip & Sugar/Snickerdoodle",
-                  "Calories: 160 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8286-snickerdoodle.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/7214-screenshot-2026-02-09-at-124130apm.png"
                 ]
               }
             ]
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -2876,13 +2851,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -3022,6 +3052,22 @@
             "title": "Breakfast",
             "sections": [
               {
+                "header": "Breakfast Tacos",
+                "bullets": [
+                  "Station: Cascabel",
+                  "Description: Protein choice of Jamon Con Huevo Scramble or Fable Shitake Carnitas Scramble, Taco with toppings and sides of Refried Beans and Crispy Potatoes.",
+                  "Calories: 580 Cal."
+                ]
+              },
+              {
+                "header": "Breakfast Platter",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein Choice of Halal All-Beef Sausage or Vegan Plant Based Sausage, Served with Sides: Scrambled Eggs,  Banana Fosters Oatmeal, Hash Brown Triangles, and Waffles",
+                  "Calories: 950 Cal."
+                ]
+              },
+              {
                 "header": "Farm Fresh Eggs",
                 "bullets": [
                   "Station: Ciao",
@@ -3030,14 +3076,6 @@
                 ],
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/3809-oip.jpeg"
-                ]
-              },
-              {
-                "header": "Breakfast Platter",
-                "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Halal All-Beef Sausage or Vegan Plant Based Sausage, Served with Sides: Scrambled Eggs,  Banana Fosters Oatmeal, Rosemary Breakfast Potatoes, Mushroom Spinach Skillet.",
-                  "Calories: 950 Cal."
                 ]
               },
               {
@@ -3136,14 +3174,6 @@
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/menuitem/2022-1/9967-condiments.jpg"
                 ]
-              },
-              {
-                "header": "Breakfast Cheesy Quesadillas (Plated)",
-                "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein choice of Cheesy Quesadillas Or Bacon Bits,  with Scrambled Eggs, Stawberry & Banana Milkshake and Toppings.",
-                  "Calories: 360 Cal."
-                ]
               }
             ]
           },
@@ -3151,35 +3181,35 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Healthy Concepts",
+                "header": "Crispy Baja Fish Tacos",
                 "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein Choice of Oven Roasted Rosemary Pepper Chicken, Oven Roasted Rosemary Pepper Cod or Rosemary Grilled Tofu. Sides of Homestyle Cauliflower Mash, Sauteed Green Beans, Mushroom and Rosemary Quinoa, Brown Rice Pilaf.",
-                  "Calories: 920 Cal."
+                  "Station: CASCABEL",
+                  "Description: Protein Choice of Battered Pub Style Cod (4oz) or Battered Plant Based Fish Taco (4oz) Comes Toppings and Sides of Corn Tortillas, White Rice Pilaf, Calabasita Succotash.",
+                  "Calories: 730 Cal."
                 ]
               },
               {
-                "header": "Honey Walnut Shrimp",
+                "header": "Creamy Butter Chicken",
                 "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Choice of Honey Walnut Shrimp, Garlic Herb Sand Bass Fish  or Honey Walnut Crispy Tofu with Sides of Steamed White Rice, Steamed Broccoli, Roasted Ginger Sweet Potatoes and Toppings.",
-                  "Calories: 1090 Cal."
+                  "Station: LAKE WOK",
+                  "Description: Garlic Herb Naan, Protein Choice of Creamy Butter Chicken or Grilled Paneer Chana Masala. Comes With Toasted Jeera Rice, Gobi Stir Fry (Cauliflower, Carrots, Green Beans, Peas) and Toppings.",
+                  "Calories: 830 Cal."
                 ]
               },
               {
-                "header": "All Beef Burger",
+                "header": "Baked Potato Bar",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of All Beef Patty or Plant Based Impossible Burger on Max's Artisan Burger or Vegan Pretzel Buns with Toppings and Macaroni Salad, Potato Salad as Sides.",
-                  "Calories: 990 Cal."
+                  "Station: RUFUS",
+                  "Description: Baked Potato, Savory Beef Chili, Mommas Chili (2oz). Comes with Toppings.",
+                  "Calories: 640 Cal."
                 ]
               },
               {
-                "header": "Creamy Chipotle Chicken Pasta",
+                "header": "Lemon Garlic Greek Chicken",
                 "bullets": [
-                  "Station: Ciao",
-                  "Description: Protein Choice of Creamy Chipotle Chicken or Creamy Chipotle Shiitake on Pasta with Sides of Steamed Broccoli, Parmesan Cheese, Chili Flakes and Max's Artisan Dinner Rolls.",
-                  "Calories: 570 Cal."
+                  "Station: CIAO",
+                  "Description: Protein Choice of Lemon Garlic Greek Chicken Thigh(4oz) or Mediterranean Stuffed Eggplant (4oz) with Garlic Herb Pita. Served with Za'atar Spiced Potatoes (Potatoes, Squash, Zucchini)  and Toppings.",
+                  "Calories: 800 Cal."
                 ]
               }
             ]
@@ -3188,35 +3218,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Char Siu Bao Bun  (Plated)",
+                "header": "Huli Huli Chicken Bowl",
                 "bullets": [
                   "Station: Lake Wok",
-                  "Description: Protein Choice of Pork Char Siu or Plant Based Fabel Mushroom Char Siu, on Bao Bun; Served with Veggie Spring Rolls and Toppings.",
-                  "Calories: 760 Cal."
+                  "Description: Max's Artisan Hawaiian Sweet Rolls.  Protein Choice of Huli Huli Chicken or Huli Huli Grilled Tofu Steaks, Served with Steamed Rice, Steamed Broccoli, Hawaiian Mac Salad and Toppings.",
+                  "Calories: 860 Cal."
+                ]
+              },
+              {
+                "header": "Mediterranean Lamb Rice Bowl",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein choice of Ground Lamb or Mediterrenean Plant-Base Steak w/Veggies served with Cucumber Salad, Turmeric Yellow Rice, Sumac Spiced Potatoes and Toppings.",
+                  "Calories: 550 Cal."
                 ]
               },
               {
                 "header": "Healthy Concepts",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Citrus Marinated Chicken Wings, Citrus Marinated Salmon or Plant Based Chicken TEnders. with Sides of Brown Rice, Stir Fried Vegetables and Toppings",
-                  "Calories: 630 Cal."
+                  "Station: Cascabel",
+                  "Description: Protein Choice of  Chili Lime Chicken, Chili Lime Mushrooms or Chili Lime Sable Fish with Sides of Red Pepper Brown Rice, Steam Vegetables and Toppings",
+                  "Calories: 470 Cal."
                 ]
               },
               {
-                "header": "Peruvian Plate",
-                "bullets": [
-                  "Station: CASCABEL",
-                  "Description: Protein Choice of Pork Loin Lomo Saltado, or Fable Mushroom Lomo Soltado, Served with Steamed Jasmine Rice, Shoestring Fries, Baked Plantains, and Toppings",
-                  "Calories: 590 Cal."
-                ]
-              },
-              {
-                "header": "Pasta Bowl",
+                "header": "Italian Hot Dog",
                 "bullets": [
                   "Station: CIAO",
-                  "Description: Penne Pasta with Choice of Beef Bolognaise (4oz) & Marinara Sauce(4oz), served with Seasonal Roasted Vegetables (4oz), Garlic Toast(1) and Toppings.",
-                  "Calories: 740 Cal."
+                  "Description: Protein choice of Spicy Italian Hot Link (1) or Vegan Bratz, with Sauteed Julianne Peppers & Onions, Straight Cut Fries and Marinara Sauce. Max's Hot Dog Buns & Toppings.",
+                  "Calories: 420 Cal."
                 ]
               }
             ]
@@ -3225,76 +3255,79 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "Chocolate Chocolate Chip Muffin",
+                "header": "Blueberry Muffins",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Chocolate Chocolate Chip Muffin",
+                  "Description: Blueberry Muffins",
+                  "Calories: 260 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6903-blueberrymuffin.jpeg"
+                ]
+              },
+              {
+                "header": "Mini Croissants",
+                "bullets": [
+                  "Station: BREAKFAST",
+                  "Description: Mini Croissants",
+                  "Calories: 100 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/2835-croissant.jpeg"
+                ]
+              },
+              {
+                "header": "Mini Danish",
+                "bullets": [
+                  "Station: BREAKFAST",
+                  "Description: Mini Danish",
+                  "Calories: 130 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/4195-danish.jpeg"
+                ]
+              },
+              {
+                "header": "Tuxedo Cake",
+                "bullets": [
+                  "Station: LUNCH",
+                  "Description: Slice of Tuxedo Layer Cake",
                   "Calories: 280 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/1777-screenshot-2026-02-09-at-124841apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/2827-screenshot-2026-02-09-at-125919apm.png"
                 ]
               },
               {
-                "header": "Bear Claws",
-                "bullets": [
-                  "Station: BREAKFAST",
-                  "Description: Bear Claws",
-                  "Calories: 0 Cal."
-                ]
-              },
-              {
-                "header": "Strawberry Cake",
+                "header": "Vegan Oatmeal Raisin & Triple Chocolate",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: A Slice of Strawberry Cake",
-                  "Calories: 320 Cal."
+                  "Description: Vegan Oatmeal Raisin & Triple Chocolate",
+                  "Calories: 160 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/2692-screenshot-2026-02-09-at-124130apm.png"
-                ]
-              },
-              {
-                "header": "Vegan Oatmeal Raisin & Cahootz",
-                "bullets": [
-                  "Station: LUNCH",
-                  "Description: Vegan Oatmeal Raisin & Cahootz",
-                  "Calories: 160 Cal."
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8820-oatmeal.jpeg"
                 ]
               }
             ]
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -3302,13 +3335,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -3448,6 +3536,22 @@
             "title": "Breakfast",
             "sections": [
               {
+                "header": "Chilaquiles",
+                "bullets": [
+                  "Station: Cascabel",
+                  "Description: Protein choice of Chicken Chilaquiles or Vegetarian Chilaquiles, with Scrambled Eggs, Refried Beans,and Toppings.",
+                  "Calories: 530 Cal."
+                ]
+              },
+              {
+                "header": "Eggs Benedict Plate",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein choice of Canadian Bacon Eggs Benedict , Poached eggs, or Plant Based Mushroom Steak Eggs Benedict, With sides of Crispy Potato Hash browns and Maple Brown Sugar Oatmeal",
+                  "Calories: 730 Cal."
+                ]
+              },
+              {
                 "header": "Farm Fresh Eggs",
                 "bullets": [
                   "Station: Ciao",
@@ -3554,22 +3658,6 @@
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/menuitem/2022-1/9967-condiments.jpg"
                 ]
-              },
-              {
-                "header": "Breakfast Torta",
-                "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein choice of Breakfast Torta, Huevo A La Mexicana, or Tofu A La Mexicana ,  with Mommas Refried Beans  and Toppings.",
-                  "Calories: 240 Cal."
-                ]
-              },
-              {
-                "header": "Sausage Egg Casserole",
-                "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein choice of Sausage Egg Casserole , or Spinach Mushroom Tomato Egg Casserole With sides of Crispy Potato Hash browns and Toppings",
-                  "Calories: 260 Cal."
-                ]
               }
             ]
           },
@@ -3579,36 +3667,33 @@
               {
                 "header": "Healthy Concepts",
                 "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein Choice of Grilled Mediterranean Chicken Breast, Mediterranean Baked Black Cod or Mediterranean Roasted Chickpeas and Tomato with Sides of Roasted Zucchini & Squash, Steamed Green Beans, Lemon Herb CousCous, Steamed Brown Rice and Toppings.",
+                  "Station: Ciao",
+                  "Description: Protein Choice of Roasted Salmon w/ Chimichurri, Herb roasted Chicken Breast or Roasted Tofu w/ Chimichurri. with Sides of Roasted Carrots, Cumin roasted cauliflower, Tri colored Quinoa, Farro.",
                   "Calories: 980 Cal."
                 ]
               },
               {
-                "header": "Peruvian Lomo Saltado",
+                "header": "Classic Pho (Plated )",
+                "bullets": [
+                  "Station: Lake Wok",
+                  "Description: Protein Choice of Classic Beef Pho or Miso Mushroom Pho, Sauces as Sides and Toppings.",
+                  "Calories: 290 Cal."
+                ]
+              },
+              {
+                "header": "All Beef Burger",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein Choice of All Beef Patty or Plant Based Impossible Burger on Max's Artisan Burger Buns with Toppings and Waffle Fries as Side .",
+                  "Calories: 710 Cal."
+                ]
+              },
+              {
+                "header": "Slow Simmered Carnitas",
                 "bullets": [
                   "Station: CASCABEL",
-                  "Description: Choice of Peruvian Beef Lomo Saltado or Fable Peruvian Lomo Saltado. Sides of Steamed  Jasmine Rice,Straight Cut Fries, Sauteed Green Beans and Toppings.",
-                  "Calories: 910 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-4/9151-lomo-saltado.jpg"
-                ]
-              },
-              {
-                "header": "Grilled Chicken Pesto Sandwhich",
-                "bullets": [
-                  "Station: Ciao",
-                  "Description: Max's Artisan Ciabatta Bun. Protein Choice of Grilled Chicken Breast or Grilled Squash & Zuccini Roasted Bell Peppers. With Sides of Waffle Fries, Lemon Couscous, White Bean & Tomato Ragout and Toppings.",
-                  "Calories: 1400 Cal."
-                ]
-              },
-              {
-                "header": "Meatloaf",
-                "bullets": [
-                  "Station: RUFUS",
-                  "Description: Protein Choice of Meatloaf or Impossible Meatloaf (4oz), with Sides of Cornbread (4oz) and Creamy Mashed Potatoes (4oz) and Garlic Green Beans.",
-                  "Calories: 700 Cal."
+                  "Description: Protein Choice of Slow Simmered Carnitas or Fable Mushroom Carnitas, With Sides of Cilantro Lime Rice (4oz), Refried Beans,  Corn Tortillas, Steamed Cauliflower and Toppings.",
+                  "Calories: 670 Cal."
                 ]
               }
             ]
@@ -3617,35 +3702,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Mezze Platter",
+                "header": "Sweet & Sour Rice Plate",
                 "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein Choice of Lamb Kofta (H) or Impossible Kofta.  Served with Seasoned Baked yellow potatoes, Quinoa & Couscous Tabouleh , Garlic Butter Pita, and Toppings",
-                  "Calories: 290 Cal."
+                  "Station: LAKE WOK",
+                  "Description: Protein choice of Sweet & Sour Pork or Sweet & Sour Chickett, with Sides of Stir fried Vegetables , Steamed Jasmine Rice, Veggie Spring Rolls and Gochujang Cucumber Salad.  with Toppings.",
+                  "Calories: 410 Cal."
                 ]
               },
               {
-                "header": "Hot Links",
+                "header": "Cheesesteak Sandwich",
                 "bullets": [
-                  "Station: RUFUS",
-                  "Description: Protein choice of Spicy Hot Pork Link or Plant Based Grilled Sausage on Max's Hot Dog Bun with sides of Shoestring Fries, Grilled Onions and Toppings.",
-                  "Calories: 380 Cal."
+                  "Station: Rufus",
+                  "Description: Protein Choice of Beef w/ Pepper & Onion or Impossible Steak Bites w/ Pepper & Onion, Served with Toppings and Hoagie Roll",
+                  "Calories: 410 Cal."
                 ]
               },
               {
-                "header": "Taco Tuesday",
+                "header": "Tostadas",
                 "bullets": [
                   "Station: Cascabel",
-                  "Description: Protein choice of Pollo Asado or Plant Based Abbots Chicken on Corn Tortilla with Spanish Rice, Pinto Beans, and Toppings.",
-                  "Calories: 380 Cal."
+                  "Description: Protein choice of Chicken Tinga or Mushroom Tinga on corn tostada shell, with Spanish Rice, Pinto Beans and  Toppings.",
+                  "Calories: 260 Cal."
                 ]
               },
               {
                 "header": "Healthy Concepts",
                 "bullets": [
                   "Station: Ciao",
-                  "Description: Protein Choice of Italian Roasted Chicken Breast,Italian Roasted Abbots Chick'n or Italiian Roasted Salmon. Served with Brown Rice Pilaf w/ Veggies, Steamed Italian Vegetables and Farro w/ Roasted Cherry Tomatoes",
-                  "Calories: 450 Cal."
+                  "Description: Protein Choice of Rosemary Chicken Wings, Rosemary Salmon, or Rosemary Grilled Portabella w/ Cauliflower Served with Steamed Wild Rice ,Chickpea & beet Salad, and Steamed Broccoli",
+                  "Calories: 630 Cal."
                 ]
               }
             ]
@@ -3654,47 +3739,41 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "Blueberry Muffins",
+                "header": "Chocolate Chip Muffins",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Blueberry Muffins",
-                  "Calories: 260 Cal."
+                  "Description: Chocolate Chip Muffin",
+                  "Calories: 330 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6903-blueberrymuffin.jpeg"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8130-screenshot-2026-02-09-at-20550apm.png"
                 ]
               },
               {
-                "header": "Mini Danish",
+                "header": "Strawberry Cheese Danish",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Mini Danish",
-                  "Calories: 130 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/4195-danish.jpeg"
+                  "Description: Strawberry Cheese Danish",
+                  "Calories: 340 Cal."
                 ]
               },
               {
-                "header": "Scones Cinnamon Apple",
+                "header": "Bear Claws",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Scones Cinnamon Apple",
-                  "Calories: 420 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8964-scone-blueberry.jpeg"
+                  "Description: Bear Claws",
+                  "Calories: 0 Cal."
                 ]
               },
               {
-                "header": "Tuxedo Cake",
+                "header": "Lemon & Cream",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Slice of Tuxedo Layer Cake",
-                  "Calories: 280 Cal."
+                  "Description: Lemon and Cream Shortcake",
+                  "Calories: 250 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/2827-screenshot-2026-02-09-at-125919apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/9158-screenshot-2026-02-09-at-15624apm.png"
                 ]
               },
               {
@@ -3712,35 +3791,21 @@
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -3748,13 +3813,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -3894,6 +4014,22 @@
             "title": "Breakfast",
             "sections": [
               {
+                "header": "Build Your Own Breakfast Platter",
+                "bullets": [
+                  "Station: Cascabel",
+                  "Description: Flour Tortilla, Protein choice of Chili Colorado, Scrambled Eggs, Fable Mushroom Chorizo or Huevo Y Papas with Refried Beans, Roasted Potatoes and Toppings.",
+                  "Calories: 470 Cal."
+                ]
+              },
+              {
+                "header": "Breakfast Crispy Chicken Sandwhich",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein choice of Crispy Chicken or Crispy Plant Based Tenders, On Buttermilk biscuit with Maple Sriracha Mayo.  Side of THash Brown Trangles",
+                  "Calories: 670 Cal."
+                ]
+              },
+              {
                 "header": "Farm Fresh Eggs",
                 "bullets": [
                   "Station: Ciao",
@@ -4000,22 +4136,6 @@
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/menuitem/2022-1/9967-condiments.jpg"
                 ]
-              },
-              {
-                "header": "Build Your Own Breakfast Platter",
-                "bullets": [
-                  "Station: Cascabel",
-                  "Description: Flour Tortilla, Protein choice of Chicken Machaca, Scrambled Eggs, or Abbots chopped chick-in Machaca with Refried Beans, Roasted Potatoes and Toppings.",
-                  "Calories: 250 Cal."
-                ]
-              },
-              {
-                "header": "Breakfast Platter",
-                "bullets": [
-                  "Station: LAKE WOK",
-                  "Description: Protein Choice of Halal Chicken Links, Scrambled Eggs or Sauteed Fable mushroom and Zucchinni. Sides of Chefs Favorate french Toast Cassarole, Hash Brown Triangles, Hot Oatmeal Bar",
-                  "Calories: 420 Cal."
-                ]
               }
             ]
           },
@@ -4023,35 +4143,35 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Healthy Concepts",
-                "bullets": [
-                  "Station: Ciao",
-                  "Description: Choice of Lemon Herb Black Cod, Lemon Herb Chicken Breast or Lemon Herb King Trumpet Mushroom & Vegetables.  Sides of Quinoa Couscous Tabbouleh, Arugula, Dried Cranberries, Red Wine Marinated Cherry Tomatoes, Lemon Vinaigrette.",
-                  "Calories: 700 Cal."
-                ]
-              },
-              {
-                "header": "Wing Wednesday",
-                "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Lemon Pepper Grilled Chicken Wings or Crispy Plant Based Tenders, Side of Cajun Sweet Fries and Toppings.",
-                  "Calories: 500 Cal."
-                ]
-              },
-              {
-                "header": "Mediterranean Lamb Rice Bowl",
+                "header": "Thai Red Curry (Plated)",
                 "bullets": [
                   "Station: Lake Wok",
-                  "Description: Protein Choice of Braised Meats Ground Lamb or Mediterranean Stuffed Eggplant  Served with Turmeric Yellow Rice, Sumac Spiced Potatoes and Toppings.",
+                  "Description: Protein Choice of Thai Chicken Red Curry (4oz) or Shiitake Miso Curry (4oz), with Side of Steamed Rice, Steamed Broccoli, Garlic Green Beans, Oven Baked Vegetable Spring Rolls.",
+                  "Calories: 660 Cal."
+                ]
+              },
+              {
+                "header": "Blackened Salmon",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein Choice of Blackened Salmon (6oz), Blackened Chicken Breast or Cauliflower Steaks w/Zesty Parsley Gremolata,  Sides of Brown Rice Pilaf, Roasted Tri Colored Carrots, Steamed Quinoa, Roasted Asparagus.",
+                  "Calories: 930 Cal."
+                ]
+              },
+              {
+                "header": "Enchiladas Plate",
+                "bullets": [
+                  "Station: CASCABEL",
+                  "Description: Protein Choice of Chicken Thigh Enchiladas In Green Salsa or Cheese Enchiladas In Verde Sauce (4oz), with Toppings and Sides of Spanish Rice, and Refried Beans, Roasted Vegetable Medley and Toppings.",
                   "Calories: 790 Cal."
                 ]
               },
               {
-                "header": "Braised Chicken Tinga Tostadas",
+                "header": "Beef Lasagna (Plated)",
                 "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein Choice of Braised Chicken Tinga or Fable Braised Tinga on Crispy Tostada Shells, Refried Beans with Toppings.",
-                  "Calories: 650 Cal."
+                  "Station: Ciao",
+                  "Description: Lasagna with Protein Choice of Beef or Four Cheese, Served with Primavera Roasted Vegetables (Asparagus, broccoli, zucchini, squash, Bell Pepper, Onion).",
+                  "Calories: 480 Cal."
                 ]
               }
             ]
@@ -4060,35 +4180,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Kung Pao Bowl",
-                "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein choice of Kung Pao Shrimp (4oz) or Kung Pao Tofu(4oz), with Jasmine Rice (4oz), Stir Fry Veggie, Veggie Spring Rolls and  Toppings",
-                  "Calories: 330 Cal."
-                ]
-              },
-              {
                 "header": "Healthy Concepts",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Blackened Catfish, Blackened Chicken Breast or Blackened Tofu. Sides of  Red Pepper Brown Rice Pilaf, Roasted Veggies and Chickpea & Beet Salad",
-                  "Calories: 720 Cal."
+                  "Station: Lale Wok",
+                  "Description: Protein Choice of Rosemary Marinated Chicken, Rosemary Salmon or  Rosemary Fable Shiitake with Sides of Yellow Turmeric Rice, Steamed Cauliflower and Barley & Cabbage Compsed Salad",
+                  "Calories: 410 Cal."
                 ]
               },
               {
-                "header": "Carnitas Plate",
+                "header": "BBQ Plate",
                 "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein Choice of Pork Carnitas(4oz) or  Fable Mushroom Carnitas, with Sides of Spanish Rice (4oz) and Pinto Beans (4oz) and Toppings",
-                  "Calories: 590 Cal."
+                  "Station: RUFUS GRILL",
+                  "Description: Protein choice of  Pork Ribs (4oz) or (BBQ Grilled Tofu Strips 4oz), with sides of Satueed Garlic Green Beans, Baked BBQ Beans, Southern Style  Cornbread and Toppings",
+                  "Calories: 790 Cal."
                 ]
               },
               {
-                "header": "Chili Dog",
+                "header": "Ranchero Plate",
+                "bullets": [
+                  "Station: CASCABEL",
+                  "Description: Corn Tortilla 4.5\"; Protein choice of Beef Ranchero (4oz) or Beef-less Ranchero(4oz). Spanish Rice (4oz) and Pinto Beans ((4oz) and Toppings.",
+                  "Calories: 980 Cal."
+                ]
+              },
+              {
+                "header": "Pasta Bowl",
                 "bullets": [
                   "Station: CIAO",
-                  "Description: Corn Dusted Hot Dog Buns. Choice of All Beef Hot Dog , Beef Chili or Plant Base Sausage or with sides of Shoestring Fries, Grilled Peppers & Onions and Toppings.",
-                  "Calories: 590 Cal."
+                  "Description: Penne Pasta with Choice of Beef Bolognaise & Marinara Sauce served with Seasonal Roasted Vegetables, Hawaiian Rolls and Toppings.",
+                  "Calories: 690 Cal."
                 ]
               }
             ]
@@ -4097,33 +4217,36 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "Chocolate Chip Muffins",
+                "header": "Sunrise Muffins",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Chocolate Chip Muffin",
-                  "Calories: 330 Cal."
+                  "Description: Sunrise Muffin",
+                  "Calories: 340 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8130-screenshot-2026-02-09-at-20550apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/1210-screenshot-2026-02-09-at-103510aam.png"
                 ]
               },
               {
-                "header": "Strawberry Cheese Danish",
+                "header": "Scones Blueberry",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Strawberry Cheese Danish",
-                  "Calories: 340 Cal."
+                  "Description: Scones Blueberry",
+                  "Calories: 420 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8964-scone-blueberry.jpeg"
                 ]
               },
               {
-                "header": "Lemon & Cream",
+                "header": "Chocolate Cake",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Lemon and Cream Shortcake",
-                  "Calories: 250 Cal."
+                  "Description: Slice of Chocolate Cake",
+                  "Calories: 300 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/9158-screenshot-2026-02-09-at-15624apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8516-chocolate-cake.jpg"
                 ]
               },
               {
@@ -4141,35 +4264,21 @@
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -4177,13 +4286,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -4323,6 +4487,22 @@
             "title": "Breakfast",
             "sections": [
               {
+                "header": "Breakfast Cheesy Enchiladas (Plated)",
+                "bullets": [
+                  "Station: Cascabel",
+                  "Description: Protein choice of Cheese Enchiladas or Beef Chorizo with Refried Beans, Roasted Potatoes and Toppings.",
+                  "Calories: 360 Cal."
+                ]
+              },
+              {
+                "header": "Breakfast Platter",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein Choice of Breakfast Sausage or Farmers Blend Sauteed Vegetable Scramble, Served with Sides: Scrambled Eggs,  Rosemary Breakfast Potatoes, Mushroom Spinach Skillet and Toppings",
+                  "Calories: 350 Cal."
+                ]
+              },
+              {
                 "header": "Farm Fresh Eggs",
                 "bullets": [
                   "Station: Ciao",
@@ -4361,14 +4541,6 @@
                 ],
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/menuitem/2022-1/7833-cereal.png"
-                ]
-              },
-              {
-                "header": "Huevos Con Chorizo",
-                "bullets": [
-                  "Station: Cascabel",
-                  "Description: Protein choice of Home Made Beef Chorizo, Huevos Con Chorizo , orHuevos Con Chorizo De Plantas, with Mommas Refried Beans and Toppings.",
-                  "Calories: 690 Cal."
                 ]
               },
               {
@@ -4437,14 +4609,6 @@
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/menuitem/2022-1/9967-condiments.jpg"
                 ]
-              },
-              {
-                "header": "Chicken & Waffles",
-                "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Crispy Thyme & Rosemary Chicken or Plant Based Crispy Thyme & Rosemary Chicken, Served with Side Scrambled Eggs, Breakfast Potato Hash w/ Bell Peppers, Belgain Waffle and Hot Honey.",
-                  "Calories: 590 Cal."
-                ]
               }
             ]
           },
@@ -4452,35 +4616,35 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Healthy Concepts",
+                "header": "Philly Cheesesteak",
                 "bullets": [
                   "Station: Rufus",
-                  "Description: Protein Choice of Citrus Marinated Chicken Breast, Citrus Marinated Salmon or Citrus Marinated Tofu. with Sides of Farro, Brown Rice Pilaf, Roasted Rainbow Carrots.",
-                  "Calories: 800 Cal."
+                  "Description: Protein Choice of Philly CheeseSteak Thinly Sliced Beef or Fable Mushroom Philly CheeseSteak, Amoroso Italian Rolls  Served with Waffle Fries, Cheddar Cheese Sauce, Steamed broccoli and Roll Hogagie.",
+                  "Calories: 600 Cal."
                 ]
               },
               {
-                "header": "Pork Chili Verde",
+                "header": "Pollo Asado",
                 "bullets": [
-                  "Station: CASCABEL",
-                  "Description: Protein Choice of Pork Chile Verde (6oz) or Hongos Y Papas En Chile Verde (6oz). Comes with Toppings and Sides of Corn Tortillas, White Spanish Rice Pilaf(4oz) and Refried Beans (4oz).",
-                  "Calories: 880 Cal."
+                  "Station: Cascabel",
+                  "Description: Protein Choice of Pollo Asado Tacos on Corn Tortillas. Sides of Mexican Rice Pilaf (Peas, Carrots, Corn), Refried Beans and Toppings.",
+                  "Calories: 730 Cal."
                 ]
               },
               {
-                "header": "Salmon Sushi Bake (Plate)",
-                "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein Choice of Salmon Sushi Bake (4oz) or Heart Of Palt Sushi Bake. Sides of Stir Fry Veggies (broccoli, carrots, snap peas, bell pepper), Quinoa, Grilled chicken and Toppings.",
-                  "Calories: 1260 Cal."
-                ]
-              },
-              {
-                "header": "Cajun Chicken Jambalaya Pasta",
+                "header": "Harissa Spiced Shrimp Budda Plate",
                 "bullets": [
                   "Station: Ciao",
-                  "Description: Max's Artisan Dinner Rolls; Penne Pasta; Protein Choice of Cajun Andouille Sausage & Shrimp Jambalaya or Crimini Jambalaya with Sides of Steamed Broccoli, Parmesan Cheese, Chili Flakes, Tomato Sauce.",
-                  "Calories: 620 Cal."
+                  "Description: Protein Choice of Harissa Spiced Catfish, Harissa Spiced Chicken Breast or Harissa Spiced Tofu, Sides of Lemon Quinoa & Brown Rice Pilaf, Sauteed Mushroom Medley and Toppings.",
+                  "Calories: 630 Cal."
+                ]
+              },
+              {
+                "header": "Tonkotsu Ramen (Plate)",
+                "bullets": [
+                  "Station: Lake Wok",
+                  "Description: Protein Choice of Miso Pork Belly Ramen or Miso Shiitake Mushroom Ramen, with Sides of Yakisoba Noodle, Hardboiled Eggs, Bean Sprout, Green Onions, Seaweed Salad, Mushrooms, Roasted Corn.",
+                  "Calories: 960 Cal."
                 ]
               }
             ]
@@ -4489,35 +4653,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Curry Plate",
+                "header": "Kung Pao Shrimp",
                 "bullets": [
-                  "Station: LAKE WOK",
-                  "Description: Naan Bread, Protein choice of Butter Chicken or Tofu Butter Chicken, with Sides of Baked Potatoes, Jeera Rice, and Toppings.",
-                  "Calories: 580 Cal."
+                  "Station: Lake Wok",
+                  "Description: Protein choice of Kung Pao Shrimp (4oz) or Kung Pao Tofu(4oz), with Jasmine Rice (4oz), Stir Fry Veggie, Veggie Spring Rolls and  Toppings",
+                  "Calories: 330 Cal."
                 ]
               },
               {
-                "header": "All Beef Burger",
+                "header": "Hot Wings Bar",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of All Beef Patty or Plant Based Simply Burger on Max's Artisan Burger Buns with Toppings and Waffle Fries as Side .",
-                  "Calories: 710 Cal."
+                  "Station: RUFUS",
+                  "Description: Protein choice of Oven Roasted Chicken Wings  or Vegan Chicken Tenders, served with Potato Salad Mac salad, Shoestring Fries, Steamed Broccoli and Toppings",
+                  "Calories: 660 Cal."
                 ]
               },
               {
                 "header": "Healthy Concepts",
                 "bullets": [
                   "Station: Cascabel",
-                  "Description: Protein Choice of Ancho Orange Chicken, Ancho Orange Salmon or Ancho Orange Abotts Chick'N. with Sides of Brown Rice, or Black Beans and Toppings",
-                  "Calories: 700 Cal."
+                  "Description: Protein Choice of Ancho Orange Chicken, Ancho Orange Fish or Anrcho Orange Chickpeas w/ Veggies. with Sides of Tomato Brown Rice, Black Beans & Toppings",
+                  "Calories: 400 Cal."
                 ]
               },
               {
-                "header": "Pizza Night",
+                "header": "Italian Style Roast",
                 "bullets": [
                   "Station: CIAO",
-                  "Description: Pizza choice of BBQ Chicken Pizza Cheese Pizza and Additional Toppings.",
-                  "Calories: 380 Cal."
+                  "Description: Protein choice of Italian Roast Pork or Italian Style Roast Chickett, with side of Mashed Potato, Sauteed Seasonal Vegetables (4oz) and Toppings (4oz). Dinner Roll.",
+                  "Calories: 610 Cal."
                 ]
               }
             ]
@@ -4526,82 +4690,79 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "Mini Croissants",
+                "header": "Banana Muffin",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Mini Croissants",
-                  "Calories: 100 Cal."
+                  "Description: Banana Muffin",
+                  "Calories: 340 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/2835-croissant.jpeg"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6463-screenshot-2026-02-09-at-113850aam.png"
                 ]
               },
               {
-                "header": "Scones Blueberry",
+                "header": "Chocolate Croissant",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Scones Blueberry",
-                  "Calories: 420 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8964-scone-blueberry.jpeg"
-                ]
-              },
-              {
-                "header": "Chocolate Cake",
-                "bullets": [
-                  "Station: LUNCH",
-                  "Description: Slice of Chocolate Cake",
+                  "Description: Chocolate Croissant",
                   "Calories: 300 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8516-chocolate-cake.jpg"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/9336-chocolate-croissant.png"
                 ]
               },
               {
-                "header": "Vegan Chocolate Chip & Sugar/Snickerdoodle",
+                "header": "Mini Danish",
+                "bullets": [
+                  "Station: BREAKFAST",
+                  "Description: Mini Danish",
+                  "Calories: 130 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/4195-danish.jpeg"
+                ]
+              },
+              {
+                "header": "Carrot Cake",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Vegan Chocolate Chip & Sugar/Snickerdoodle",
+                  "Description: Slice of Carrot Cake",
+                  "Calories: 290 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6167-screenshot-2026-02-09-at-25455apm.png"
+                ]
+              },
+              {
+                "header": "Vegan Oatmeal Raisin & Triple Chocolate",
+                "bullets": [
+                  "Station: LUNCH",
+                  "Description: Vegan Oatmeal Raisin & Triple Chocolate",
                   "Calories: 160 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8286-snickerdoodle.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8820-oatmeal.jpeg"
                 ]
               }
             ]
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -4609,13 +4770,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -4755,11 +4971,19 @@
             "title": "Breakfast",
             "sections": [
               {
-                "header": "Chilaquiles (Plated)",
+                "header": "Huevos A La Mexicana",
                 "bullets": [
                   "Station: Cascabel",
-                  "Description: Protein choice of Chicken Chilaquiles or Vegetarian Chilaquiles, with Scrambled Eggs, Refried Beans,and Toppings.",
-                  "Calories: 530 Cal."
+                  "Description: Flour Tortilla, Protein choice of Huevos A La Mexicana or Halal Chicken Sausage links with Refried Beans and Toppings.",
+                  "Calories: 220 Cal."
+                ]
+              },
+              {
+                "header": "Bacon Egg Casserole",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein choice of Bacon Egg Casserole , or Spinach Mushroom Tomato Egg Casserole With sides of Crispy Potato Hash browns and Toppings",
+                  "Calories: 210 Cal."
                 ]
               },
               {
@@ -4771,14 +4995,6 @@
                 ],
                 "image_urls": [
                   "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/3809-oip.jpeg"
-                ]
-              },
-              {
-                "header": "Breakfast Platter",
-                "bullets": [
-                  "Station: RUFUS GRILL",
-                  "Description: Protein Choice of Hickory Smoked Ham Steaks, Scrambled Eggs (4oz), orVegetarian Breakfast Sausage. Sides of Breakfast Veggies , Hash Brown and Oatmeal",
-                  "Calories: 500 Cal."
                 ]
               },
               {
@@ -4884,35 +5100,35 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Harissa Roasted Black Cod",
+                "header": "Lemon Pepper Salmon",
                 "bullets": [
                   "Station: Ciao",
-                  "Description: Protein Choice of Harissa Roasted Cod, Harrisa Spiced Shrimp, Harissa Roasted Chicken Breast or Harrisa Spiced Tofu, Served with Steamed Broccoli, Brown Rice Pilaf and Toppings.",
-                  "Calories: 840 Cal."
+                  "Description: Protein Choice of Lemon Pepper Seared Salmon, Lemon Pepper Chicken Breast or Lemon Pepper King Oyster Scallop With Parsley Gremolata. Sides of Brown Rice Pilaf, Roasted Veggies (Asparagus, Red Onion, Zucchini, Squash).",
+                  "Calories: 550 Cal."
                 ]
               },
               {
-                "header": "Creamy Butter Chicken",
+                "header": "Gyudon Bowl (Plated)",
                 "bullets": [
                   "Station: LAKE WOK",
-                  "Description: Garlic Herb Naan, Protein Choice of Creamy Butter Chicken or Grilled Paneer Chana Masala. Comes With Toasted Jeera Rice, Gobi Stir Fry (Cauliflower, Carrots, Green Beans, Peas) and Toppings.",
+                  "Description: Protein Choice of Beef Gyudon Bowl(4oz) or Fable Mushroom Gyudon Bowl (4oz), with Sides of Steamed White Rice (4oz), Stir Fry Vegetables (4oz) and Toppings.",
+                  "Calories: 580 Cal."
+                ]
+              },
+              {
+                "header": "Crispy Chicken Tenders (Served)",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Garlic Herb Butter Toast (Max's Artisan Bread). Protein Choice of Crispy Chicken Tenders or Crispy Plant Based Kick'n Tenders, Served With Sides of Creamy Mac Salad, Celery, Carrots and Toppings.",
                   "Calories: 830 Cal."
                 ]
               },
               {
-                "header": "Tri Tip Dinner",
-                "bullets": [
-                  "Station: Rufus",
-                  "Description: Max's Artisan Ciabatta Dinner Roll. Protein Choice of Grilled Tri Tip or Cauliflower Steaks W/ Zesty Parsley Gremolata (4oz), with Sides of Creamy Mashed Potatoes, Garlic Green Beans.",
-                  "Calories: 460 Cal."
-                ]
-              },
-              {
-                "header": "Mommas Calabasitas Con Puerco",
+                "header": "Carne Asada Tortas",
                 "bullets": [
                   "Station: Cascabel",
-                  "Description: Protein Choice of Mommas Calabasitas Con Puerco or Mommas Calabasitas en Salsa Roja (Squash/Zucchini, Onions & Peppers in Red Sauce). Served with Sides of Mexican Rice Pilaf (Peas, Carrots, Corn), Creamy Refries Black Beans, Corn Tortillas and Toppings.",
-                  "Calories: 970 Cal."
+                  "Description: Protein Choice of Meats Carne Asada or Plant Based Impossible Asada, Served with Refried Beans, Max's Artisan Telera Bread and Toppings.",
+                  "Calories: 1100 Cal."
                 ]
               }
             ]
@@ -4921,35 +5137,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Healthy Concepts",
+                "header": "Taiwanese Night Market Plate",
                 "bullets": [
                   "Station: Lake Wok",
-                  "Description: Protein Choice of Grilled Citrus Paprika Salmon or Grilled Citrus Paprika Tofu, Sides of Brown Rice & Quinoa Pilafwith Veggies, Steamed Broccoli, Roasted Corn with Bell Peppers and Barley and Cabbage Composed Salad",
-                  "Calories: 400 Cal."
+                  "Description: Protein Choice of  Taiwanese Popcorn Chicken, or Taiwanese Abbot's Chick'N served with Fried Rice, Stir Fried Vegetables and Toppings.",
+                  "Calories: 930 Cal."
                 ]
               },
               {
-                "header": "BBQ Plate",
+                "header": "Bobcat Grain Bowl",
                 "bullets": [
-                  "Station: RUFUS GRILL",
-                  "Description: Protein choice of  BBQ Pork Ribs (4oz) or BBQ Tofu Strips 4oz), with sides of Mashed Potatoes, Baked Asparagus, Southern Style  Cornbread and Toppings",
-                  "Calories: 810 Cal."
+                  "Station: Rufus",
+                  "Description: Protein Choice of Harissa Roasted Chicken, Harissa Roasted Salmon, Harissa Grilled Tofu. Sides of Brown Rice, Roasted Seasoned Potatoes and Toppings.",
+                  "Calories: 800 Cal."
                 ]
               },
               {
-                "header": "Loaded Nachos",
+                "header": "Beef Fajitas",
                 "bullets": [
                   "Station: CASCABEL",
-                  "Description: Protein Choice of Seasoned Ground Beef (6oz) or Plant-Base Crumble (6oz) , Served with Tortilla Chips, Nacho Cheese, Pinto Beans (4oz) and Toppings.",
-                  "Calories: 940 Cal."
+                  "Description: Protein Choice of Beef Fajitas(4oz) or Plant Based Beef Fajitas (4oz) , with Toppings and Sides of Cilantro Lime Rice (4oz), Pinto Beans (4oz), Flour Tortillas, and Toppings",
+                  "Calories: 840 Cal."
                 ]
               },
               {
-                "header": "Chicken Fricassee",
+                "header": "Pizza",
                 "bullets": [
-                  "Station: Ciao",
-                  "Description: Protein Choice of Chicken Fricassee or Oyster Mushroom Fricassee served with Baked Potato Wedges, Honey Roasted Carrots with Thyme\nand Parmesan Polenta and Toppings",
-                  "Calories: 190 Cal."
+                  "Station: Rufus",
+                  "Description: Pizza Choice of Meat Lovers Pizza or Cheese Pizza With Sides of Chili Flakes, Parmesan Cheese, Hot Honey",
+                  "Calories: 420 Cal."
                 ]
               }
             ]
@@ -4958,79 +5174,68 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "Banana Muffin",
+                "header": "Chocolate Chocolate Chip Muffin",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Banana Muffin",
-                  "Calories: 340 Cal."
+                  "Description: Chocolate Chocolate Chip Muffin",
+                  "Calories: 280 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6463-screenshot-2026-02-09-at-113850aam.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/1777-screenshot-2026-02-09-at-124841apm.png"
                 ]
               },
               {
-                "header": "Cinnamon Rolls",
+                "header": "Scones White Choco Raspberry",
                 "bullets": [
                   "Station: BREAKFAST",
-                  "Description: Cinnamon Rolls",
-                  "Calories: 130 Cal."
+                  "Description: Scones White Choco Raspberry",
+                  "Calories: 420 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6950-screenshot-2026-02-09-at-12358apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8964-scone-blueberry.jpeg"
                 ]
               },
               {
-                "header": "Carrot Cake",
+                "header": "Red Velvet",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Slice of Carrot Cake",
-                  "Calories: 290 Cal."
+                  "Description: Slice of Red Velvet cake",
+                  "Calories: 310 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/6167-screenshot-2026-02-09-at-25455apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/4897-screenshot-2026-02-09-at-22152apm.png"
                 ]
               },
               {
-                "header": "Vegan Oatmeal Raisin & Cahootz",
+                "header": "Vegan Oatmeal Raisin & Triple Chocolate",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Vegan Oatmeal Raisin & Cahootz",
+                  "Description: Vegan Oatmeal Raisin & Triple Chocolate",
                   "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/8820-oatmeal.jpeg"
                 ]
               }
             ]
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -5038,13 +5243,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -5294,35 +5554,35 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Healthy Concepts",
-                "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Blackened Salmon or Chermoula Baked Tofu. Sides of Lemon‑Herb Quinoa Roasted, Moroccan Carrots, Herbed Paprika Potatoes and Toppings.",
-                  "Calories: 630 Cal."
-                ]
-              },
-              {
-                "header": "Beef Bolognese",
-                "bullets": [
-                  "Station: Ciao",
-                  "Description: Protein Choice of Beef Bolognese or Mushroom Bolognese; Sides of Penne Pasta, Max's Artisan Dinner Rolls, Steamed Broccoli and Toppings.",
-                  "Calories: 630 Cal."
-                ]
-              },
-              {
-                "header": "Chicken Fried Rice Bowl",
-                "bullets": [
-                  "Station: LAKE WOK",
-                  "Description: Protein Choice of Teriyaki Chicken or Crispy Tempura Tofu. Served with Sides of Garlic Fried Rice(Peas & Carrots), Garlic Green Beans, Vegetable Spring Rolls and Toppings.",
-                  "Calories: 720 Cal."
-                ]
-              },
-              {
-                "header": "Chicken Mole",
+                "header": "Ceviche Bar",
                 "bullets": [
                   "Station: Cascabel",
-                  "Description: Protein Choice of Chicken Thigh Mole or Fable Mole Served with Corn Tortillas, Spanish Rice and Refried Beans and Toppings.",
-                  "Calories: 710 Cal."
+                  "Description: Protein Choice of Bobcat Salmon, Shrimp Ceviche or Heart Of Palm & Mushroom Ceviche Served with Sides of Steamed Cauliflower, Wild Rice Pilaf, Tortilla Chips.",
+                  "Calories: 830 Cal."
+                ]
+              },
+              {
+                "header": "Char Siu Bao Bun  (Plated)",
+                "bullets": [
+                  "Station: Lake Wok",
+                  "Description: Protein Choice of Char Siu Bao or Plant Based Marinated Char Siu Bao, on Bao Bun; Served with Toppings.",
+                  "Calories: 550 Cal."
+                ]
+              },
+              {
+                "header": "Loaded Tater Tots",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Mommas Three Bean Chili. With Sides of Crispy Golden Tater Tots, House Made Cheese Sauce, Chopped Smoked Bacon and Toppings.",
+                  "Calories: 680 Cal."
+                ]
+              },
+              {
+                "header": "Basil & Garlic Beef Bolognese",
+                "bullets": [
+                  "Station: Ciao",
+                  "Description: Penne Pasta. Protein Choice of Basil & Garlic Beef Bolognese or Plant Based Basil & Garlic Bolognese; Sides of Steamed Broccoli, Parmesan Cheese, Chili Flakes and Max's Artisan Dinner Rolls.",
+                  "Calories: 630 Cal."
                 ]
               }
             ]
@@ -5331,38 +5591,35 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Tikka Masala",
-                "bullets": [
-                  "Station: Lake Wok",
-                  "Description: Protein choice of Chicken Tikka Masala or Paneer Chana Masala, with a side of Naan Jaan, Jeera Rice, Roasted Veggies(Cauliflower, Green Beans, Carrots, Peas), and Toppings",
-                  "Calories: 480 Cal."
-                ]
-              },
-              {
                 "header": "Breakfast For Dinner",
                 "bullets": [
-                  "Station: Rufus",
-                  "Description: Protein Choice of Pork Ham Steaks, or Morningstar Breakfast Patties, Served with Scrambled Eggs, French Toast Sticks, Breakfast Potatoes (Potatoes, Onions, Bell Peppers), and Toppings",
-                  "Calories: 220 Cal."
+                  "Station: Lake Wok",
+                  "Description: Protein Choice of Pork Sausage Patties or Vegetarian Breakfast Sausage Patty Served with Scrambled Eggs, French Toast Sticks, Breakfast Potatoes, Fruit Salad and Syrup.",
+                  "Calories: 740 Cal."
                 ]
               },
               {
-                "header": "Peruvian Lomo Saltado",
+                "header": "Mushroom Swiss Burger",
+                "bullets": [
+                  "Station: Rufus",
+                  "Description: Protein Choice of Beef Patty or Simply Plant-Based Patty, on Vegan Pretzel Bun or Oil Top Humburger Bun, Served with Waffle Fries, Grilled Onions, and Toppings.",
+                  "Calories: 520 Cal."
+                ]
+              },
+              {
+                "header": "Cuban Sandwich",
                 "bullets": [
                   "Station: CASCABEL",
-                  "Description: Choice of Peruvian Beef Lomo Saltado or Fable Peruvian Lomo Saltado. Sides of Steamed  Jasmine Rice,Shoestring Cut Fries, Baked Plantains and Toppings.",
-                  "Calories: 430 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-4/9151-lomo-saltado.jpg"
+                  "Description: Italian Sub. Protein Choice of Cuban Pulled Pork or Fable Shiitake  Served with  Sliced Ham,  Plantains and Toppings.",
+                  "Calories: 720 Cal."
                 ]
               },
               {
                 "header": "Healthy Concepts",
                 "bullets": [
                   "Station: Ciao",
-                  "Description: Protein Choice of Rosemary Marinated Chicken or Rosemary Tofu with Sides of Brown Rice, Steamed Broccoli,  Seasoned Baked Potatoes and Chickpeas and Beets Salad",
-                  "Calories: 680 Cal."
+                  "Description: Protein Choice of (H) Herb Marinated Chicken or Herb Roasted Potatoes & Fabel Mushroomwith Sides of Brown Rice Pilaf, Roasted Veggies, Seasoned baked potatoes and Lentil Salad",
+                  "Calories: 630 Cal."
                 ]
               }
             ]
@@ -5371,14 +5628,14 @@
             "title": "Bakery",
             "sections": [
               {
-                "header": "Red Velvet",
+                "header": "Black Forest Cake",
                 "bullets": [
                   "Station: LUNCH",
-                  "Description: Slice of Red Velvet cake",
-                  "Calories: 310 Cal."
+                  "Description: Slice of Black Forest Cake",
+                  "Calories: 320 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/4897-screenshot-2026-02-09-at-22152apm.png"
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-2/5478-screenshot-2026-02-09-at-110933aam.png"
                 ]
               },
               {
@@ -5396,35 +5653,21 @@
           },
           {
             "title": "FoG Breakfast",
-            "sections": []
-          },
-          {
-            "title": "FoG Lunch & Dinner",
             "sections": [
               {
-                "header": "Charcuterie",
+                "header": "Yogurt",
                 "bullets": [
-                  "Description: Cubed Cheese, Goat Cheese, Crackers, Pita Bread, Marinated Olives, Hummus, Butter Pickles, Dates, Hot Honey, Salami.",
-                  "Calories: 110 Cal."
+                  "Description: Organic Vanilla Yogurt, Greek Yogurt, Oat Milk Yogurt, Peach Yogurt, Strawberry Yogurt, Chia Pudding, Overnight Oats.",
+                  "Calories: 80 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
                 ]
               },
               {
-                "header": "Deli Items",
+                "header": "Fruit",
                 "bullets": [
-                  "Description: Honey Wheat Bread, Sourdough Bread, Deli Meat of The Day, Chickpea Toona (vegan), Sliced Cheese, Shredded Lettuce, Sliced Tomato, Sliced Onion, Pickles, Pinwheels, Potato Chips, Jalapeno, Pepperoncini.",
-                  "Calories: 140 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
-                ]
-              },
-              {
-                "header": "Yogurt Toppings",
-                "bullets": [
-                  "Description: Blueberries, Strawberries, Mango,House Made Granola, Chocolate Chips, Oreo Bits, M&M's, Almond Slices, Cranberries, Pumpkin Seeds.",
+                  "Description: Frozen Diced Mango, Frozen Strawberries, Frozen Blueberries, Whole Apples, Whole Bananas, Whole Oranges, Whole Pears.",
                   "Calories: 30 Cal."
                 ],
                 "image_urls": [
@@ -5432,13 +5675,68 @@
                 ]
               },
               {
-                "header": "Yogurt",
+                "header": "Toppings",
                 "bullets": [
-                  "Description: Organic Vanilla Yogurt, Peach Yogurt, Strawberry Yogurt, Oat Milk Yogurt, Greek Yogurt, Chia Pudding, Chocolate Pudding, Vanilla Pudding.",
-                  "Calories: 80 Cal."
+                  "Description: Chia Seeds, Sliced Almonds, Cranberries, Pumpkin Seeds, House-Made Granula, Chocolate Chips, M&M'S, Oreo Bites.",
+                  "Calories: 400 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6644-screen-shot-2022-07-22-at-40606-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/8230-screen-shot-2022-07-22-at-35704-pm.png"
+                ]
+              },
+              {
+                "header": "Bagel Bar",
+                "bullets": [
+                  "Description: Plain Bagel, Blueberry Bagel, Cinnamon Raisin Bagel, Onion Bagel, Cream Cheese, Strawberry Cream Cheese , Butter Cups, Avocado Spread.",
+                  "Calories: 230 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/4811-screen-shot-2022-07-22-at-40725-pm.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "FoG Lunch & Dinner",
+            "sections": [
+              {
+                "header": "Salad Bar - Mix Greens",
+                "bullets": [
+                  "Description: Choice of Lettuce Mix, Spinach Mix, Spring Mix, Power Greens Mix.",
+                  "Calories: 0 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2443-screen-shot-2022-07-22-at-35039-pm.png"
+                ]
+              },
+              {
+                "header": "Composed Salad",
+                "bullets": [
+                  "Description: Choice of Caesar Salad, Street Corn Salad, Chicken & Pasta Salad, Harvest Chicken Salad, Greek Pasta Salad, Cucumber Salad.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Toppings",
+                "bullets": [
+                  "Description: Choice of Diced Chicken, Sliced Cucumbers, Cherry Tomatoes, Shredded Carrots, Broccoli, Boiled Eggs, Beets, Edamame, Chickpea, Kidney Beans, Olives, Sliced Mushrooms, Roasted Corn, Croutons.",
+                  "Calories: 35 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6596-screen-shot-2022-07-22-at-35451-pm.png"
+                ]
+              },
+              {
+                "header": "Salad Dressings",
+                "bullets": [
+                  "Description: Choice of Green Goddess, Lemon Vinaigrette, Cream Honey Mustard, Caesar, Ranch, Balsamic Vinaigrette.",
+                  "Calories: 160 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/2961-screen-shot-2022-07-22-at-35242-pm.png"
                 ]
               }
             ]
@@ -6321,43 +6619,56 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Chicken Tinga Tostadas",
+                "header": "Carne Asada Torta",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Protein Choice of Chicken Thigh Tinga or Fable Mushroom Tinga With Sides of Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn), Creamy Refried Beans, Corn Tostada Shells and Toppings.",
-                  "Calories: 730 Cal."
+                  "Description: Protein Choice of Carne Asada or Oyster Mushroom, Served with Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn) Creamy Refried Beans; Max's Artisan Telera Roll. Toppings: Cilantro/Onion Blend, Queso Fresco, Limes, Shredded Lettuce, Salsa Molcajetes, Fresh House made Guacamole.",
+                  "Calories: 960 Cal."
                 ]
               },
               {
-                "header": "Pescado a la Veracruzana",
+                "header": "Grilled Cod Fish Tacos",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Protein Choice of Baked Rock Cod w/Tomato, Capers & Olives or Oyster Mushroom Veracruz w/Tomato, Olives & Capers. Comes with  Wild West Wild Rice Pilaf, Garlicy Collard Greens; Sweet Potato & Black Bean Hash.",
-                  "Calories: 620 Cal."
+                  "Description: Protein Choice of Pan Seared  Rock Cod, Mango Salsa, Shredded Cabbage, Chipotle Aioli, & Crispy Taco Shell or Oyster Mushroom & Cauliflower Ceviche with a side of: House Made Tortilla Chips",
+                  "Calories: 750 Cal."
                 ]
               },
               {
-                "header": "Char Siu Pork",
+                "header": "Butter Chicken",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Protein Choice of Char Siu Pork or Char Tofu, Served with Fluffy Steamed Rice and Toppings.",
+                  "Description: Protein Choice of Butter Chicken or Chana Masala; Aloo Gobi (Potato and Cauliflower); Comes With, Jeera Rice, Garlic Butter Naan, Toppings: Mango Chutney, Cilantro Chutney, Kachumber Salad (Cucumber, Tomato, Onion), Raita (Yogurt Sauce)",
                   "Calories: 630 Cal."
                 ]
               },
               {
-                "header": "BBQ Chicken Plate",
+                "header": "Mediterranean Citrus Herb Chicken",
                 "bullets": [
-                  "Station: Maca",
-                  "Description: Protein Choice of Smoked Chicken Thigh w/ Tangy BBQ Sauce or Grilled Portobello Mushroom w/ Tangy BBQ Sauce, with Sides of Brown Rice & Quinoa Pilaf and Sweet Potato Puree.",
-                  "Calories: 860 Cal."
+                  "Station: Macca",
+                  "Description: Choice of Halal Citrus Herb Chicken Thigh or Grilled Portobello Mushroom. Sides: Citrus Brown Rice & Quinoa Pilaf and, Roasted Spiced Sweet Potatoes",
+                  "Calories: 570 Cal."
                 ]
               },
               {
                 "header": "Monday Pizza",
                 "bullets": [
-                  "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza, Spicy Hawaiian Pizza (Cubed Ham(Pork), Pineapple & Pickled Jalapeno, Green Onion) and Veggie Lovers Pizza  (Mushroom, Peppers, Onion & Olives).",
+                  "Station: 𝝅 (Pizza)",
+                  "Description: Pizza Choice of Pepperoni Pizza, Four Cheese Pizza or Spicy Hawaii'n  (Pineapple, Ham, Pickled Jalapeno) or Veggie Lovers  (Mushroom, Peppers, Onion & Olives)",
                   "Calories: 290 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/3065-daily-pizza.png"
+                ]
+              },
+              {
+                "header": "Minestrone",
+                "bullets": [
+                  "Description: From The Garden",
+                  "Calories: 100 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-1/1267-soup-of-the-day.jpg"
                 ]
               }
             ]
@@ -6366,35 +6677,57 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Mommas Calabasitas Con Puerco",
+                "header": "Minestrone",
+                "bullets": [
+                  "Description: From The Garden",
+                  "Calories: 100 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-1/1267-soup-of-the-day.jpg"
+                ]
+              },
+              {
+                "header": "Lomo Saltado",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Protein Choice of Mommas Calabasitas Con Puerco (Pork Braised in Red Sauce with Onions, Squash & Peppers)  or Mommas Calabasitas en Salsa Roja (Squash/Zucchini, Onions & Peppers in Red Sauce). Served with Sides of Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn), Creamy Refried Black Beans, Corn Tortillas and Toppings.",
-                  "Calories: 810 Cal."
+                  "Description: Choice of Beef Lomo Saltado Peruviano or Mushroom and Sweet Potato Saltado. Sides of Fluffy Steamed Rice, Crispy French Fries and Toppings.",
+                  "Calories: 480 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-4/9151-lomo-saltado.jpg"
                 ]
               },
               {
-                "header": "Cajun Shrimp Plate",
+                "header": "Honey Chipotle Shrimp Pasta",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Choice of Cajun Shrimp With Garlic Brown Butter Sauce or Sauteed Cajun Mushroom Medley.  Sides of Creamy Polenta, Maque Choux, Max's Artisan Dinner Rolls.",
-                  "Calories: 330 Cal."
+                  "Description: Protein Choice of Honey Chipotle Shrimp Alfredo or  Penne With Prima Vera Pomodoro with Sides of Max's Artisan Bread Dinner Rolls, and Steamed Broccoli",
+                  "Calories: 310 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/1973-cramy-chipotle-shrimp-feature.jpg"
                 ]
               },
               {
-                "header": "Butter Chicken",
+                "header": "Garlic-Ginger Glazed Sticky Pork",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Garlic Butter Naan, Protein Choice of Butter Chicken (Halal) or Chana Masala. Comes With Jeera Rice, Aloo Goobi (Potato and Cauliflower) and Toppings.",
-                  "Calories: 520 Cal."
+                  "Description: Protein Choice of Garlic-Ginger Glazed Sticky Pork\nor Garlic-Ginger Glazed Sticky Tofu & Shitake, Sides of Steamed Rice or Crisp Green Bean Stir Fry and Toppings",
+                  "Calories: 330 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/8826-chatgpt-image-jan-12-2026-12_25_20-pm.png"
                 ]
               },
               {
-                "header": "Penne & Turkey Bolognese",
+                "header": "BBQ Chicken Plate",
                 "bullets": [
                   "Station: Maca",
-                  "Description: Ground Turkey Bolognese & (GF) Penne Pasta or Prima Vera Vegetable (GF) Pasta With Marinara . Side of Sauteed Seasonal Vegetables.",
-                  "Calories: 420 Cal."
+                  "Description: Protein Coice of Smoked Chicken Thigh With Tangy BBQ Sauce or Portobello Mushroom With Tangy BBQ Sauce, with Brown Rice , Quinoa Pilaf  and Sweet Potato Puree",
+                  "Calories: 220 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/5501-k_photo_recipe-ramp-up_2022-05-grilled-portabello-mushrooms_kitchnaprilkitchnapril5110-2-1.jpeg"
                 ]
               },
               {
@@ -6414,26 +6747,26 @@
             "title": "Late Night",
             "sections": [
               {
-                "header": "Chicken Alfredo",
+                "header": "Tacos de Asada",
                 "bullets": [
-                  "Station: Carbano",
-                  "Description: Protein Choice of Creamy Chicken & Leek Alfredo or Creamy Pesto Alfredo with Sides of Chopped Parsley, Fresh Shaved Parmesan, House Salad, Chili Flake and Honey Butter Buns.",
-                  "Calories: 460 Cal."
+                  "Station: Carbona",
+                  "Description: Flour  Tortilla. Protein Choice of Tacos de Asada (Medium Spice) Sliced Asada) (HALAL) or Chili Lime Soyrizo, Served with White Rice, Pinto Beans, Plancha Seared Fajitas and Toppings.",
+                  "Calories: 880 Cal."
                 ]
               },
               {
-                "header": "Vietnamese Garlic Swai",
+                "header": "Mediterranean Herb Salmon",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Protein Choice of Vietnamese Swai w/ Garlic Sauce or Sautéed Power Greens. Served with Sides of Vegetable Eggroll, Jasmine Rice and Toppings.",
-                  "Calories: 650 Cal."
+                  "Description: Mediterranean Herb Salmon w/Lemon Garlic Sauce Served with Sides of Herb Butter Wild Rice, Maple Brown Sugar Carrots, Sliced Lemon, Garbanzo Bean Salad, Chopped Parsley.",
+                  "Calories: 450 Cal."
                 ]
               },
               {
                 "header": "Monday Pizza",
                 "bullets": [
                   "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza",
+                  "Description: Choice of Pizza: Pepperoni Pizza or Four Cheese Pizza",
                   "Calories: 290 Cal."
                 ]
               }
@@ -6599,50 +6932,37 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Lomo Saltado",
+                "header": "Chicken Enchiladas",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Choice of Lomo Saltado or Portabella Mushroom & Sweet Potato Saltado. Sides of Fluffy Jasmin Rice, Crispy Fries and Toppings.",
-                  "Calories: 700 Cal."
+                  "Description: Protein choice of Chicken Enchiladas  or Cheese Enchiladas (4oz), Green Enchilada Sauce with toppings and sides of Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn) Creamy Refried Beans.",
+                  "Calories: 450 Cal."
                 ]
               },
               {
-                "header": "Tuscan Lemon Shrimp Penne",
+                "header": "Salmon Sushi Bake",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Choice of Shrimp Pasta Parsley-Lemon Butter Sauce With Cherry Tomato, Zucchini, Garlic & Capers (4oz) or Penne  Pasta (4oz) with Zesty Marinara Sauce (4oz). Comes with sides of Steamed Broccoli, Max's Artisan Dinner Rolls.",
-                  "Calories: 500 Cal."
+                  "Description: Protein Choice of Salmon Sushi Bake (4oz) or Avocado Cucumber Bake.",
+                  "Calories: 420 Cal."
                 ]
               },
               {
-                "header": "Teriyaki Chicken",
+                "header": "Lamb Pita",
                 "bullets": [
-                  "Station: Flame (Pasta)",
-                  "Description: Protein Choice of Teriyaki Chicken With Grilled Pineapple or Portabella Mushroom Teriyaki With Grilled Pineapple, with Sides of Fried Rice, Bok Choy Stir Fry, Roasted Ginger Sweet Potatoes and Toppings.",
-                  "Calories: 830 Cal."
+                  "Station: Flame",
+                  "Description: Warmed Pita Bread, Protein Choice of Lamb or Spinach Spanakopita.  Comes with  Lemon Pepper Spiced Potatoes\nRoasted Peppers, Tomatoes & Onions, Tzatziki, Hummus, Cucumber Salad (Cucumber, Tomato, Onion, Kalamata Olives, Feta cheese), Pickled Red Onion",
+                  "Calories: 870 Cal."
                 ]
               },
               {
                 "header": "Turkey Taco Salad",
                 "bullets": [
                   "Station: Maca",
-                  "Description: Choice of Ground Turkey Taco Meat or Meaty Mushroom, Corn, Chickpea, Sweet Potato & Black Bean Hash. Sides of Wild West Wild Rice Pilaf, Corn Tostada.",
-                  "Calories: 460 Cal."
+                  "Description: Ground Turkey Taco or Meaty Mushroom, Corn, Chickpea, Sweet Potato & Black Bean Hash. Side: Wild West Wild Rice Pilaf, Corn Tostada.",
+                  "Calories: 250 Cal."
                 ]
               },
-              {
-                "header": "Tuesday Pizza",
-                "bullets": [
-                  "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza, Meat Lovers Pizza (Pepperoni, Sausage (Pork), Salami, Ham) and Spicy Veggie Hawaiian Pizza (Pineapple & Pickled Jalapeno).",
-                  "Calories: 290 Cal."
-                ]
-              }
-            ]
-          },
-          {
-            "title": "Dinner",
-            "sections": [
               {
                 "header": "Tuesday Pizza",
                 "bullets": [
@@ -6655,38 +6975,74 @@
                 ]
               },
               {
-                "header": "Pollo Asado",
+                "header": "Tuscan Tomato Bisque Featuring Oat Milk",
                 "bullets": [
-                  "Station: Carbone",
-                  "Description: Protein Choice of Pollo Asado or Oyster Mushroom, Served with Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn) Creamy Refried Beans; Corn Tortilla. Toppings: Cilantro/Onion Blend, Queso Fresco, Limes, Shredded Lettuce, Salsa Molcajetes, Fresh House made Guacamole.",
-                  "Calories: 530 Cal."
-                ]
-              },
-              {
-                "header": "Garlic-Ginger Miso Glazed Salmon",
-                "bullets": [
-                  "Station: Flame",
-                  "Description: Protein Choice of Garlic-Ginger Miso Glazed Salmon\nor Garlic-Ginger Miso Glazed Sticky Tofu, Sides of Fusion Barley & Wild Rice Pilaf or Gochujang Stir-Fried Greens",
-                  "Calories: 160 Cal."
+                  "Description: From The Garden",
+                  "Calories: 280 Cal."
                 ],
                 "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/8826-chatgpt-image-jan-12-2026-12_25_20-pm.png"
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6681-basil-tomato-bisque-soup.png"
+                ]
+              }
+            ]
+          },
+          {
+            "title": "Dinner",
+            "sections": [
+              {
+                "header": "Turkey Taco Salad",
+                "bullets": [
+                  "Station: Maca",
+                  "Description: Ground Turkey Taco or Meaty Mushroom, Corn, Chickpea, Sweet Potato & Black Bean Hash. Side: Wild West Wild Rice Pilaf, Corn Tostada.",
+                  "Calories: 250 Cal."
                 ]
               },
               {
-                "header": "Tonkotsu Ramen",
+                "header": "Tuesday Pizza",
+                "bullets": [
+                  "Station: 𝝅 (Pizza)",
+                  "Description: Pizza Choice of Pepperoni Pizza, Four Cheese Pizza or Meat Lovers (Pepperoni, Sausage (Pork), Salami, Ham) or Spicy Veggie Hawaiian (Pineapple & Pickled Jalapeno)",
+                  "Calories: 290 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/8611-daily-pizza.png"
+                ]
+              },
+              {
+                "header": "Tuscan Tomato Bisque Featuring Oat Milk",
+                "bullets": [
+                  "Description: From The Garden",
+                  "Calories: 280 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/6681-basil-tomato-bisque-soup.png"
+                ]
+              },
+              {
+                "header": "Guatemalan Pepian de Pollo",
+                "bullets": [
+                  "Station: Carbone",
+                  "Description: Corn Tortillas. Protein Choice of Guatemalan Chicken Pepian Thigh or Vegetable Pepian Stew With Squash, Potato & Green Beans. Comes  with Sides of Cilantro Lime Rice(4oz), Black Beans (4oz) and Toppings.",
+                  "Calories: 590 Cal."
+                ]
+              },
+              {
+                "header": "Pan Seared Salmon",
+                "bullets": [
+                  "Station: Deux",
+                  "Description: Pretein Choice of Pan Seared Salmon or Grilled Tofu with sides of Steamed Broccoli, Creamy Polenta, Garlic Cauliflower Puree, and Sauteed Swiss Chard",
+                  "Calories: 270 Cal."
+                ]
+              },
+              {
+                "header": "Beef Pho",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Protein Choice of Pork Belly or Miso Shitake Mushroom Ramen, with Sides of Yakisoba Noodle, Hardboiled Eggs, Bean Sprout, Green Onions, Seaweed Salad, Mushrooms, Roasted Corn.",
-                  "Calories: 820 Cal."
-                ]
-              },
-              {
-                "header": "Mediterranean Citrus Herb Chicken",
-                "bullets": [
-                  "Station: Macca",
-                  "Description: Choice of Halal Citrus Herb Chicken Thigh or Grilled Portobello Mushroom. Sides: Citrus Brown Rice & Quinoa Pilaf and, Roasted Spiced Sweet Potatoes",
-                  "Calories: 570 Cal."
+                  "Description: Protein Choice of Beef Pho or Umami Plant Based Pho, Side of Rice Noodles, and Toppings.",
+                  "Calories: 670 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-4/7231-beef-pho.jpg"
                 ]
               }
             ]
@@ -6695,18 +7051,26 @@
             "title": "Late Night",
             "sections": [
               {
-                "header": "Plant Powered Protein",
+                "header": "BYOB Carnitas Bowl",
+                "bullets": [
+                  "Station: Carbone",
+                  "Description: Flour Tortillas.  Protein Choice of Build Your Own Carnitas Fajita Bowl or Plant Based Fajita With Sides of Cilantro & Jalapeno Rice, Black Beans and Toppings.",
+                  "Calories: 800 Cal."
+                ]
+              },
+              {
+                "header": "Cornucopia of Harvest",
                 "bullets": [
                   "Station: Deux",
-                  "Description: White Bean & Kale Soup(Shrimp Protein Upon Request), 7 Grain Heaven Salad. Served with Sides of Chimichurri, French Bread, Polenta Stuffed Mushrooms, Pinto Bean Salad.",
-                  "Calories: 660 Cal."
+                  "Description: Veggie Stuffed Onions (Shrimp Protein Upon Request),Three Sister's Soup; Roasted Winter Vegetables; Vegetarian Marsala Casserole Served with Sides of Pear & Gorgonzola Salad; Marinated Garbanzo Beans.",
+                  "Calories: 450 Cal."
                 ]
               },
               {
                 "header": "Tuesday Pizza",
                 "bullets": [
                   "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza",
+                  "Description: Choice of Pizza: Pepperoni Pizza or Four Cheese Pizza",
                   "Calories: 290 Cal."
                 ]
               }
@@ -6872,43 +7236,56 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Honey Chipotle Chicken Bowl",
+                "header": "Mommas Calabasitas Con Puerco",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Choice of Chicken Thigh or Honey Chipotle Oyster Mushroom Asado Served with Sides of Wild West Wild Rice Pilaf, Tender Whole Black Beans, Flour Tortillas and Toppings.",
-                  "Calories: 710 Cal."
+                  "Description: Protein Choice of Mommas Calabasitas Con Puerco (Pork Braised in Red Sauce with Onions, Squash & Peppers)  or Mommas Calabasitas en Salsa Roja (Squash/Zucchini, Onions & Peppers in Red Sauce). Served with Sides of Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn), Creamy Refried Black Beans, Corn Tortillas and Toppings.",
+                  "Calories: 810 Cal."
                 ]
               },
               {
-                "header": "Pan Seared Salmon",
+                "header": "Buddha Grain Bowl",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Pretein Choice of Pan Seared Salmon w/Lemon Herb Sauce or Grilled Tofu w/Lemon Herb Sauce with Sides of Steamed Broccoli, Creamy Polenta, Garlic Cauliflower Puree, and Sauteed Swiss Chard.",
-                  "Calories: 490 Cal."
+                  "Description: Protein Choice of Harissa Spiced Shrimp or Harissa Spiced Tofu, Sides of Lemon Quinoa & Brown Rice Pilaf, Sauteed Mushroom Medley, and Toppings.",
+                  "Calories: 770 Cal."
                 ]
               },
               {
-                "header": "Beef Pho",
+                "header": "Chicken Parmesan Pasta",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Protein Choice of Beef Pho or Umami Plant Based Pho, Side of Rice Noodles, and Toppings.",
-                  "Calories: 670 Cal."
+                  "Description: Protein Choice of Crispy Chicken Parmesan(4oz) or Grilled Eggplant w/ Marinara & Cheese(4oz) on Penna Pasta; Comes with Zesty Marinara Sauce (4oz), Steamed Broccoli and Primavera Vegetables. Max's Artisan Dinner Rolls",
+                  "Calories: 770 Cal."
                 ]
               },
               {
-                "header": "Oatly Chicken Pesto Alfredo",
+                "header": "Penne & Turkey Bolognese",
                 "bullets": [
                   "Station: Maca",
-                  "Description: Protein Choice of Chicken Thigh or Primavera Vegetables with Penne Pasta (GF) In a Creamy Plant Based Pesto Alfredo Sauce.  Served with Sauteed Seasonal Vegetables.",
-                  "Calories: 230 Cal."
+                  "Description: Ground Turkey Bolognese & (GF) Penne Pasta or Prima Vera Vegetable (GF) Pasta With Marinara . Side of Sauteed Seasonal Vegetables.",
+                  "Calories: 420 Cal."
                 ]
               },
               {
                 "header": "Wednesday Pizza",
                 "bullets": [
-                  "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza, Spicy Hawaiian Pizza (Cubed Ham(Pork), Pineapple & Pickled Jalapeno, Green Onion) and Veggie Lovers Pizza  (Mushroom, Peppers, Onion & Olives).",
+                  "Station: 𝝅 (Pizza)",
+                  "Description: Pizza Choice of Pepperoni Pizza, Four Cheese Pizza or Spicy Hawaii'n  (Pineapple, Ham, Pickled Jalapeno) or Veggie Lovers  (Mushroom, Peppers, Onion & Olives)",
                   "Calories: 290 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/7868-daily-pizza.png"
+                ]
+              },
+              {
+                "header": "(H) Tortilla Chicken Soup",
+                "bullets": [
+                  "Description: Omnivore",
+                  "Calories: 180 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/7490-cheesy-chicken-tortilla-soup.png"
                 ]
               }
             ]
@@ -6936,27 +7313,37 @@
                 ]
               },
               {
-                "header": "Quesabirria Tacos",
+                "header": "Carnitas Plate",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Protein Choice of  Beef Birria or Fable Mushroom Birria on Corn Tortiila.  Served with Spanish Rice, Refired Beans, Consommé and Toppings.",
-                  "Calories: 420 Cal."
+                  "Description: Protein Choice of Pork Carnitas(4oz) or  Fable Mushroom Carnitas, with Sides of Spanish Rice (4oz) and Refried Beans (4oz) and Toppings",
+                  "Calories: 680 Cal."
                 ]
               },
               {
-                "header": "Buddha Grain Bowl",
+                "header": "Lemon Dill Seared Shrimp",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Protein Choice of Harissa Spiced Shrimp or Harissa Spiced Tofu, Sides of Lemon Quinoa & Brown Rice Pilaf, Sauteed Mushroom Medley, and Toppings.",
-                  "Calories: 770 Cal."
+                  "Description: Protein Choice of Lemon Dill Seared Shrimp or Mediterranean Falafel, with Warm Pita Bread, Lemon Pepper Brown Rice & Quinoa Pilaf,  Sauteed Swiss Chard With Lemon & Fennel and Pan Tossed Golden Chickpeas",
+                  "Calories: 290 Cal."
                 ]
               },
               {
-                "header": "Honey Chipotle Chicken Pasta",
+                "header": "Teriyaki Chicken",
                 "bullets": [
-                  "Station: Flame",
-                  "Description: Choice of Chicken Thigh or Mushrooms with Honey Chipotle Alfredo Sauce, Penne Pasta, Asparagus, Peas, Peppers & Onions.  Served with Max's Artisan Dinner Rolls",
-                  "Calories: 270 Cal."
+                  "Station: Flame (Pasta)",
+                  "Description: Protein Choice of Teriyaki Chicken With Grilled Pineapple or Portabella Mushroom Teriyaki With Grilled Pineapple, with Sides of Fried Rice, Bok Choy Stir Fry, Roasted Ginger Sweet Potatoes and Toppings.",
+                  "Calories: 830 Cal."
+                ]
+              },
+              {
+                "header": "(H) Tortilla Chicken Soup",
+                "bullets": [
+                  "Description: Omnivore",
+                  "Calories: 180 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/menuitem/2022-7/7490-cheesy-chicken-tortilla-soup.png"
                 ]
               }
             ]
@@ -6965,26 +7352,26 @@
             "title": "Late Night",
             "sections": [
               {
-                "header": "Japanese Golden Curry",
+                "header": "California Bacon Burger",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Protein Choice of Golden Japanese Curry (Beef) or Golden Vegetable Curry, with sides of Jasmine Rice (4oz), Vegetarian Spring Rolls (4oz) and Toppings.",
-                  "Calories: 580 Cal."
+                  "Description: Max's Cheddar & Onion Burger Bun; Protein Choice of California Burger Beef Patty or Black Bean Burger , Served With French Fries and Toppings.",
+                  "Calories: 740 Cal."
                 ]
               },
               {
-                "header": "Gourmet Rainbow Trout",
+                "header": "Coconut - Braised Black Cod",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Gourmet Rainbow Trout, Garlic Buttered Asparagus. Served with Sides of Couscous Pilaf, Garbanzo Bean Salad.",
-                  "Calories: 930 Cal."
+                  "Description: Protein Choice of Coconut - Braised Black Cod; Served with Coconut & Vegetable Curry, Garlic Jasmine Rice and Toppings.",
+                  "Calories: 540 Cal."
                 ]
               },
               {
                 "header": "Wednesday Pizza",
                 "bullets": [
                   "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza",
+                  "Description: Choice of Pizza: Pepperoni Pizza or Four Cheese Pizza",
                   "Calories: 290 Cal."
                 ]
               }
@@ -7150,43 +7537,56 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Carnitas Plate",
+                "header": "Beef Machaca",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Protein Choice of Pork Shoulder Carnitas(4oz) or  Fable Mushroom Carnitas, with Sides of Spanish Rice Pilaf (Peas, Corn, Carrots) (4oz) and Refried Beans (4oz), Corn Tortillas and Toppings.",
-                  "Calories: 630 Cal."
+                  "Description: Protein Choice of Braised Beef Machaca (Halaql), Peppers & Onions or Fable Mushroom Machaca with Peppers & Onions, Served with Spanish Rice Pilaf (Peas, Carrots, Corn), Whole Tender Pinto Beans, Flour Tortilla and Toppings",
+                  "Calories: 520 Cal."
                 ]
               },
               {
-                "header": "Calabrese Cod",
+                "header": "Cajun Shrimp Plate",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Protein Choice of Black Cod Calabrese & Parmesan or Grilled Polenta Topped With Calabrese & Parmesan, on Max's Artisan Dinner Roll; Served with Sauteed Garlic Asparagus, Creamy Mashed Potatoes.",
-                  "Calories: 490 Cal."
+                  "Description: Choice of Cajun Shrimp With Garlic Brown Butter Sauce or Roasted Cajun Mushroom Medley.  Sidfes: Creamy Polenta, Corn on the Cob, Maque Choux.",
+                  "Calories: 230 Cal."
                 ]
               },
               {
-                "header": "Miso Ginger Chicken",
+                "header": "Tonkotsu Ramen",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Choice of Miso Ginger Chicken or Miso Ginger Tofu. Comes with Sides of Steamed Rice, Bok Choy Stir Fry, Roasted Ginger Sweet Potatoes and Toppings.",
-                  "Calories: 820 Cal."
+                  "Description: Protein Choice of Pork Belly or Miso Shitake Mushroom Ramen, with Sides of Yakisoba Noodle, Hardboiled Eggs, Bean Sprout, Green Onions, Seaweed Salad, Mushrooms, Roasted Corn.",
+                  "Calories: 730 Cal."
                 ]
               },
               {
                 "header": "Five-Spice Smoked Chicken",
                 "bullets": [
                   "Station: Maca",
-                  "Description: Proteins: Chicken Thigh Smoked With Five-Spice Maple Glaze or Five-Spice Smoked Mushroom & Sweet Potato. Sides of Fusion Wild Rice & Quinoa Pilaf, Umami Stir-Fried Seasonal Greens.",
+                  "Description: Proteins: Chicken Thigh (Halal) Smoked With Five-Spice Maple Glazeor Five-Spice Smoked Mushroom & Sweet Potato. Sides: Fusion Wild Rice & Quinoa Pilaf, Umami Stir-Fried Seasonal Greens.",
                   "Calories: 610 Cal."
                 ]
               },
               {
                 "header": "Thursday Pizza",
                 "bullets": [
-                  "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza, Meat Lovers Pizza (Pepperoni, Sausage (Pork), Salami, Ham) and Spicy Veggie Hawaiian Pizza (Pineapple & Pickled Jalapeno).",
+                  "Station: 𝝅 (Pizza)",
+                  "Description: Pizza Choice of Pepperoni Pizza, Four Cheese Pizza or Meat Lovers (Pepperoni, Sausage (Pork), Salami, Ham) or Spicy Veggie Hawaiian (Pineapple & Pickled Jalapeno)",
                   "Calories: 290 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/1230-daily-pizza.png"
+                ]
+              },
+              {
+                "header": "Soup de Jour",
+                "bullets": [
+                  "Description: Soup de Jour",
+                  "Calories: 120 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-1/1267-soup-of-the-day.jpg"
                 ]
               }
             ]
@@ -7195,11 +7595,11 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Turkey Taco Salad",
+                "header": "Five-Spice Smoked Chicken",
                 "bullets": [
                   "Station: Maca",
-                  "Description: Ground Turkey Taco or Meaty Mushroom, Corn, Chickpea, Sweet Potato & Black Bean Hash. Side: Wild West Wild Rice Pilaf, Corn Tostada.",
-                  "Calories: 250 Cal."
+                  "Description: Proteins: Chicken Thigh (Halal) Smoked With Five-Spice Maple Glazeor Five-Spice Smoked Mushroom & Sweet Potato. Sides: Fusion Wild Rice & Quinoa Pilaf, Umami Stir-Fried Seasonal Greens.",
+                  "Calories: 610 Cal."
                 ]
               },
               {
@@ -7214,27 +7614,40 @@
                 ]
               },
               {
-                "header": "Al Pastor",
+                "header": "Carne Asada Torta",
                 "bullets": [
-                  "Station: CASCABEL",
-                  "Description: Protein choice of Pork Al Pastor w/ Pineapple (4oz) or Vegan Al Pastor Mushroom with Pineapple (4oz), with Toppings and sides of Cilantro Lime Rice (4oz) , Black Beans (4oz). 4.5\" Corn Tortillas",
-                  "Calories: 680 Cal."
+                  "Station: Carbone",
+                  "Description: Protein Choice of Carne Asada or Oyster Mushroom, Served with Fluffy Spanish Rice Pilaf (Peas, Carrots, Corn) Creamy Refried Beans; Max's Artisan Telera Roll. Toppings: Cilantro/Onion Blend, Queso Fresco, Limes, Shredded Lettuce, Salsa Molcajetes, Fresh House made Guacamole.",
+                  "Calories: 960 Cal."
                 ]
               },
               {
-                "header": "Lemon Herb Baked Cod",
+                "header": "Pescado a la Veracruzana",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Choice of Lemon Herb Baked Cod or Eggplant Roulade on Max's Artisan dinner roll.  Sides of Creamy Polenta,  Za'atar Spiced Roasted Kale & Chickpeas, Sauteed Swiss Chard With Lemon & Fennel",
-                  "Calories: 250 Cal."
+                  "Description: Protein Choice of Cod Veracruz or Mushrom Veracruz. Comes with   Wild West Wild Rice Pilaf; Garlicy Collard Greens; Sweet Potato & Black Bean Hash",
+                  "Calories: 340 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2023-6/7513-screen-shot-2023-06-20-at-110542-am.png"
                 ]
               },
               {
-                "header": "Lamb Pita",
+                "header": "Char Siu Pork",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Warmed Pita Bread, Protein Choice of Lamb or Spinach Spanakopita.  Comes with  Lemon Pepper Spiced Potatoes\nRoasted Peppers, Tomatoes & Onions, Tzatziki, Hummus, Cucumber Salad (Cucumber, Tomato, Onion, Kalamata Olives, Feta cheese), Pickled Red Onion",
-                  "Calories: 870 Cal."
+                  "Description: Protein Choice of Char Siu Pork or Char Siu Fable Mushroom, Served with  Steamed Rice, Steamed Broccoli, and Toppings.",
+                  "Calories: 430 Cal."
+                ]
+              },
+              {
+                "header": "Soup de Jour",
+                "bullets": [
+                  "Description: Soup de Jour",
+                  "Calories: 120 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-1/1267-soup-of-the-day.jpg"
                 ]
               }
             ]
@@ -7243,26 +7656,26 @@
             "title": "Late Night",
             "sections": [
               {
-                "header": "Chef's Chili",
+                "header": "Orange Chicken",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Chef's Beef Chili. Served with Sides of Steamed Broccoli; House made Potato Chip and Toppings.",
-                  "Calories: 690 Cal."
+                  "Description: Protein Choice of Tempura Battered Chicken w/ Orange Sauce or Deep Fried Orange Tofu;  Served with Vegetable Chow Mein and Toppings.",
+                  "Calories: 800 Cal."
                 ]
               },
               {
-                "header": "Tacos de las Papas",
+                "header": "Festa del Giardino",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Flour  Tortilla. Protein Choice of Papas Con Hongos (Shrimp Protein Upon Request). Served with Sides of Chili Lime Brown Rice; Black Bean Soup; Blue Corn Tortilla Chips; Mexican Sweet Potatoes and Toppings.",
-                  "Calories: 950 Cal."
+                  "Description: Loaded Veggie Lasagna (Shrimp Protein Upon Request), Vegetarian Minestra Maritata (Italian Wedding Soup)Served with Sides of Mozzarella Salad, Garlic Bread, Baked Eggplant w/ Parmesan.",
+                  "Calories: 670 Cal."
                 ]
               },
               {
                 "header": "Thursday Pizza",
                 "bullets": [
                   "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza",
+                  "Description: Choice of Pizza: Pepperoni Pizza or Four Cheese Pizza",
                   "Calories: 290 Cal."
                 ]
               }
@@ -7428,19 +7841,40 @@
             "title": "Lunch",
             "sections": [
               {
-                "header": "Tacos de Camarones",
+                "header": "Friday Pizza",
                 "bullets": [
-                  "Station: Deux",
-                  "Description: Crispy Taco Shell. Protein Choice of Pan Seared Shrimp or Oyster Mushroom & Cauliflower Ceviche with Toppings and House Made Tortilla Chips as Side.",
-                  "Calories: 620 Cal."
+                  "Station: 𝝅 (Pizza)",
+                  "Description: Pizza Choice of Pepperoni Pizza, Four Cheese Pizza or Spicy Hawaii'n  (Pineapple, Ham, Pickled Jalapeno) or Veggie Lovers  (Mushroom, Peppers, Onion & Olives)",
+                  "Calories: 290 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/6516-daily-pizza.png"
                 ]
               },
               {
-                "header": "Chicken Vindaloo",
+                "header": "Creamy Clam Chowder",
+                "bullets": [
+                  "Description: Omnivore",
+                  "Calories: 180 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/8864-screen-shot-2026-01-15-at-121528-pm.jpg"
+                ]
+              },
+              {
+                "header": "Camarones A La Crema",
+                "bullets": [
+                  "Station: Carbone",
+                  "Description: Corn Tortillas. Protein Choice of Grilled Chipotle Shrimp In a Mushroom Chipotle Cream Sauce With Peppers & Onions or Cremini Mushroom With Peppers, Onions, Asparagus & Peas In A Chipotle Cream Sauce. Comes  with Sides of Spanish Rice Pilaf (Peas, Carrots, Corn), Creamy Refried Pinto Beans, Flour Tortilla. Toppings",
+                  "Calories: 770 Cal."
+                ]
+              },
+              {
+                "header": "Beef & Broccoli",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Protein Choice of Chicken Thigh Vindaloo or Potato & Mushroom Vindaloo, with a sides of Quinoa & Brown rice Pilaf, Seasonal Vegetable Stir-Fry.",
-                  "Calories: 460 Cal."
+                  "Description: Protein Choice of Beef Broccoli or Fable Mushroom & Broccoli . With Sides of Cucumber Salad, Pickled Ginger, Seaweed Salad, Kimchi, Seasoned Bean Sprouts, Spicy Mayo",
+                  "Calories: 400 Cal."
                 ]
               },
               {
@@ -7450,14 +7884,6 @@
                   "Description: Protein Choice of: Fresh Oven Roasted Lemon Pepper Salmon or Eggplant Roulade Filled With Citrus Brown Rice & Quinoa Pilaf. Sides: Roasted Spiced Sweet Potatoes , Braised Greens.",
                   "Calories: 280 Cal."
                 ]
-              },
-              {
-                "header": "Friday Pizza",
-                "bullets": [
-                  "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza, Spicy Hawaiian Pizza (Cubed Ham(Pork), Pineapple & Pickled Jalapeno, Green Onion) and Veggie Lovers Pizza  (Mushroom, Peppers, Onion & Olives).",
-                  "Calories: 290 Cal."
-                ]
               }
             ]
           },
@@ -7465,38 +7891,37 @@
             "title": "Dinner",
             "sections": [
               {
-                "header": "Lamb Barbacoa",
-                "bullets": [
-                  "Station: Carbone",
-                  "Description: Protein choice of Lamb Barbacoa or Fable Mushroom Barbacoa on Corn Tortillas with Sides ofSpanish Rice, Refried Beans, and Toppings.",
-                  "Calories: 790 Cal."
-                ]
-              },
-              {
-                "header": "The Cooks Corner",
+                "header": "Grilled Cod Fish Tacos",
                 "bullets": [
                   "Station: Deux",
-                  "Description: The Cooks Corner, Cooks Special Of The Day",
-                  "Calories: 0 Cal."
+                  "Description: Protein Choice of Pan Seared  Rock Cod, Mango Salsa, Chipotle Aioli, & Crispy Taco Shell or Oyster Mushroom & Cauliflower Ceviche with a side of: House Made Tortilla Chips",
+                  "Calories: 740 Cal."
                 ]
               },
               {
-                "header": "Bang Bang Shrimp",
+                "header": "Chicken Parmesan Pasta",
                 "bullets": [
                   "Station: Flame",
-                  "Description: Protein Choice of Bang Bang Shrimp or Bang Bang Crispy Tofu, with Sides of Streamed Rice, Stir Fry Vegetables(Red Onion, Red Bell Pepper, Green Bell Pepper, Cabbage) and Toppings of Cucumber, Pickled Ginger, Seaweed, Edamame, Cabbage, Spicy Mayo.",
-                  "Calories: 560 Cal."
-                ],
-                "image_urls": [
-                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2025-4/7315-bang-bang-shrimp2.jpg"
+                  "Description: Protein Choice of Crispy Chicken Parmesan(4oz) or Grilled Eggplant w/ Marinara & Cheese(4oz) on Penna Pasta; Comes with Zesty Marinara Sauce (4oz), Steamed Broccoli and Primavera Vegetables.",
+                  "Calories: 770 Cal."
                 ]
               },
               {
-                "header": "Five-Spice Smoked Chicken",
+                "header": "Oatly Chicken Pesto Alfredo",
                 "bullets": [
                   "Station: Maca",
-                  "Description: Proteins: Chicken Thigh (Halal) Smoked With Five-Spice Maple Glazeor Five-Spice Smoked Mushroom & Sweet Potato. Sides: Fusion Wild Rice & Quinoa Pilaf, Umami Stir-Fried Seasonal Greens.",
-                  "Calories: 610 Cal."
+                  "Description: Protein Choice of Chicken or Primavera Vegetables with Penne Pasta (GF) In a Creamy Plant Based Pesto Alfredo Sauce.  Served with Sauteed Seasonal Vegetables",
+                  "Calories: 230 Cal."
+                ]
+              },
+              {
+                "header": "Creamy Clam Chowder",
+                "bullets": [
+                  "Description: Omnivore",
+                  "Calories: 180 Cal."
+                ],
+                "image_urls": [
+                  "https://static.eagle.bigzpoon.com/61bd7ecd8c760e0011ac0fac/menuitem/2026-1/8864-screen-shot-2026-01-15-at-121528-pm.jpg"
                 ]
               },
               {
@@ -7516,34 +7941,26 @@
             "title": "Late Night",
             "sections": [
               {
-                "header": "Hainanese Chicken Rice",
+                "header": "Hibachi",
                 "bullets": [
                   "Station: Carbone",
-                  "Description: Protein Choice of Thai Style Hainanese Chicken or Vegetarian Hainanese Rice, Served with Jasmine Rice Nam Jim Jaew, Thai Peanut Coleslaw, Som Tam (Green Papaya Salad).",
-                  "Calories: 740 Cal."
+                  "Description: Protein Choice of Shrimp, Chicken or Vegetable Chow Mein, White Rice; Served with Napa Cabbage, Bean Sprout, Mushroom, Bok Choy, Green Onions, Spicy Teriyaki or Plain Teriyaki Sauce, Veggie Spring Rolls.",
+                  "Calories: 760 Cal."
                 ]
               },
               {
-                "header": "Roasted Haddock",
+                "header": "Linguini di Mare",
                 "bullets": [
                   "Station: Deux",
-                  "Description: Choice of Roasted Haddock w/ Picatta Sauce or Cheesy Stuffed Peppers. Sides of Wild Rice Medley; Crisp Cucumber Salad.",
-                  "Calories: 860 Cal."
-                ]
-              },
-              {
-                "header": "Croque Monsieur",
-                "bullets": [
-                  "Station: Flame",
-                  "Description: Choice of Protein: Croque Monsieur Served on Max's Country Bread, House Salad, Roasted Seasonal Vegetables, Garlic Butter Potatoes.",
-                  "Calories: 470 Cal."
+                  "Description: Mussel, Clam, Squid, & Shrimp Lemon Garlic Linguine, Zuppa Di Gnocchi Served with Sides of Harvest Salad, Garlic Bread, Chimichurri.",
+                  "Calories: 690 Cal."
                 ]
               },
               {
                 "header": "Friday Pizza",
                 "bullets": [
                   "Station: Pizza",
-                  "Description: Pizza Choice of Pepperoni Pizza or Four Cheese Pizza",
+                  "Description: Choice of Pizza: Pepperoni Pizza or Four Cheese Pizza",
                   "Calories: 290 Cal."
                 ]
               }
