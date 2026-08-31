@@ -743,6 +743,7 @@ MENU_LOCATION_CONFIG = {
 }
 
 CONTENT_PIPELINE_LOCK = threading.Lock()
+PAGES_JSON_LOCK = threading.Lock()
 CONTENT_SCHEDULER = None
 STARTUP_PIPELINE_STARTED = False
 
@@ -783,6 +784,123 @@ def _get_polygon_records(polygons_payload: Any) -> list[dict]:
     raise ValueError(
         "polygons.json must be a JSON array or an object containing a 'polygons' array"
     )
+
+
+def _load_user_pages_payload_for_write() -> tuple[Any, list[dict]]:
+    """Load pages.json while preserving its existing top-level shape."""
+    if not PAGES_JSON_PATH.exists():
+        payload: Any = []
+        return payload, payload
+
+    with PAGES_JSON_PATH.open("r", encoding="utf-8") as f:
+        payload = json.load(f)
+
+    if isinstance(payload, list):
+        if not all(isinstance(page, dict) for page in payload):
+            raise ValueError("pages.json array contains one or more non-object entries")
+        return payload, payload
+
+    if isinstance(payload, dict) and isinstance(payload.get("pages"), list):
+        pages = payload["pages"]
+        if not all(isinstance(page, dict) for page in pages):
+            raise ValueError("pages.json 'pages' array contains one or more non-object entries")
+        return payload, pages
+
+    raise ValueError(
+        "pages.json must be a JSON array or an object containing a 'pages' array"
+    )
+
+
+def _clean_optional_page_string(value: Any) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str):
+        raise ValueError("Expected a string or null")
+    cleaned = value.strip()
+    return cleaned or None
+
+
+def _validate_page_geometry(value: Any) -> dict:
+    if not isinstance(value, dict):
+        raise ValueError("geometry must be an object")
+
+    latitude = value.get("latitude")
+    longitude = value.get("longitude")
+    geometry_type = value.get("type", "point")
+
+    if geometry_type != "point":
+        raise ValueError("geometry.type must be 'point'")
+    if isinstance(latitude, bool) or not isinstance(latitude, (int, float)):
+        raise ValueError("geometry.latitude must be a number")
+    if isinstance(longitude, bool) or not isinstance(longitude, (int, float)):
+        raise ValueError("geometry.longitude must be a number")
+    if not -90 <= float(latitude) <= 90:
+        raise ValueError("geometry.latitude must be between -90 and 90")
+    if not -180 <= float(longitude) <= 180:
+        raise ValueError("geometry.longitude must be between -180 and 180")
+
+    return {
+        "type": "point",
+        "latitude": float(latitude),
+        "longitude": float(longitude),
+    }
+
+
+def _build_submitted_page(data: dict) -> dict:
+    """Validate the mobile page payload and produce the object stored in pages.json."""
+    page_type = _clean_optional_page_string(data.get("type")) or "wildlife"
+    title = _clean_optional_page_string(data.get("title"))
+    description = _clean_optional_page_string(data.get("description"))
+
+    if not title:
+        raise ValueError("title is required")
+    if not description:
+        raise ValueError("description is required")
+
+    tags = data.get("tags", [])
+    if not isinstance(tags, list) or not all(isinstance(tag, str) for tag in tags):
+        raise ValueError("tags must be an array of strings")
+    tags = [tag.strip().lower() for tag in tags if tag.strip()]
+
+    image_urls = data.get("image_urls", [])
+    if not isinstance(image_urls, list) or not all(
+        isinstance(url, str) for url in image_urls
+    ):
+        raise ValueError("image_urls must be an array of strings")
+    image_urls = [url.strip() for url in image_urls if url.strip()]
+
+    if page_type == "wildlife" and not image_urls:
+        raise ValueError("wildlife pages require at least one image URL")
+
+    location_id = data.get("location_id")
+    if location_id is not None and (
+        isinstance(location_id, bool) or not isinstance(location_id, (int, float))
+    ):
+        raise ValueError("location_id must be a number or null")
+
+    page = {
+        "id": str(uuid.uuid4()),
+        "type": page_type,
+        "tags": tags,
+        "location_id": location_id,
+        "title": title,
+        "subtitle": _clean_optional_page_string(data.get("subtitle")),
+        "description": description,
+        "image_urls": image_urls,
+        "start": _clean_optional_page_string(data.get("start")),
+        "end": _clean_optional_page_string(data.get("end")),
+        "host": _clean_optional_page_string(data.get("host")) or "Campus Explorer",
+        "source_url": _clean_optional_page_string(data.get("source_url")),
+        "pin_url": _clean_optional_page_string(data.get("pin_url")),
+        "geometry": _validate_page_geometry(data.get("geometry")),
+    }
+
+    image_alt_text = data.get("image_alt_text", data.get("alt_text"))
+    image_alt_text = _clean_optional_page_string(image_alt_text)
+    if image_alt_text:
+        page["image_alt_text"] = image_alt_text
+
+    return page
 
 
 def _build_menu_fetch_queue() -> list[dict]:
@@ -1308,6 +1426,50 @@ def init_content_jobs(app):
 # ─────────────────────────────────────────
 # Routes
 # ─────────────────────────────────────────
+
+
+@events_bp.route("/add/page", methods=["POST"])
+def add_page():
+    """Append one user-submitted page item to pages.json."""
+    data = request.get_json(silent=True)
+    if not isinstance(data, dict):
+        return jsonify({"error": "Request body must be a JSON object"}), 400
+
+    try:
+        page = _build_submitted_page(data)
+    except ValueError as exc:
+        return jsonify({"error": str(exc)}), 400
+
+    try:
+        with PAGES_JSON_LOCK:
+            payload, pages = _load_user_pages_payload_for_write()
+
+            if any(existing.get("id") == page["id"] for existing in pages):
+                # Extremely unlikely with UUID4, but do not silently overwrite.
+                return jsonify({"error": "Generated page ID already exists"}), 409
+
+            pages.append(page)
+            PAGES_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
+            _write_json_atomically(PAGES_JSON_PATH, payload)
+
+        logger.info(
+            "[pages] added page id=%s type=%s title=%r",
+            page["id"],
+            page["type"],
+            page["title"],
+        )
+
+        return jsonify({
+            "message": "Page created",
+            "page": page,
+        }), 201
+
+    except (OSError, json.JSONDecodeError, ValueError) as exc:
+        logger.exception("[pages] failed to write pages.json")
+        return jsonify({
+            "error": "Failed to save page",
+            "details": str(exc),
+        }), 500
 
 
 @events_bp.route("/contentAPIURL", methods=["GET"])
