@@ -742,6 +742,14 @@ MENU_LOCATION_CONFIG = {
     },
 }
 
+MENU_DAY_TITLES = frozenset(MENU_GROUP_IDS.keys())
+MENU_WRAPPER_TITLES = frozenset({
+    "menu",
+    "weekly menu",
+    "dining menu",
+    "food menu",
+})
+
 CONTENT_PIPELINE_LOCK = threading.Lock()
 PAGES_JSON_LOCK = threading.Lock()
 CONTENT_SCHEDULER = None
@@ -990,6 +998,93 @@ def _build_nested_content(location_data: dict) -> list[dict]:
     return nested_content
 
 
+def _count_menu_sections(nested_content: Any) -> int:
+    if not isinstance(nested_content, list):
+        return 0
+
+    section_count = 0
+
+    for day_item in nested_content:
+        if not isinstance(day_item, dict):
+            continue
+
+        tabs = day_item.get("tabs")
+        if not isinstance(tabs, list):
+            continue
+
+        for tab in tabs:
+            if not isinstance(tab, dict):
+                continue
+
+            sections = tab.get("sections")
+            if not isinstance(sections, list):
+                continue
+
+            section_count += sum(
+                1
+                for section in sections
+                if (
+                    isinstance(section, dict)
+                    and isinstance(section.get("header"), str)
+                    and section["header"].strip()
+                )
+            )
+
+    return section_count
+
+
+def _validate_generated_menu_payload(menu_payload: dict) -> dict[str, int]:
+    required_payloads = {
+        "PAV_nested_content": "Pavilion",
+        "YWDC_nested_content": "Yablokoff-Wallace Dining Center",
+    }
+    section_counts: dict[str, int] = {}
+
+    for payload_key, location_name in required_payloads.items():
+        nested_content = menu_payload.get(payload_key)
+
+        if not isinstance(nested_content, list):
+            raise ValueError(f"{payload_key} is missing or invalid")
+
+        section_count = _count_menu_sections(nested_content)
+        if section_count <= 0:
+            raise ValueError(
+                f"{payload_key} did not contain any menu item sections"
+            )
+
+        section_counts[location_name] = section_count
+
+    return section_counts
+
+
+def _is_menu_nested_content_item(item: Any) -> bool:
+    if not isinstance(item, dict):
+        return False
+
+    title = item.get("title")
+    if not isinstance(title, str):
+        return False
+
+    normalized_title = title.strip().lower()
+    return title.strip() in MENU_DAY_TITLES or normalized_title in MENU_WRAPPER_TITLES
+
+
+def _merge_food_menu_nested_content(
+    existing_nested_content: Any,
+    generated_menu_content: list[dict],
+) -> list[dict]:
+    preserved_content = []
+
+    if isinstance(existing_nested_content, list):
+        preserved_content = [
+            item
+            for item in existing_nested_content
+            if not _is_menu_nested_content_item(item)
+        ]
+
+    return [*generated_menu_content, *preserved_content]
+
+
 def generate_food_menu_payload() -> dict:
     """Fetch all Pavilion/YWDC menu endpoints and build nested_content arrays."""
     fetch_queue = _build_menu_fetch_queue()
@@ -1116,10 +1211,21 @@ def generate_food_menu_payload() -> dict:
         flush=True,
     )
 
-    return {
+    menu_payload = {
         "YWDC_nested_content": _build_nested_content(parsed_data["YWDC"]),
         "PAV_nested_content": _build_nested_content(parsed_data["PAV"]),
     }
+
+    section_counts = _validate_generated_menu_payload(menu_payload)
+    print(
+        "[food_menu] generated menu content - "
+        f"Pavilion={section_counts['Pavilion']} section(s), "
+        "Yablokoff-Wallace Dining Center="
+        f"{section_counts['Yablokoff-Wallace Dining Center']} section(s)",
+        flush=True,
+    )
+
+    return menu_payload
 
 
 def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
@@ -1137,13 +1243,21 @@ def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
 
     polygon_records = _get_polygon_records(polygons_payload)
 
-    pavilion_content = menu_payload.get("PAV_nested_content")
-    ywdc_content = menu_payload.get("YWDC_nested_content")
+    try:
+        section_counts = _validate_generated_menu_payload(menu_payload)
+    except ValueError as exc:
+        print(
+            f"[food_menu] generated menu rejected; existing polygons retained: {exc}",
+            flush=True,
+        )
+        logger.error(
+            "[food_menu] generated menu rejected; existing polygons retained: %s",
+            exc,
+        )
+        raise
 
-    if not isinstance(pavilion_content, list):
-        raise ValueError("PAV_nested_content is missing or invalid")
-    if not isinstance(ywdc_content, list):
-        raise ValueError("YWDC_nested_content is missing or invalid")
+    pavilion_content = menu_payload["PAV_nested_content"]
+    ywdc_content = menu_payload["YWDC_nested_content"]
 
     replacements = {
         "774": {
@@ -1176,7 +1290,10 @@ def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
                 expected_name,
             )
 
-        record["nested_content"] = replacement["nested_content"]
+        record["nested_content"] = _merge_food_menu_nested_content(
+            record.get("nested_content"),
+            replacement["nested_content"],
+        )
         matched[location_id] += 1
 
     missing_ids = [
@@ -1192,15 +1309,36 @@ def _replace_food_menu_nested_content(menu_payload: dict) -> dict[str, int]:
 
     print(
         f"[food_menu] polygons.json updated successfully - "
-        f"Pavilion={matched['774']}, DC={matched['1130']}",
+        f"Pavilion={matched['774']} "
+        f"({section_counts['Pavilion']} section(s)), "
+        "Yablokoff-Wallace Dining Center="
+        f"{matched['1130']} "
+        f"({section_counts['Yablokoff-Wallace Dining Center']} section(s))",
         flush=True,
     )
     logger.info(
-        "[food_menu] updated polygons.json: Pavilion=%d, DC=%d",
+        "[food_menu] updated polygons.json: Pavilion=%d (%d sections), "
+        "Yablokoff-Wallace Dining Center=%d (%d sections)",
         matched["774"],
+        section_counts["Pavilion"],
         matched["1130"],
+        section_counts["Yablokoff-Wallace Dining Center"],
     )
     return matched
+
+
+def invalidate_content_api_cache(reason: str = "manual") -> None:
+    """Clear in-process caches used while rebuilding /contentAPIURL."""
+    global PRESENCE_PAGES_CACHE, PRESENCE_PAGES_CACHE_EXPIRES_AT
+
+    PRESENCE_PAGES_CACHE = None
+    PRESENCE_PAGES_CACHE_EXPIRES_AT = None
+
+    print(
+        f"[content_jobs] /contentAPIURL cache invalidated ({reason})",
+        flush=True,
+    )
+    logger.info("[content_jobs] /contentAPIURL cache invalidated: %s", reason)
 
 
 def generate_food_menus_and_update_polygons() -> dict[str, int]:
@@ -1209,6 +1347,7 @@ def generate_food_menus_and_update_polygons() -> dict[str, int]:
     with CONTENT_PIPELINE_LOCK:
         menu_payload = generate_food_menu_payload()
         matched = _replace_food_menu_nested_content(menu_payload)
+        invalidate_content_api_cache("food-menu update")
     print("[content_jobs] food-menu update job finished", flush=True)
     return matched
 
@@ -1244,7 +1383,12 @@ def run_startup_content_pipeline() -> None:
         print("[content_jobs] startup step 2/3: updating polygons.json", flush=True)
         _replace_food_menu_nested_content(menu_payload)
 
-        print("[content_jobs] startup step 3/3: refreshing Presence cache", flush=True)
+        print(
+            "[content_jobs] startup step 3/3: invalidating and refreshing "
+            "/contentAPIURL cache",
+            flush=True,
+        )
+        invalidate_content_api_cache("startup content pipeline")
         events = refresh_presence_pages_cache()
 
     print(
@@ -1481,7 +1625,6 @@ def content_api_url():
     aggregated_response = {
         "pages": []
     }
-    print("api endpoint hit")
 
     # ─── STEP A: Add Event Pages ───
     try:
@@ -1492,19 +1635,15 @@ def content_api_url():
 
     # ─── STEP B: Add Migrated Polygons ───
     try:
-        # Assuming polygons.json is saved in the same directory as events.py
-        polygons_file_path = os.path.join(
-            os.path.dirname(__file__), "polygons.json")
-
-        if os.path.exists(polygons_file_path):
-            with open(polygons_file_path, "r", encoding="utf-8") as f:
+        if POLYGONS_JSON_PATH.exists():
+            with POLYGONS_JSON_PATH.open("r", encoding="utf-8") as f:
                 polygons_data = json.load(f)
 
-                if isinstance(polygons_data, list):
-                    aggregated_response["pages"].extend(polygons_data)
-                elif isinstance(polygons_data, dict) and "polygons" in polygons_data:
-                    aggregated_response["pages"].extend(
-                        polygons_data["polygons"])
+            if isinstance(polygons_data, list):
+                aggregated_response["pages"].extend(polygons_data)
+            elif isinstance(polygons_data, dict) and "polygons" in polygons_data:
+                aggregated_response["pages"].extend(
+                    polygons_data["polygons"])
     except Exception as e:
         logger.error("ContentAPI Pipeline Error (Polygons): %s", e)
 
@@ -1540,6 +1679,16 @@ def content_api_url():
             )
     except Exception as e:
         logger.error("ContentAPI Pipeline Error (User Pages): %s", e)
+
+    print(
+        f"[content_api] rebuilt /contentAPIURL with "
+        f"{len(aggregated_response['pages'])} page(s)",
+        flush=True,
+    )
+    logger.info(
+        "[content_api] rebuilt /contentAPIURL with %d page(s)",
+        len(aggregated_response["pages"]),
+    )
 
     return jsonify(aggregated_response)
 

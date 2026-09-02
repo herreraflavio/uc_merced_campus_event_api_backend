@@ -4,3 +4,4 @@ myvenv
 __pycache__/
 old
 ai_debug_log.txt
+routes/presence_*_cache.json
