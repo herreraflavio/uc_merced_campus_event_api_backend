@@ -6,7 +6,6 @@ import json
 import os
 import re
 import base64
-import requests
 import math
 from collections import Counter
 import unicodedata
@@ -17,6 +16,13 @@ from openai import OpenAI
 from dotenv import load_dotenv
 
 from helper.normalize_location import normalize_event_location
+from .ai_retrieval import (
+    MAX_CONTEXT_ITEMS as AI_MAX_CONTEXT_ITEMS,
+    MIN_CONTEXT_ITEMS as AI_MIN_CONTEXT_ITEMS,
+    rank_items,
+    serialize_retrieval_debug,
+)
+from .events import build_content_api_payload
 
 load_dotenv()
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -379,8 +385,6 @@ logging.basicConfig(
     filemode="a"
 )
 logger = logging.getLogger(__name__)
-
-CONTENT_API_URL = "https://uc-merced-campus-event-api-backend.onrender.com/contentAPIURL"
 
 # ------------------------------------------------------------------------------
 # CONFIG
@@ -1058,6 +1062,9 @@ def ask_ai():
 
         query = str(data.get("query", "")).strip()
         item_ids = data.get("item_ids", [])
+        context_token_budget = parse_context_token_budget(
+            data.get("max_tokens")
+        )
 
         logger.info(f"Extracted Query: '{query}'")
         logger.info(f"Extracted Item IDs: {item_ids}")
@@ -1077,35 +1084,22 @@ def ask_ai():
             }), 200
 
         # ------------------------------------------------------------------
-        # 1) FETCH LIVE CONTENT & GENERATE DYNAMIC WORD BANK
+        # 1) LOAD CURRENT CONTENT FROM THE SAME SOURCE AS /contentAPIURL
         # ------------------------------------------------------------------
-        logger.debug(f"Fetching content from: {CONTENT_API_URL}")
-        content_resp = requests.get(CONTENT_API_URL, timeout=15)
-        content_resp.raise_for_status()
-        content_json = content_resp.json()
-
+        content_json = build_content_api_payload()
         pages = content_json.get("pages", [])
         logger.debug(
-            f"Successfully fetched {len(pages)} pages from Content API.")
+            f"Loaded {len(pages)} pages from current Content API sources.")
 
         if not isinstance(pages, list):
             logger.error("Invalid content API response: 'pages' is not a list")
             return jsonify({"error": "Invalid content API response"}), 500
 
-        # Build the dynamic Gaussian word bank on the fly
-        generate_dynamic_word_bank(pages)
-        logger.debug(f"Dynamic Word Bank Generated: {DYNAMIC_EXPANSIONS}")
-
         # ------------------------------------------------------------------
-        # 2) QUERY HINTS / WORD BANK EXPANSION
+        # 2) FILTER TO USER item_ids
         # ------------------------------------------------------------------
-        query_hints = build_query_hints(query)
-        logger.debug(f"Query Hints: {query_hints}")
-
-        # ------------------------------------------------------------------
-        # 3) FILTER TO USER item_ids
-        # ------------------------------------------------------------------
-        valid_items = [p for p in pages if p.get("id") in item_ids]
+        item_id_set = {str(item_id).strip() for item_id in item_ids if str(item_id).strip()}
+        valid_items = [p for p in pages if str(p.get("id", "")).strip() in item_id_set]
         logger.info(
             f"Found {len(valid_items)} valid items matching provided item_ids.")
 
@@ -1118,94 +1112,60 @@ def ask_ai():
             }), 200
 
         # ------------------------------------------------------------------
-        # 4) ENCODE ITEMS
+        # 3) QUERY UNDERSTANDING + LOCAL RETRIEVAL
         # ------------------------------------------------------------------
-        encoded_items = [encode_item(item) for item in valid_items]
-        logger.debug(f"Encoded {len(encoded_items)} items successfully.")
-
-        # ------------------------------------------------------------------
-        # 5) LOCAL PRE-RANK
-        # ------------------------------------------------------------------
-        scored = []
-        for enc in encoded_items:
-            local_score = score_encoded_item(query_hints, enc)
-            scored.append({
-                "score": local_score,
-                "encoded": enc
-            })
-
-        scored.sort(key=lambda x: x["score"], reverse=True)
-
-        # Log the local rankings to see what matched best before the LLM
-        debug_scores = [{"id": r["encoded"]["compact"]
-                         ["id"], "score": r["score"]} for r in scored]
+        retrieval_result = rank_items(
+            query,
+            valid_items,
+            user_location=data.get("user_location") or data.get("coordinates"),
+            max_context_items=AI_MAX_CONTEXT_ITEMS,
+            min_context_items=AI_MIN_CONTEXT_ITEMS,
+            max_context_tokens=context_token_budget,
+        )
+        top_scored = retrieval_result["context_rows"]
+        llm_candidates = retrieval_result["llm_candidates"]
+        debug_scores = [
+            {
+                "rank": row["rank"],
+                "id": row["id"],
+                "score": row["score"],
+                "signals": row["signals"],
+                "matched_concepts": sorted(row["matched_concepts"]),
+                "protected_recall": row["protected_recall"],
+            }
+            for row in retrieval_result["ranked_rows"][:40]
+        ]
         logger.debug(f"Local Pre-Rank Scores: {debug_scores}")
 
-        # ------------------------------------------------------------------
-        # 6) BUILD LLM CANDIDATES (Enforce Max and Min Rankings)
-        # ------------------------------------------------------------------
-        top_scored = scored[:MAX_CONTEXT_ITEMS]
-
-        # Ensure we always provide at least MIN_CONTEXT_ITEMS if available
-        if len(top_scored) < MIN_CONTEXT_ITEMS and len(scored) >= MIN_CONTEXT_ITEMS:
-            top_scored = scored[:MIN_CONTEXT_ITEMS]
-        elif len(top_scored) == 0 and scored:
-            top_scored = scored
-
-        llm_candidates = []
-        for row in top_scored:
-            enc = row["encoded"]
-            compact = dict(enc["compact"])
-
-            nested_compact = build_query_aware_nested_excerpt(
-                enc["nested_segments"],
-                query_hints,
-                max_chars=MAX_NESTED_CONTEXT_CHARS
-            )
-
-            if nested_compact:
-                compact["nested_content_compact"] = nested_compact
-
-            llm_candidates.append(compact)
-
         logger.info(
-            f"Selected {len(llm_candidates)} candidates for LLM processing.")
+            f"Selected {len(llm_candidates)} candidates for LLM processing; "
+            f"context token estimate={retrieval_result['context_token_estimate']}.")
+        llm_candidate_ids = [
+            str(candidate.get("id", "")).strip()
+            for candidate in llm_candidates
+            if str(candidate.get("id", "")).strip()
+        ]
+        llm_candidate_id_set = set(llm_candidate_ids)
+        candidate_by_id = {
+            str(candidate.get("id", "")).strip(): candidate
+            for candidate in llm_candidates
+            if str(candidate.get("id", "")).strip()
+        }
 
         # ------------------------------------------------------------------
-        # 7) BUILD PROMPT
+        # 4) BUILD PROMPT
         # ------------------------------------------------------------------
-        system_prompt = (
-            # "You are an intelligent campus content assistant. "
-            # "Answer the user's query using the provided campus items. "
-            # "Be less strict and highly inclusive in your matching—if an event is even loosely or tangentially related to the user's query, include it. "
-            # "Provide a comprehensive, engaging overview (at least 3-5 sentences) summarizing the relevant events. "
-            # "Aim to return at least 10 relevant events in your ranking, if available in the context. "
-            # "Some items include nested_content_compact, which is a structured compact collapse "
-            # "of deeper nested content such as menus or schedules using delimiters like "
-            # "'day=Friday || tab=Lunch || item=Blackened Salmon || desc=...'. "
-            # "Use that compact field when it is relevant to the query.\n\n"
-            # "At the end, output the relevant item IDs ranked best to worst in this exact format:\n"
+        system_prompt = build_ai_system_prompt()
+        user_content = build_ai_user_content(query, llm_candidates)
 
-            "You are a campus informant. "
-            "Answer the user's query using the provided campus items. "
-            "Provide a comprohensive overview (at least 1-3 sentences) summarizing the relevant items. "
-            "Inlclude up to 10 relevent item IDs in your ranking at the end, ranked best to worst in this exact format:\n"
-            "[IDS: id1, id2, id3, id4, ...]\n"
-            "Do not output JSON."
-        )
-
-        user_content = json.dumps({
-            "query": query,
-            "available_items": llm_candidates
-        }, indent=2, ensure_ascii=False)
-
-        logger.debug(
-            f"=== SYSTEM PROMPT ===\n{system_prompt}\n=====================")
-        logger.debug(
-            f"=== USER CONTENT (LLM CANDIDATES) ===\n{user_content}\n=====================================")
+        if data.get("debug_retrieval") is True:
+            logger.debug(
+                f"=== SYSTEM PROMPT ===\n{system_prompt}\n=====================")
+            logger.debug(
+                f"=== USER CONTENT (LLM CANDIDATES) ===\n{user_content}\n=====================================")
 
         # ------------------------------------------------------------------
-        # 8) CALL MODEL
+        # 5) CALL MODEL
         # ------------------------------------------------------------------
         logger.info(f"Calling OpenAI model: {MODEL_NAME}")
         resp = client.chat.completions.create(
@@ -1219,36 +1179,45 @@ def ask_ai():
         )
 
         raw = (resp.choices[0].message.content or "").strip()
-        logger.debug(
-            f"=== RAW LLM RESPONSE ===\n{raw}\n========================")
+        if data.get("debug_retrieval") is True:
+            logger.debug(
+                f"=== RAW LLM RESPONSE ===\n{raw}\n========================")
 
         # ------------------------------------------------------------------
-        # 9) EXTRACT RANKED IDS
+        # 6) EXTRACT AND VALIDATE RANKED IDS
         # ------------------------------------------------------------------
-        ranked_item_ids = []
+        model_selected_item_ids = parse_model_ranked_ids(raw, llm_candidate_id_set)
+        direct_model_selected_item_ids = dedupe_ranked_ids(
+            model_selected_item_ids,
+            llm_candidate_id_set,
+        )
+        ranked_item_ids = list(direct_model_selected_item_ids)
+        ai_overview = clean_ai_overview(raw)
+        model_answer_unavailable = answer_claims_unavailable(ai_overview)
+        used_local_fallback = False
+        pre_backfill_item_ids = list(ranked_item_ids)
 
-        tag_match = re.search(r"\[IDS:\s*(.*?)\]", raw, re.IGNORECASE)
-        if tag_match:
-            found_ids = [x.strip()
-                         for x in tag_match.group(1).split(",") if x.strip()]
-            ranked_item_ids = [x for x in found_ids if x in item_ids]
-        elif re.search(r"IDs?:\s*(.*)", raw, re.IGNORECASE):
-            fallback_match = re.search(r"IDs?:\s*(.*)", raw, re.IGNORECASE)
-            found_ids = fallback_match.group(1).replace(",", " ").split()
-            ranked_item_ids = [x.strip()
-                               for x in found_ids if x.strip() in item_ids]
-
-        if not ranked_item_ids:
+        if not ranked_item_ids and not model_answer_unavailable:
             logger.warning(
                 "Regex extraction failed or empty. Falling back to local top_scored order.")
-            ranked_item_ids = [row["encoded"]["compact"]["id"]
-                               for row in top_scored]
+            used_local_fallback = True
+            ranked_item_ids = [row["id"] for row in top_scored]
+
+        ranked_item_ids = dedupe_ranked_ids(ranked_item_ids, llm_candidate_id_set)
+        if not model_answer_unavailable:
+            pre_backfill_item_ids = list(ranked_item_ids)
+            ranked_item_ids = append_local_backfill_ids(
+                ranked_item_ids,
+                top_scored,
+                max_ids=10,
+            )
+        backfilled_item_ids = [
+            item_id
+            for item_id in ranked_item_ids
+            if item_id not in set(pre_backfill_item_ids)
+        ]
 
         logger.info(f"Final Ranked Item IDs: {ranked_item_ids}")
-
-        ai_overview = re.sub(r"\[IDS:.*?\]", "", raw,
-                             flags=re.IGNORECASE).strip()
-        ai_overview = re.sub(r"(?i)IDs?:.*", "", ai_overview).strip()
 
         if not ai_overview:
             ai_overview = "Here are the top matches based on your search."
@@ -1256,37 +1225,47 @@ def ask_ai():
         logger.debug(f"Cleaned AI Overview: '{ai_overview}'")
 
         # ------------------------------------------------------------------
-        # 10) BUILD CITATIONS
+        # 7) BUILD CITATIONS
         # ------------------------------------------------------------------
-        citations = []
-        for pid in ranked_item_ids:
-            matched_item = next(
-                (item for item in valid_items if item.get("id") == pid), None)
-            if not matched_item:
-                continue
-
-            snippet = ""
-            if isinstance(matched_item.get("label"), dict) and matched_item["label"].get("name"):
-                snippet = str(matched_item["label"].get("name")).strip()
-            elif matched_item.get("location"):
-                snippet = str(matched_item.get("location")).strip()
-            elif matched_item.get("host"):
-                snippet = str(matched_item.get("host")).strip()
-
-            if not snippet:
-                snippet = "Location not specified"
-
-            citations.append({
-                "page_id": pid,
-                "title": matched_item.get("title", ""),
-                "snippet": snippet
-            })
+        citations = build_ai_citations(
+            ranked_item_ids,
+            valid_items,
+            candidate_by_id,
+        )
 
         final_response = {
             "ai_overview": ai_overview,
             "citations": citations,
             "ranked_item_ids": ranked_item_ids
         }
+
+        if data.get("debug_retrieval") is True:
+            final_response["retrieval_debug"] = serialize_retrieval_debug(
+                retrieval_result
+            )
+            final_response["stage2_debug"] = {
+                "llm_request": {
+                    "api": "chat.completions",
+                    "model": MODEL_NAME,
+                    "temperature": 0.3,
+                    "max_tokens": 800,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_content},
+                    ],
+                },
+                "llm_candidate_ids": llm_candidate_ids,
+                "llm_candidates": llm_candidates,
+                "raw_model_output": raw,
+                "raw_model_selected_ids": model_selected_item_ids,
+                "model_selected_ids": direct_model_selected_item_ids,
+                "ids_before_backfill": pre_backfill_item_ids,
+                "used_local_fallback": used_local_fallback,
+                "answer_claims_unavailable": model_answer_unavailable,
+                "backfilled_ids": backfilled_item_ids,
+                "final_ranked_item_ids": ranked_item_ids,
+                "citations": citations,
+            }
 
         logger.debug(
             f"=== FINAL JSON RESPONSE ===\n{json.dumps(final_response, indent=2)}\n===========================")
@@ -1296,11 +1275,177 @@ def ask_ai():
 
         return jsonify(final_response), 200
 
-    except requests.exceptions.RequestException as e:
-        logger.error(
-            f"Failed to fetch content API data: {str(e)}", exc_info=True)
-        return jsonify({"error": "Failed to fetch content API data", "details": str(e)}), 502
     except Exception as e:
         logger.error(
             f"Failed to generate AI response: {str(e)}", exc_info=True)
         return jsonify({"error": "Failed to generate AI response", "details": str(e)}), 500
+
+
+def dedupe_ranked_ids(
+    ranked_item_ids: list[str],
+    allowed_item_ids: set[str],
+) -> list[str]:
+    seen = set()
+    deduped = []
+
+    for item_id in ranked_item_ids:
+        if item_id not in allowed_item_ids or item_id in seen:
+            continue
+        seen.add(item_id)
+        deduped.append(item_id)
+
+    return deduped
+
+
+def append_local_backfill_ids(
+    ranked_item_ids: list[str],
+    context_rows: list[dict],
+    *,
+    max_ids: int,
+) -> list[str]:
+    seen = set(ranked_item_ids)
+    backfilled = list(ranked_item_ids)
+
+    for row in context_rows:
+        item_id = row.get("id")
+        if not item_id or item_id in seen:
+            continue
+        seen.add(item_id)
+        backfilled.append(item_id)
+        if len(backfilled) >= max_ids:
+            break
+
+    return backfilled[:max_ids]
+
+
+def build_ai_system_prompt() -> str:
+    return (
+        "You are answering questions about the UC Merced campus using only the "
+        "supplied current campus records. Read each candidate's title, type, "
+        "tags, description, evidence excerpts, timing, and relevant nested "
+        "sections before answering. Use explicit information from the records, "
+        "including conditions such as times, dates, restrictions, availability, "
+        "and qualifications. Do not invent facts, but do not say information is "
+        "unavailable when a supplied record explicitly contains it. If a record "
+        "directly answers the question, use it even if its page type is not the "
+        "obvious category. Treat the local rank as a useful prior, not final "
+        "truth. Write a concise grounded answer in 1-3 sentences, preserving any "
+        "important conditions, then include up to 10 supporting item IDs ranked "
+        "by how directly they answer the user's question in this exact format:\n"
+        "[IDS: id1, id2, id3, id4, ...]\n"
+        "Do not output JSON."
+    )
+
+
+def build_ai_user_content(query: str, llm_candidates: list[dict]) -> str:
+    return json.dumps({
+        "query": query,
+        "available_items": llm_candidates,
+    }, indent=2, ensure_ascii=False)
+
+
+def parse_model_ranked_ids(raw: str, allowed_item_ids: set[str]) -> list[str]:
+    tag_match = re.search(r"\[IDS:\s*(.*?)\]", raw or "", re.IGNORECASE | re.DOTALL)
+    if tag_match:
+        found_ids = [
+            item_id.strip()
+            for item_id in tag_match.group(1).split(",")
+            if item_id.strip()
+        ]
+        return [item_id for item_id in found_ids if item_id in allowed_item_ids]
+
+    fallback_match = re.search(r"IDs?:\s*(.*)", raw or "", re.IGNORECASE)
+    if fallback_match:
+        found_ids = fallback_match.group(1).replace(",", " ").split()
+        return [
+            item_id.strip()
+            for item_id in found_ids
+            if item_id.strip() in allowed_item_ids
+        ]
+
+    return []
+
+
+def clean_ai_overview(raw: str) -> str:
+    overview = re.sub(r"\[IDS:.*?\]", "", raw or "", flags=re.IGNORECASE | re.DOTALL).strip()
+    return re.sub(r"(?im)^IDs?:.*$", "", overview).strip()
+
+
+def answer_claims_unavailable(text: str) -> bool:
+    normalized = re.sub(r"\s+", " ", (text or "").lower()).strip()
+    if not normalized:
+        return False
+    negative_patterns = [
+        r"\bdoes not specify\b",
+        r"\bdo not specify\b",
+        r"\bdoesn't specify\b",
+        r"\bnot specified\b",
+        r"\bnot available\b",
+        r"\bno (?:relevant )?(?:information|records?|locations?|items?) (?:is |are )?(?:available|found|provided|specified)\b",
+        r"\bi (?:could not|can't|cannot) find\b",
+        r"\bunable to find\b",
+    ]
+    return any(re.search(pattern, normalized) for pattern in negative_patterns)
+
+
+def build_ai_citations(
+    ranked_item_ids: list[str],
+    valid_items: list[dict],
+    candidate_by_id: dict[str, dict],
+) -> list[dict]:
+    valid_item_by_id = {
+        str(item.get("id", "")).strip(): item
+        for item in valid_items
+        if str(item.get("id", "")).strip()
+    }
+    citations = []
+
+    for pid in ranked_item_ids:
+        matched_item = valid_item_by_id.get(str(pid).strip())
+        if not matched_item:
+            continue
+
+        candidate = candidate_by_id.get(str(pid).strip(), {})
+        snippet = choose_citation_snippet(matched_item, candidate)
+        citations.append({
+            "page_id": pid,
+            "title": matched_item.get("title", ""),
+            "snippet": snippet,
+        })
+
+    return citations
+
+
+def choose_citation_snippet(
+    matched_item: dict,
+    candidate: dict,
+) -> str:
+    for key in ("evidence_excerpt", "description", "nested_content_compact"):
+        value = candidate.get(key)
+        if isinstance(value, str) and value.strip():
+            return trim_citation_snippet(value)
+
+    if isinstance(matched_item.get("label"), dict) and matched_item["label"].get("name"):
+        return trim_citation_snippet(str(matched_item["label"].get("name")))
+    for key in ("location", "location_at", "host", "subtitle", "title"):
+        value = matched_item.get(key)
+        if isinstance(value, str) and value.strip():
+            return trim_citation_snippet(value)
+
+    return "Location not specified"
+
+
+def trim_citation_snippet(value: str, limit: int = 280) -> str:
+    snippet = re.sub(r"\s+", " ", value).strip()
+    if len(snippet) <= limit:
+        return snippet
+    return snippet[:limit].rsplit(" ", 1)[0].rstrip() + "..."
+
+
+def parse_context_token_budget(value) -> int:
+    try:
+        token_budget = int(value)
+    except (TypeError, ValueError):
+        token_budget = 4000
+
+    return max(1500, min(token_budget, 8000))

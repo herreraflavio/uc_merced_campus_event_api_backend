@@ -1616,13 +1616,14 @@ def add_page():
         }), 500
 
 
-@events_bp.route("/contentAPIURL", methods=["GET"])
-def content_api_url():
+def build_content_api_payload() -> dict[str, list[dict]]:
     """
-    Unified endpoint that aggregates multiple data sources into a single JSON payload.
-    Structured as a pipeline so future data sources can be appended easily to the 'pages' array.
+    Build the unified content payload from current source state.
+
+    Presence events use the existing short-lived operational cache. Polygons and
+    user pages are read from disk each call so edits and UGC appear immediately.
     """
-    aggregated_response = {
+    aggregated_response: dict[str, list[dict]] = {
         "pages": []
     }
 
@@ -1679,6 +1680,17 @@ def content_api_url():
             )
     except Exception as e:
         logger.error("ContentAPI Pipeline Error (User Pages): %s", e)
+
+    return aggregated_response
+
+
+@events_bp.route("/contentAPIURL", methods=["GET"])
+def content_api_url():
+    """
+    Unified endpoint that aggregates multiple data sources into a single JSON payload.
+    Structured as a pipeline so future data sources can be appended easily to the 'pages' array.
+    """
+    aggregated_response = build_content_api_payload()
 
     print(
         f"[content_api] rebuilt /contentAPIURL with "
