@@ -1572,50 +1572,6 @@ def init_content_jobs(app):
 # ─────────────────────────────────────────
 
 
-@events_bp.route("/add/page", methods=["POST"])
-def add_page():
-    """Append one user-submitted page item to pages.json."""
-    data = request.get_json(silent=True)
-    if not isinstance(data, dict):
-        return jsonify({"error": "Request body must be a JSON object"}), 400
-
-    try:
-        page = _build_submitted_page(data)
-    except ValueError as exc:
-        return jsonify({"error": str(exc)}), 400
-
-    try:
-        with PAGES_JSON_LOCK:
-            payload, pages = _load_user_pages_payload_for_write()
-
-            if any(existing.get("id") == page["id"] for existing in pages):
-                # Extremely unlikely with UUID4, but do not silently overwrite.
-                return jsonify({"error": "Generated page ID already exists"}), 409
-
-            pages.append(page)
-            PAGES_JSON_PATH.parent.mkdir(parents=True, exist_ok=True)
-            _write_json_atomically(PAGES_JSON_PATH, payload)
-
-        logger.info(
-            "[pages] added page id=%s type=%s title=%r",
-            page["id"],
-            page["type"],
-            page["title"],
-        )
-
-        return jsonify({
-            "message": "Page created",
-            "page": page,
-        }), 201
-
-    except (OSError, json.JSONDecodeError, ValueError) as exc:
-        logger.exception("[pages] failed to write pages.json")
-        return jsonify({
-            "error": "Failed to save page",
-            "details": str(exc),
-        }), 500
-
-
 def build_content_api_payload() -> dict[str, list[dict]]:
     """
     Build the unified content payload from current source state.
