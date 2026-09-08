@@ -30,6 +30,14 @@ def create_autofill_ai_blueprint(client) -> Blueprint:
         if not isinstance(data, dict):
             return jsonify({"error": "Request body must be a JSON object"}), 400
 
+        if data.get("ai_data_sharing_consent") is not True:
+            return jsonify({
+                "error": {
+                    "code": "ai_data_sharing_consent_required",
+                    "message": "AI Autofill data sharing consent is required.",
+                }
+            }), 400
+
         image_urls = data.get("image_urls", [])
         if not isinstance(image_urls, list):
             return jsonify({"error": "image_urls must be an array"}), 400
@@ -57,7 +65,6 @@ def create_autofill_ai_blueprint(client) -> Blueprint:
             "tags": existing_tags,
             "subtitle": _clean_string(data.get("subtitle")),
             "host": _clean_string(data.get("host")),
-            "geometry": data.get("geometry"),
             "location_id": data.get("location_id"),
             "start": data.get("start"),
             "end": data.get("end"),
