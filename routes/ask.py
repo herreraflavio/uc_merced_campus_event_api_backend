@@ -1060,6 +1060,14 @@ def ask_ai():
         logger.debug(f"Raw Request Body: {raw_body}")
         logger.debug(f"Parsed JSON Data: {data}")
 
+        if data.get("ai_data_sharing_consent") is not True:
+            return jsonify({
+                "error": {
+                    "code": "ai_data_sharing_consent_required",
+                    "message": "AI Search data sharing consent is required.",
+                }
+            }), 400
+
         query = str(data.get("query", "")).strip()
         item_ids = data.get("item_ids", [])
         context_token_budget = parse_context_token_budget(

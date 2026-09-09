@@ -4,7 +4,7 @@ import tempfile
 import unittest
 from pathlib import Path
 from types import SimpleNamespace
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from flask import Flask
 
@@ -40,6 +40,32 @@ def item(
 
 
 class AiRetrievalTests(unittest.TestCase):
+    def test_ai_route_rejects_missing_or_false_consent_before_openai(self):
+        app = Flask(__name__)
+        app.register_blueprint(ask_module.ask_bp)
+
+        for consent_value in (None, False):
+            with self.subTest(consent_value=consent_value):
+                payload = {
+                    "query": "where is the library",
+                    "item_ids": ["library"],
+                }
+                if consent_value is not None:
+                    payload["ai_data_sharing_consent"] = consent_value
+
+                fake_client = MagicMock()
+                with patch.object(ask_module, "build_content_api_payload") as build_content, \
+                    patch.object(ask_module, "client", fake_client):
+                    response = app.test_client().post("/ai", json=payload)
+
+                self.assertEqual(response.status_code, 400)
+                self.assertEqual(
+                    response.get_json()["error"]["code"],
+                    "ai_data_sharing_consent_required",
+                )
+                build_content.assert_not_called()
+                fake_client.chat.completions.create.assert_not_called()
+
     def test_restroom_alias_queries_surface_restroom_records(self):
         corpus = [
             item(
@@ -344,6 +370,7 @@ class AiRetrievalTests(unittest.TestCase):
             response = app.test_client().post(
                 "/ai",
                 json={
+                    "ai_data_sharing_consent": True,
                     "query": "where can I park for free",
                     "item_ids": ["free-parking", "generic-parking"],
                     "debug_retrieval": True,
@@ -408,6 +435,7 @@ class AiRetrievalTests(unittest.TestCase):
             response = app.test_client().post(
                 "/ai",
                 json={
+                    "ai_data_sharing_consent": True,
                     "query": "any events offering food",
                     "item_ids": ["event-food", "dining-a"],
                     "debug_retrieval": True,
@@ -474,6 +502,7 @@ class AiRetrievalTests(unittest.TestCase):
             response = app.test_client().post(
                 "/ai",
                 json={
+                    "ai_data_sharing_consent": True,
                     "query": "where can I park for free",
                     "item_ids": ["free-parking", "generic-parking"],
                     "debug_retrieval": True,
@@ -515,6 +544,7 @@ class AiRetrievalTests(unittest.TestCase):
             response = app.test_client().post(
                 "/ai",
                 json={
+                    "ai_data_sharing_consent": True,
                     "query": "where can I use the bathroom",
                     "item_ids": ["restroom-a", "event-a"],
                 },
