@@ -997,6 +997,7 @@
     "id": "polygon1761861346599768",
     "location_id": 1612,
     "extrusion_color": "#0bbfde",
+    "height_m": 15,
     "label": {
       "name": "Kolligian Library",
       "hideBefore": 16,
@@ -8833,6 +8834,7 @@
   {
     "id": "polygon1762551985858856",
     "location_id": null,
+    "height_m": 0,
     "label": {
       "name": "Bellevue Lot H Zone",
       "hideBefore": 17,
@@ -9067,6 +9069,7 @@
     "id": "polygon1761858609026974",
     "location_id": 1748,
     "extrusion_color": "#cb6be6",
+    "height_m": 6,
     "label": {
       "name": "Facilities Services A",
       "hideBefore": 17,
@@ -9106,7 +9109,7 @@
     "id": "polygon1763160787041855",
     "location_id": 1844,
     "extrusion_color": "#cb6be6",
-    "height_m": 5,
+    "height_m": 6,
     "label": {
       "name": "TAPS",
       "hideBefore": 19,
