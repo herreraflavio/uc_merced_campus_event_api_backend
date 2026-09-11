@@ -6394,6 +6394,7 @@
   },
   {
     "id": "polygon1761862947648773",
+    "extrusion_color": "#5700ff",
     "location_id": 361,
     "label": {
       "name": "ADMIN",
