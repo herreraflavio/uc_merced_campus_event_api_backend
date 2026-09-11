@@ -656,6 +656,7 @@
     "id": "polygon1761860486750884",
     "location_id": 1804,
     "height_m": 13,
+    "extrusion_color": "#a0b7d9",
     "label": {
       "name": "COB",
       "hideBefore": 15,
