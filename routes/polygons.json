@@ -255,6 +255,7 @@
     "id": "polygon1761858687866950",
     "location_id": 1694,
     "extrusion_color": "#e1a8f1",
+    "height_m": 14,
     "label": {
       "name": "Central Plant",
       "hideBefore": 17,
@@ -385,6 +386,7 @@
     "id": "polygon1761860170632272",
     "location_id": 1882,
     "extrusion_color": "#0bbfde",
+    "height_m": 13,
     "label": {
       "name": "SSM",
       "hideBefore": 15,
@@ -522,6 +524,7 @@
     "id": "polygon1761860370535493",
     "location_id": 1936,
     "extrusion_color": "#0bbfde",
+    "height_m": 13,
     "label": {
       "name": "SSB",
       "hideBefore": 15,
@@ -594,8 +597,9 @@
     "id": "polygon1761860435344370",
     "location_id": 1924,
     "extrusion_color": "#4a6799",
+    "height_m": 0,
     "label": {
-      "name": "AOA",
+      "name": "COB 3(formerly AOA)",
       "hideBefore": 14,
       "hideAfter": null
     },
@@ -651,6 +655,7 @@
   {
     "id": "polygon1761860486750884",
     "location_id": 1804,
+    "height_m": 13,
     "label": {
       "name": "COB",
       "hideBefore": 15,
@@ -725,6 +730,7 @@
     "id": "polygon1761860579793939",
     "location_id": 1670,
     "extrusion_color": "#a0b7d9",
+    "height_m": 14,
     "label": {
       "name": "SE1",
       "hideBefore": 14,
@@ -825,6 +831,7 @@
     "id": "polygon176186065863142",
     "location_id": 1552,
     "extrusion_color": "#0bbfde",
+    "height_m": 14,
     "label": {
       "name": "SE2",
       "hideBefore": 14,
@@ -904,6 +911,7 @@
     "id": "polygon1761860798659497",
     "location_id": 1362,
     "extrusion_color": "#ff2828",
+    "height_m": 6,
     "label": {
       "name": "Mariposa",
       "hideBefore": 14,
@@ -1103,6 +1111,7 @@
     "id": "polygon1761861405251545",
     "location_id": 634,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Tulare",
       "hideBefore": 16,
@@ -1180,6 +1189,7 @@
     "id": "polygon1761861562792597",
     "location_id": 946,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Stanislaus",
       "hideBefore": 16,
@@ -1257,6 +1267,7 @@
     "id": "polygon1761861620897565",
     "location_id": 526,
     "extrusion_color": "#ff3132",
+    "height_m": 14,
     "label": {
       "name": "Granite Pass",
       "hideBefore": 16,
@@ -1329,6 +1340,7 @@
     "id": "polygon1761861665664626",
     "location_id": 484,
     "extrusion_color": "#ff3132",
+    "height_m": 17,
     "label": {
       "name": "Sentinel Rock",
       "hideBefore": 16,
@@ -1414,6 +1426,7 @@
     "id": "polygon1761861712013544",
     "location_id": 590,
     "extrusion_color": "#ff3132",
+    "height_m": 18,
     "label": {
       "name": "Glacier Point",
       "hideBefore": 16,
@@ -1485,6 +1498,7 @@
     "id": "polygon1761861787851598",
     "location_id": 1084,
     "extrusion_color": "#0bbfde",
+    "height_m": 14,
     "label": {
       "name": "SRE",
       "hideBefore": 14,
@@ -1561,6 +1575,7 @@
     "id": "polygon1761861841336199",
     "location_id": 774,
     "extrusion_color": "#0125cc",
+    "height_m": 10,
     "label": {
       "name": "Pavilion",
       "hideBefore": 14,
@@ -4474,6 +4489,7 @@
     "id": "polygon1761861884490287",
     "location_id": 712,
     "extrusion_color": "#0bbfde",
+    "height_m": 14,
     "label": {
       "name": "ACS",
       "hideBefore": 15,
@@ -4534,6 +4550,7 @@
     "id": "polygon1761861947974663",
     "location_id": 1100,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "San Joaquin",
       "hideBefore": 17,
@@ -4680,6 +4697,7 @@
     "id": "polygon1761862210606822",
     "location_id": 762,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Kings",
       "hideBefore": 16,
@@ -4757,6 +4775,7 @@
     "id": "polygon1761862248859831",
     "location_id": 642,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Kern",
       "hideBefore": 16,
@@ -4834,6 +4853,7 @@
     "id": "polygon1761862292593315",
     "location_id": 752,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Madera",
       "hideBefore": 16,
@@ -4911,6 +4931,7 @@
     "id": "polygon1761862422686169",
     "location_id": 1130,
     "extrusion_color": "#0125cc",
+    "height_m": 6,
     "label": {
       "name": "DC",
       "hideBefore": 14,
@@ -6355,6 +6376,7 @@
     "id": "polygon1761862844956290",
     "location_id": 116,
     "extrusion_color": "#ff2828",
+    "height_m": 16,
     "label": {
       "name": "El Portal",
       "hideBefore": 14,
@@ -6426,6 +6448,7 @@
     "id": "polygon1761862947648773",
     "extrusion_color": "#0bbfde",
     "location_id": 361,
+    "height_m": 15,
     "label": {
       "name": "ADMIN",
       "hideBefore": 14,
@@ -6494,6 +6517,7 @@
     "id": "polygon1761863007636326",
     "location_id": 476,
     "extrusion_color": "#cb6be6",
+    "height_m": 12,
     "label": {
       "name": "Conference Center",
       "hideBefore": 15,
@@ -6567,6 +6591,7 @@
     "id": "polygon1761863114066280",
     "location_id": 1110,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Merced",
       "hideBefore": 16,
@@ -6644,6 +6669,7 @@
     "id": "polygon1761863167448187",
     "location_id": 1180,
     "extrusion_color": "#cc0100",
+    "height_m": 6,
     "label": {
       "name": "Calaveras",
       "hideBefore": 16,
@@ -6721,6 +6747,7 @@
     "id": "polygon1761863295367247",
     "location_id": 1262,
     "extrusion_color": "#ff2828",
+    "height_m": 6,
     "label": {
       "name": "Tuolumne",
       "hideBefore": 15,
@@ -6817,6 +6844,7 @@
     "id": "polygon1761863506341424",
     "location_id": 1524,
     "extrusion_color": "#c4deff",
+    "height_m": 7,
     "label": {
       "name": "Student Activities & Athletic Center",
       "hideBefore": 17,
@@ -6884,6 +6912,7 @@
   {
     "id": "polygon1761863605342500",
     "location_id": 1320,
+    "height_m": 10,
     "extrusion_color": "#c4deff",
     "label": {
       "name": "Joseph E. Gallo Recreation & Wellness Center",
@@ -6959,6 +6988,7 @@
     "id": "polygon1761861907489943",
     "location_id": 144,
     "extrusion_color": "#e1a8f1",
+    "height_m": 9,
     "label": {
       "name": "Health & Aquatic Center",
       "hideBefore": 18,
@@ -7011,6 +7041,7 @@
     "id": "polygon1761863691369604",
     "location_id": 366,
     "extrusion_color": "#e1a8f1",
+    "height_m": 9,
     "label": {
       "name": "Welcome Center",
       "hideBefore": 17,
@@ -7233,6 +7264,7 @@
     "id": "polygon1761864638825198",
     "location_id": 864,
     "extrusion_color": "#cb6be6",
+    "height_m": 5,
     "label": {
       "name": "ECEC",
       "hideBefore": 14,
@@ -7465,6 +7497,7 @@
     "id": "polygon1761860891689236",
     "location_id": 1846,
     "extrusion_color": "#0bbfde",
+    "height_m": 13,
     "label": {
       "name": "COB2",
       "hideBefore": 15,
@@ -7855,6 +7888,7 @@
     "id": "polygon1761865240288559",
     "location_id": 1162,
     "extrusion_color": "#0bbfde",
+    "height_m": 14,
     "label": {
       "name": "BSP",
       "hideBefore": 14,
@@ -8101,6 +8135,7 @@
     "id": "polygon1761865648911798",
     "location_id": 976,
     "extrusion_color": "#ff2828",
+    "height_m": 14,
     "label": {
       "name": "Half Dome",
       "hideBefore": 15,
@@ -8418,6 +8453,7 @@
     "id": "polygon1761864411289394",
     "location_id": 618,
     "extrusion_color": "#ff2828",
+    "height_m": 13,
     "label": {
       "name": "Cathedral",
       "hideBefore": 16,
@@ -8506,6 +8542,7 @@
     "id": "polygon1761941210659436",
     "location_id": 731,
     "extrusion_color": "#ff2828",
+    "height_m": 13,
     "label": {
       "name": "Tenaya",
       "hideBefore": 16,
@@ -9069,6 +9106,7 @@
     "id": "polygon1763160787041855",
     "location_id": 1844,
     "extrusion_color": "#cb6be6",
+    "height_m": 5,
     "label": {
       "name": "TAPS",
       "hideBefore": 19,
