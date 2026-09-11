@@ -2,6 +2,7 @@
   {
     "id": "polygon1761858238549970",
     "location_id": 1960,
+    "height_m": 0,
     "label": {
       "name": "North Bowl Lot 1",
       "hideBefore": 14,
@@ -58,6 +59,7 @@
   {
     "id": "polygon1761858397559679",
     "location_id": 1974,
+    "height_m": 0,
     "label": {
       "name": "North Bowl Lot 2",
       "hideBefore": 14,
@@ -110,6 +112,7 @@
   {
     "id": "polygon1761858443392270",
     "location_id": 2050,
+    "height_m": 0,
     "label": {
       "name": "P3 Lot",
       "hideBefore": 14,
@@ -156,6 +159,7 @@
   {
     "id": "polygon1761858529192827",
     "location_id": 1714,
+    "height_m": 0,
     "label": {
       "name": "Research Server",
       "hideBefore": 17,
@@ -217,6 +221,7 @@
   {
     "id": "polygon1761858559824132",
     "location_id": 1742,
+    "extrusion_color": "#e1a8f1",
     "label": {
       "name": "Facilities Services B",
       "hideBefore": 17,
@@ -249,6 +254,7 @@
   {
     "id": "polygon1761858687866950",
     "location_id": 1694,
+    "extrusion_color": "#e1a8f1",
     "label": {
       "name": "Central Plant",
       "hideBefore": 17,
@@ -318,6 +324,7 @@
   {
     "id": "polygon1761858712943575",
     "location_id": 1706,
+    "extrusion_color": "#e1a8f1",
     "label": {
       "name": "University Police",
       "hideBefore": 17,
@@ -377,6 +384,7 @@
   {
     "id": "polygon1761860170632272",
     "location_id": 1882,
+    "extrusion_color": "#0bbfde",
     "label": {
       "name": "SSM",
       "hideBefore": 15,
@@ -447,6 +455,7 @@
   {
     "id": "polygon1761860301580820",
     "location_id": 1791,
+    "height_m": 0,
     "label": {
       "name": "Le Grand Lot",
       "hideBefore": 14,
@@ -512,6 +521,7 @@
   {
     "id": "polygon1761860370535493",
     "location_id": 1936,
+    "extrusion_color": "#0bbfde",
     "label": {
       "name": "SSB",
       "hideBefore": 15,
@@ -583,6 +593,7 @@
   {
     "id": "polygon1761860435344370",
     "location_id": 1924,
+    "extrusion_color": "#4a6799",
     "label": {
       "name": "AOA",
       "hideBefore": 14,
@@ -1168,6 +1179,7 @@
   {
     "id": "polygon1761861562792597",
     "location_id": 946,
+    "extrusion_color": "#cc0100",
     "label": {
       "name": "Stanislaus",
       "hideBefore": 16,
@@ -1472,6 +1484,7 @@
   {
     "id": "polygon1761861787851598",
     "location_id": 1084,
+    "extrusion_color": "#0bbfde",
     "label": {
       "name": "SRE",
       "hideBefore": 14,
@@ -4520,6 +4533,7 @@
   {
     "id": "polygon1761861947974663",
     "location_id": 1100,
+    "extrusion_color": "#cc0100",
     "label": {
       "name": "San Joaquin",
       "hideBefore": 17,
@@ -4592,6 +4606,7 @@
   {
     "id": "polygon1761862172959950",
     "location_id": 984,
+    "extrusion_color": "#cc0100",
     "label": {
       "name": "Fresno",
       "hideBefore": 17,
@@ -4741,6 +4756,7 @@
   {
     "id": "polygon1761862248859831",
     "location_id": 642,
+    "extrusion_color": "#cc0100",
     "label": {
       "name": "Kern",
       "hideBefore": 16,
@@ -4817,6 +4833,7 @@
   {
     "id": "polygon1761862292593315",
     "location_id": 752,
+    "extrusion_color": "#cc0100",
     "label": {
       "name": "Madera",
       "hideBefore": 16,
@@ -6337,6 +6354,7 @@
   {
     "id": "polygon1761862844956290",
     "location_id": 116,
+    "extrusion_color": "#ff2828",
     "label": {
       "name": "El Portal",
       "hideBefore": 14,
@@ -6625,6 +6643,7 @@
   {
     "id": "polygon1761863167448187",
     "location_id": 1180,
+    "extrusion_color": "#cc0100",
     "label": {
       "name": "Calaveras",
       "hideBefore": 16,
@@ -6797,6 +6816,7 @@
   {
     "id": "polygon1761863506341424",
     "location_id": 1524,
+    "extrusion_color": "#c4deff",
     "label": {
       "name": "Student Activities & Athletic Center",
       "hideBefore": 17,
@@ -6864,6 +6884,7 @@
   {
     "id": "polygon1761863605342500",
     "location_id": 1320,
+    "extrusion_color": "#c4deff",
     "label": {
       "name": "Joseph E. Gallo Recreation & Wellness Center",
       "hideBefore": 17,
@@ -7167,6 +7188,7 @@
   {
     "id": "polygon17618640488354",
     "location_id": 542,
+    "height_m": 0,
     "label": {
       "name": "Bobcat Field",
       "hideBefore": 17,
@@ -7210,6 +7232,7 @@
   {
     "id": "polygon1761864638825198",
     "location_id": 864,
+    "extrusion_color": "#cb6be6",
     "label": {
       "name": "ECEC",
       "hideBefore": 14,
@@ -7275,6 +7298,7 @@
   {
     "id": "polygon176186469807932",
     "location_id": 1176,
+    "extrusion_color": "#3cdae1",
     "label": {
       "name": "Greenhouse",
       "hideBefore": 15,
@@ -7343,6 +7367,7 @@
   {
     "id": "polygon1761864721100301",
     "location_id": 1068,
+    "extrusion_color": "#3cdae1",
     "label": {
       "name": "EH&S Facility",
       "hideBefore": 15,
@@ -7439,6 +7464,7 @@
   {
     "id": "polygon1761860891689236",
     "location_id": 1846,
+    "extrusion_color": "#0bbfde",
     "label": {
       "name": "COB2",
       "hideBefore": 15,
@@ -7961,6 +7987,7 @@
   {
     "id": "polygon1761865367414523",
     "location_id": 356,
+    "height_m": 0,
     "label": {
       "name": "Tennis Courts",
       "hideBefore": 16,
@@ -8019,6 +8046,7 @@
   {
     "id": "polygon1761865382252840",
     "location_id": 244,
+    "height_m": 0,
     "label": {
       "name": "Basketball Courts",
       "hideBefore": 16,
@@ -8072,6 +8100,7 @@
   {
     "id": "polygon1761865648911798",
     "location_id": 976,
+    "extrusion_color": "#ff2828",
     "label": {
       "name": "Half Dome",
       "hideBefore": 15,
@@ -8388,6 +8417,7 @@
   {
     "id": "polygon1761864411289394",
     "location_id": 618,
+    "extrusion_color": "#ff2828",
     "label": {
       "name": "Cathedral",
       "hideBefore": 16,
@@ -8475,6 +8505,7 @@
   {
     "id": "polygon1761941210659436",
     "location_id": 731,
+    "extrusion_color": "#ff2828",
     "label": {
       "name": "Tenaya",
       "hideBefore": 16,
@@ -8616,6 +8647,7 @@
   {
     "id": "polygon1762549587833659",
     "location_id": 860,
+    "height_m": 0,
     "label": {
       "name": "ECEC Lot Blue Zone",
       "hideBefore": 17,
@@ -8819,6 +8851,7 @@
   {
     "id": "polygon1761865825162867",
     "location_id": 229,
+    "height_m": 0,
     "label": {
       "name": "Scholar's Lot H Zone",
       "hideBefore": 15,
@@ -8897,6 +8930,7 @@
   {
     "id": "polygon176255236834235",
     "location_id": 535,
+    "height_m": 0,
     "label": {
       "name": "Scholar's Lot Blue Zone",
       "hideBefore": 15,
@@ -8950,6 +8984,7 @@
   {
     "id": "polygon1762553384644206",
     "location_id": null,
+    "height_m": 0,
     "label": {
       "name": "Calaveras Lot",
       "hideBefore": 17,
@@ -8994,6 +9029,7 @@
   {
     "id": "polygon1761858609026974",
     "location_id": 1748,
+    "extrusion_color": "#cb6be6",
     "label": {
       "name": "Facilities Services A",
       "hideBefore": 17,
@@ -9032,6 +9068,7 @@
   {
     "id": "polygon1763160787041855",
     "location_id": 1844,
+    "extrusion_color": "#cb6be6",
     "label": {
       "name": "TAPS",
       "hideBefore": 19,
