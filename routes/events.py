@@ -1661,6 +1661,27 @@ def content_api_url():
     return jsonify(aggregated_response)
 
 
+@events_bp.route("/publicContentAPIURL", methods=["GET"])
+def public_content_api_url():
+    pages: list[dict] = []
+    try:
+        if POLYGONS_JSON_PATH.exists():
+            with POLYGONS_JSON_PATH.open("r", encoding="utf-8") as f:
+                polygons_data = json.load(f)
+
+            if isinstance(polygons_data, dict):
+                polygons_data = polygons_data.get("polygons")
+            if not isinstance(polygons_data, list):
+                raise ValueError(
+                    "polygons.json must be a JSON array or an object containing a 'polygons' array"
+                )
+            pages.extend(polygons_data)
+    except Exception as e:
+        logger.error("PublicContentAPI Pipeline Error (Polygons): %s", e)
+
+    return jsonify({"pages": pages})
+
+
 @events_bp.route("/presence_events", methods=["GET"])
 def presence_events():
     try:
