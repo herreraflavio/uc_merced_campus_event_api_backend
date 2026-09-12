@@ -22,7 +22,29 @@
     "end": "2026-04-27T22:35:59.347Z",
     "image_alt_text": "Public restrooms"
   },
-
+  {
+    "description": "Saw a cute bunny ",
+    "geometry": {
+      "type": "point",
+      "longitude": -120.425641,
+      "latitude": 37.364754
+    },
+    "start": "2026-04-27T22:47:03.541Z",
+    "image_urls": [
+      "https://tiles.flavioherrera.com/images/1777330148162-a432cb0d-b805-44eb-93ab-7f30606fdff2-campus-post-1-B370FCAD-2046-4FE5-A45E-297E9AE38561.jpg"
+    ],
+    "subtitle": "New pavilion lawn",
+    "image_alt_text": "Bunny",
+    "type": "wildlife",
+    "pin_url": "/wildlife_pin.png",
+    "location_id": 1882,
+    "end": "2026-04-27T23:47:03.541Z",
+    "tags": ["wildlife"],
+    "host": "Campus Explorer",
+    "id": "CBA13787-EFCC-4256-8608-B0DEB1E8EE1F",
+    "title": "Cute bunny",
+    "source_url": "https://campusmap.ucmercedhub.com/"
+  },
   {
     "end": "2026-04-29T01:17:44.950Z",
     "subtitle": "Near library",
@@ -206,5 +228,28 @@
     ],
     "id": "2E1E4CC7-FCCC-47B0-9D6C-138CA003C306",
     "source_url": "https://campusmap.ucmercedhub.com/"
+  },
+  {
+    "image_urls": [
+      "https://tiles.flavioherrera.com/images/1777491847661-cf7b42fd-5807-4843-994b-bb5cce59cbcb-Screenshot-2026-04-29-at-12.43.17-PM.png"
+    ],
+    "start": "2026-04-29T02:07:02.242Z",
+    "geometry": {
+      "latitude": 37.363752,
+      "type": "point",
+      "longitude": -120.426988
+    },
+    "host": "Campus Explorer",
+    "pin_url": "/wildlife_pin.png",
+    "title": "Family of ducks",
+    "image_alt_text": "Saw a family of ducks, like 10 baby ducks, really cute",
+    "location_id": 816,
+    "type": "wildlife",
+    "tags": ["wildlife"],
+    "end": "2026-04-29T03:07:02.242Z",
+    "source_url": "https://campusmap.ucmercedhub.com/",
+    "description": "Saw a family of ducks, like 10 baby ducks, really cute",
+    "id": "55C99F32-F81F-483C-8F9B-383F971BBBF6",
+    "subtitle": "Near little lake"
   }
 ]
